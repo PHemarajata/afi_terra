@@ -1,0 +1,87 @@
+run_id	sample_name	sample_type	expected_results	kk_report_name_16GB	kk_report_name_rick	kk_report_name_rick
+3	24-5-0126	CLINICAL	Rickettsia spp	00126_S6_kreport.txt	NA	NA
+3	14-8-0277	CLINICAL	Leptospira spp	00277_S4_kreport.txt	NA	NA
+3	09-0-00369	CLINICAL	Rickettsia spp	00369_S1_kreport.txt	NA	NA
+3	22-1-0389	CLINICAL	Orientia tsutsugamushi	00389_S5_kreport.txt	NA	NA
+3	25-4-0428	CLINICAL	Leptospira spp	00428_S8_kreport.txt	NA	NA
+3	25-0-00618	CLINICAL	Orientia tsutsugamushi	00618_S7_kreport.txt	NA	NA
+3	09-03-1937	CLINICAL	Burkholderia pseudomallei	01937_S2_kreport.txt	NA	NA
+3	09-04-2757	CLINICAL	Leptospira spp	02757_S3_kreport.txt	NA	NA
+4	09-0-02165	CLINICAL	Burkholderia pseudomallei	09002165_S3_kreport.txt	NA	NA
+5	09-01-2966	CLINICAL	Burkholderia pseudomallei	09102966_S1_kreport.txt	NA	NA
+5	09-02-2659	CLINICAL	Leptospira spp	09202659_S12_kreport.txt	NA	NA
+4	09-03-0546	CLINICAL	Streptococcus suis	09300546_S4_kreport.txt	NA	NA
+4	09-03-2710	CLINICAL	Escherichia coli	09302710_S2_kreport.txt	NA	NA
+4	09-03-2890	CLINICAL	Streptococcus pneumoniae	09302890_S5_kreport.txt	NA	NA
+5	09-04-2516	CLINICAL	Streptococcus suis	09402516_S8_kreport.txt	NA	NA
+5	09-05-2813	CLINICAL	Burkholderia pseudomallei	09502813_S2_kreport.txt	NA	NA
+5	09-06-2983	CLINICAL	Escherichia coli	09602983_S7_kreport.txt	NA	NA
+5	09-07-0912	CLINICAL	Burkholderia pseudomallei	09700912_S3_kreport.txt	NA	NA
+2	09-09-2043	CLINICAL	Streptococcus pneumoniae	09902043_S1_kreport.txt	NA	NA
+5	10-9-0410	CLINICAL	Rickettsia	10900410_S10_kreport.txt	NA	NA
+2	11-2-0465	CLINICAL	Yersinia spp.	11200465_S2_kreport.txt	NA	NA
+4	11-8-0801	CLINICAL	Orientia tsutsugamushi	11800801_S7_kreport.txt	NA	NA
+5	16-4-1070	CLINICAL	Rickettsia	16401070_S11_kreport.txt	NA	NA
+5	21-0-01573	CLINICAL	Escherichia coli	21001573_S6_kreport.txt	NA	NA
+2	22-9-1988	CLINICAL	Streptococcus suis	22900088_S3_kreport.txt	NA	NA
+2	22-9-0253	CLINICAL	Orientia tsutsugamushi	22900253_S4_kreport.txt	NA	NA
+2	23-5-0382	CLINICAL	Streptococcus pneumoniae	23500382_S6_kreport.txt	NA	NA
+2	23-5-0805	CLINICAL	Escherichia coli	23500805_S7_kreport.txt	NA	NA
+5	24-5-0367	CLINICAL	Orientia tsutsugamushi	24500367_S5_kreport.txt	NA	NA
+4	25-3-0179	CLINICAL	Coxiella burnetii	25300179_S6_kreport.txt	NA	NA
+5	25-8-0370	CLINICAL	Coxiella burnetii	25800370_S9_kreport.txt	NA	NA
+2	23-0-00493	CLINICAL	Escherichia coli	25800493_S10_kreport.txt	NA	NA
+5	25-9-0911	CLINICAL	Orientia tsutsugamushi	25900911_S4_kreport.txt	NA	NA
+1	3_E. coli	PC_SINGLE (if you ever add single-organism PCs)	Escherichia coli	E-coli_S4_kreport.txt	NA	NA
+1	5_Mixed	MIXED4	Streptococcus pneumoniae	Mixed_S6_kreport.txt	NA	NA
+1	5_Mixed	MIXED4	Streptococcus suis	Mixed_S6_kreport.txt	NA	NA
+1	5_Mixed	MIXED4	Escherichia coli	Mixed_S6_kreport.txt	NA	NA
+1	5_Mixed	MIXED4	Pseudomonas aeruginosa	Mixed_S6_kreport.txt	NA	NA
+4	NC_S1	NTC		NC_S1_kreport.txt	NA	NA
+5	NC_S14	NTC		NC_S14_kreport.txt	NA	NA
+3	NC_S9	NTC		NC_S9_kreport.txt	NA	NA
+1	NC-20251016_S1	NTC		NC-20251016_S1_kreport.txt	NA	NA
+2	NTC_S11	NTC		NTC_S11_kreport.txt	NA	NA
+1	4_P. aeruginosa	PC_SINGLE (if you ever add single-organism PCs)	Pseudomonas aeruginosa	P-aeru_S5_kreport.txt	NA	NA
+3	PC_S10	PC_MIX8	Bacillus subtilis	PC_S10_kreport.txt	NA	NA
+3	PC_S10	PC_MIX8	Listeria monocytogenes	PC_S10_kreport.txt	NA	NA
+3	PC_S10	PC_MIX8	Staphylococcus aureus	PC_S10_kreport.txt	NA	NA
+3	PC_S10	PC_MIX8	Enterococcus faecalis	PC_S10_kreport.txt	NA	NA
+3	PC_S10	PC_MIX8	Limosilactobacillus fermentum	PC_S10_kreport.txt	NA	NA
+3	PC_S10	PC_MIX8	Salmonella Enterica	PC_S10_kreport.txt	NA	NA
+3	PC_S10	PC_MIX8	Escherichia coli	PC_S10_kreport.txt	NA	NA
+3	PC_S10	PC_MIX8	Pseudomonas aeruginosa	PC_S10_kreport.txt	NA	NA
+2	PC_S12	PC_MIX8	Bacillus subtilis	PC_S12_kreport.txt	NA	NA
+2	PC_S12	PC_MIX8	Listeria monocytogenes	PC_S12_kreport.txt	NA	NA
+2	PC_S12	PC_MIX8	Staphylococcus aureus	PC_S12_kreport.txt	NA	NA
+2	PC_S12	PC_MIX8	Enterococcus faecalis	PC_S12_kreport.txt	NA	NA
+2	PC_S12	PC_MIX8	Limosilactobacillus fermentum	PC_S12_kreport.txt	NA	NA
+2	PC_S12	PC_MIX8	Salmonella Enterica	PC_S12_kreport.txt	NA	NA
+2	PC_S12	PC_MIX8	Escherichia coli	PC_S12_kreport.txt	NA	NA
+2	PC_S12	PC_MIX8	Pseudomonas aeruginosa	PC_S12_kreport.txt	NA	NA
+5	PC_S13	PC_MIX8	Bacillus subtilis	PC_S13_kreport.txt	NA	NA
+5	PC_S13	PC_MIX8	Listeria monocytogenes	PC_S13_kreport.txt	NA	NA
+5	PC_S13	PC_MIX8	Staphylococcus aureus	PC_S13_kreport.txt	NA	NA
+5	PC_S13	PC_MIX8	Enterococcus faecalis	PC_S13_kreport.txt	NA	NA
+5	PC_S13	PC_MIX8	Limosilactobacillus fermentum	PC_S13_kreport.txt	NA	NA
+5	PC_S13	PC_MIX8	Salmonella Enterica	PC_S13_kreport.txt	NA	NA
+5	PC_S13	PC_MIX8	Escherichia coli	PC_S13_kreport.txt	NA	NA
+5	PC_S13	PC_MIX8	Pseudomonas aeruginosa	PC_S13_kreport.txt	NA	NA
+4	PC_S8	PC_MIX8	Bacillus subtilis	PC_S8_kreport.txt	NA	NA
+4	PC_S8	PC_MIX8	Listeria monocytogenes	PC_S8_kreport.txt	NA	NA
+4	PC_S8	PC_MIX8	Staphylococcus aureus	PC_S8_kreport.txt	NA	NA
+4	PC_S8	PC_MIX8	Enterococcus faecalis	PC_S8_kreport.txt	NA	NA
+4	PC_S8	PC_MIX8	Limosilactobacillus fermentum	PC_S8_kreport.txt	NA	NA
+4	PC_S8	PC_MIX8	Salmonella Enterica	PC_S8_kreport.txt	NA	NA
+4	PC_S8	PC_MIX8	Escherichia coli	PC_S8_kreport.txt	NA	NA
+4	PC_S8	PC_MIX8	Pseudomonas aeruginosa	PC_S8_kreport.txt	NA	NA
+1	PC_S7	PC_MIX8	Bacillus subtilis	PC-20251016_S7_kreport.txt	NA	NA
+1	PC_S7	PC_MIX8	Listeria monocytogenes	PC-20251016_S7_kreport.txt	NA	NA
+1	PC_S7	PC_MIX8	Staphylococcus aureus	PC-20251016_S7_kreport.txt	NA	NA
+1	PC_S7	PC_MIX8	Enterococcus faecalis	PC-20251016_S7_kreport.txt	NA	NA
+1	PC_S7	PC_MIX8	Limosilactobacillus fermentum	PC-20251016_S7_kreport.txt	NA	NA
+1	PC_S7	PC_MIX8	Salmonella Enterica	PC-20251016_S7_kreport.txt	NA	NA
+1	PC_S7	PC_MIX8	Escherichia coli	PC-20251016_S7_kreport.txt	NA	NA
+1	PC_S7	PC_MIX8	Pseudomonas aeruginosa	PC-20251016_S7_kreport.txt	NA	NA
+1	1_S. pneumoniae	PC_SINGLE (if you ever add single-organism PCs)	Streptococcus pneumoniae	S-pneumo_S2_kreport.txt	NA	NA
+1	2_S. suis	PC_SINGLE (if you ever add single-organism PCs)	Streptococcus suis	S-suis_S3_kreport.txt	NA	NA

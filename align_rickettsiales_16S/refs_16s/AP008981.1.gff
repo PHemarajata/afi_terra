@@ -1,0 +1,3 @@
+##gff-version 3
+AP008981.1	barrnap:0.9	rRNA	379136	380634	0	-	.	Name=16S_rRNA;product=16S ribosomal RNA
+AP008981.1	barrnap:0.9	rRNA	1104990	1107792	0	+	.	Name=23S_rRNA;product=23S ribosomal RNA

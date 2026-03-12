@@ -1,0 +1,54 @@
+# macOS
+.DS_Store
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.venv/
+venv/
+.env
+
+# Build/test artifacts
+.pytest_cache/
+.mypy_cache/
+coverage/
+htmlcov/
+
+# Workflow/local outputs
+results/
+comparison/
+*.log
+
+# Project data / run artifacts (large, reproducible)
+kraken16_reports/
+kraken16_reports_nofastp/
+align_rickettsiales_16S/align/
+align_rickettsiales_16S/logs/
+align_rickettsiales_16S/metrics/
+inputs/
+validation/*.tsv
+
+# Keep validation markdown summaries if desired; ignore generated tables by default
+validation/*.csv
+
+# Generated helper outputs
+wdl/inputs/batch_from_*.json
+docs/project_summary_extracted.txt
+
+# Local symlink artifact
+afi_terra
+
+# Local manuscript/support docs
+*.docx
+AFI_Bioinformatics_Training_Packet_Final.pdf
+Writing and Editing AFI virus manuscript - Project Summary and Strategy.pdf
+
+# Spreadsheet outputs and Office temp files
+validation/*.xlsx
+validation/~$*
+
+# Editor
+.vscode/
+.idea/
