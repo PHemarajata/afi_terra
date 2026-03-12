@@ -93,8 +93,12 @@ def build_inputs(args: argparse.Namespace, samples: list[dict]) -> dict:
 
 def normalize_sample_type_from_mapping(value: str) -> str:
     text = (value or "").strip().upper()
-    if text in {"PC", "POSITIVE_CONTROL", "PC_MIX8", "PC_SINGLE", "MIXED4"}:
-        return "PC"
+    if "PC_SINGLE" in text or "SINGLE-ORGANISM" in text:
+        return "PC_SINGLE"
+    if "MIXED4" in text or "PC_MIX4" in text:
+        return "MIXED4"
+    if text in {"PC", "POSITIVE_CONTROL", "PC_MIX8"} or "PC_MIX8" in text:
+        return "PC_MIX8"
     if text in {"NTC", "NC", "NEGATIVE_CONTROL"}:
         return "NTC"
     return "clinical"
@@ -116,11 +120,17 @@ def derive_fastq_sample_id(report_name: str, fallback_sample: str) -> str:
     return fallback_sample.strip()
 
 
-def infer_mode(expected_taxon: str, mode_policy: str) -> str:
+def infer_mode(expected_taxon: str, sample_type: str, mode_policy: str) -> str:
     if mode_policy == "all_validation":
         return "validation"
     if mode_policy == "all_routine":
         return "routine"
+
+    # In auto mode, MIXED4 and PC_SINGLE are validation controls.
+    if sample_type in {"MIXED4", "PC_SINGLE"}:
+        return "validation"
+
+    # PC_MIX8 can be used in both validation and routine runs.
     return "validation" if expected_taxon else "routine"
 
 
@@ -155,7 +165,8 @@ def load_samples_from_mapping(args: argparse.Namespace) -> list[dict]:
                 continue
 
             expected_taxon = normalize_expected_taxon(row.get("expected_results", ""))
-            mode = infer_mode(expected_taxon, args.mode_policy)
+            sample_type = normalize_sample_type_from_mapping(row.get("sample_type", ""))
+            mode = infer_mode(expected_taxon, sample_type, args.mode_policy)
 
             sample_id = derive_fastq_sample_id(row.get("kk_report_name_16GB", ""), sample_name)
             r1 = f"{args.fastq_uri_prefix.rstrip('/')}/{sample_id}_R1.fastq.gz"
@@ -163,7 +174,7 @@ def load_samples_from_mapping(args: argparse.Namespace) -> list[dict]:
 
             item = {
                 "sample_id": sample_id,
-                "sample_type": normalize_sample_type_from_mapping(row.get("sample_type", "")),
+                "sample_type": sample_type,
                 "mode": mode,
                 "classifier_mode": args.default_classifier_mode,
                 "r1_fastq": r1,

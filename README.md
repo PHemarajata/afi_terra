@@ -163,3 +163,6 @@ Notes:
 
 - Keep NTC and PC8 in each run submission so controls are processed with the same run.
 - In mode auto, rows with expected_results become validation and rows without expected_results become routine.
+- Control type handling:
+	- Validation mode supports PC_MIX8, MIXED4, and PC_SINGLE as positive control classes.
+	- Routine mode treats only PC_MIX8 as routine positive control class.

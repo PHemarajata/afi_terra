@@ -18,13 +18,15 @@ sample_id = "~{sample_id}"
 sample_type = "~{sample_type}"
 expected = "~{expected_taxon}".strip()
 
+validation_applicable_types = {"PC_MIX8", "MIXED4", "PC_SINGLE", "CLINICAL", "PC"}
+
 detected = sorted(
     set(
         calls.loc[calls["call"].isin(["Confirmed", "Probable"]), "genus"].astype(str)
     )
 )
 
-if sample_type.upper() in ["PC", "CLINICAL"] and expected:
+if sample_type.upper() in validation_applicable_types and expected:
     validation_result = "Concordant" if expected in detected else "Discordant"
 else:
     validation_result = "Not_applicable"
@@ -36,6 +38,7 @@ out = pd.DataFrame([
         "expected_taxon": expected,
         "detected_taxa": ",".join(detected),
         "validation_result": validation_result,
+        "validation_control_class": sample_type if sample_type.upper() in {"PC_MIX8", "MIXED4", "PC_SINGLE", "PC"} else "none",
     }
 ])
 
@@ -74,12 +77,15 @@ detected = sorted(
     )
 )
 
+routine_positive_control_types = {"PC_MIX8", "PC"}
+
 out = pd.DataFrame([
     {
         "sample_id": sample_id,
         "sample_type": sample_type,
         "taxa_present": ",".join(detected),
         "n_taxa_present": len(detected),
+    "routine_positive_control": "true" if sample_type.upper() in routine_positive_control_types else "false",
     }
 ])
 
