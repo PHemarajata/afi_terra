@@ -19,10 +19,11 @@ for _, row in metrics.iterrows():
     reads = row["mapped_reads"]
     breadth = row["max_breadth"]
 
-    ntc_reads = ntc.loc[
+    ntc_matches = ntc.loc[
         ntc["genus"] == row["genus"],
         "mapped_reads"
-    ].values[0]
+    ]
+    ntc_reads = int(ntc_matches.values[0]) if len(ntc_matches.values) > 0 else 0
 
     if reads >= 1000 and breadth >= 0.25 and reads >= 10 * ntc_reads:
         call = "Confirmed"

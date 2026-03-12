@@ -140,7 +140,16 @@ def load_samples_from_mapping(args: argparse.Namespace) -> list[dict]:
         if missing:
             raise SystemExit(f"Mapping TSV missing required columns: {', '.join(sorted(missing))}")
 
+        requested_run_ids = set(args.run_id) if args.run_id else None
+        if requested_run_ids and "run_id" not in set(reader.fieldnames):
+            raise SystemExit("--run-id was provided, but mapping TSV does not have a run_id column")
+
         for row_index, row in enumerate(reader, start=2):
+            if requested_run_ids:
+                row_run_id = (row.get("run_id") or "").strip()
+                if row_run_id not in requested_run_ids:
+                    continue
+
             sample_name = (row.get("sample_name") or "").strip()
             if not sample_name or sample_name.startswith("Undetermined"):
                 continue
@@ -198,6 +207,7 @@ def main() -> None:
     parser.add_argument("--default-classifier-mode", choices=sorted(VALID_CLASSIFIERS), default="double")
     parser.add_argument("--fastq-uri-prefix", help="Required with --mapping-tsv, e.g. gs://bucket/fastq")
     parser.add_argument("--per-sample-use-human-scrub", choices=["true", "false"])
+    parser.add_argument("--run-id", action="append", help="Optional run_id filter (repeatable), e.g. --run-id 3")
 
     args = parser.parse_args()
 

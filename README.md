@@ -130,3 +130,36 @@ Outputs:
 - `comparison/single_vs_double.summary.tsv`
 - `comparison/single_vs_double.validation_differences.tsv`
 - `comparison/single_vs_double.routine_differences.tsv`
+
+Run-by-run operation with NTC-dependent interpretation:
+
+Because ntc_background is run-dependent, execute one sequencing run at a time.
+
+Suggested 2-pass pattern per run:
+
+1) Build run-specific batch JSON (filter by run_id):
+
+`python3 scripts/build_batch_inputs_json.py \
+	--mapping-tsv AFI_optimizeProtocol.tsv \
+	--run-id 3 \
+	--out-json wdl/inputs/run3.batch.json \
+	--fastq-uri-prefix gs://YOUR_BUCKET/fastq \
+	--default-classifier-mode single \
+	--mode-policy auto \
+	--per-sample-use-human-scrub true`
+
+2) First Terra pass for that run (include PC8 + NTC + clinical/validation samples) to produce NTC metrics outputs.
+
+3) Build run-specific ntc_background.tsv from NTC metrics files:
+
+`python3 scripts/build_ntc_background_from_metrics.py \
+	--ntc-metrics path/to/NTC1.metrics.tsv \
+	--ntc-metrics path/to/NTC2.metrics.tsv \
+	--out wdl/inputs/run3.ntc_background.tsv`
+
+4) Upload run3.ntc_background.tsv to GCS and re-run the same run3 batch config using that file for AFI_Rickettsiales_Batch.ntc_background.
+
+Notes:
+
+- Keep NTC and PC8 in each run submission so controls are processed with the same run.
+- In mode auto, rows with expected_results become validation and rows without expected_results become routine.
