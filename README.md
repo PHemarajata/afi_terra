@@ -2,6 +2,28 @@
 
 Metagenomic Rickettsiales detection workflow.
 
+Terra import options (to avoid missing-import errors):
+
+1) Recommended: Dockstore + GitHub
+
+- This repo includes .dockstore.yml with both workflows:
+	- /wdl/AFI_Rickettsiales_Main.wdl
+	- /wdl/AFI_Rickettsiales_Batch.wdl
+- In Dockstore, link GitHub repository PHemarajata/afi_terra.
+- Create or refresh a workflow version from the Git tag/branch.
+- In Terra, import from Dockstore (TRS) instead of uploading a single WDL file.
+- Terra will pull the full descriptor set and resolve imports automatically.
+
+2) Direct Terra upload (fallback)
+
+- Upload a zip that contains all imported files with relative paths preserved.
+- At minimum include:
+	- wdl/AFI_Rickettsiales_Batch.wdl
+	- wdl/AFI_Rickettsiales_Main.wdl
+	- wdl/tasks/*.wdl
+	- NCBI_scrub_PE/tasks/quality_control/read_filtering/task_ncbi_scrub.wdl
+- Uploading only AFI_Rickettsiales_Batch.wdl will fail because it imports AFI_Rickettsiales_Main.wdl.
+
 Docker images used by WDL tasks:
 
 - AFI core image (fastp, minimap2, samtools, kraken2, python, pandas, scripts): `phemarajata614/afi-terra:0.1.0`

@@ -1,0 +1,13 @@
+version: 1.2
+workflows:
+  - name: AFI_Rickettsiales_Main
+    subclass: WDL
+    primaryDescriptorPath: /wdl/AFI_Rickettsiales_Main.wdl
+    testParameterFiles:
+      - /wdl/inputs/validation_single.example.json
+      - /wdl/inputs/routine_single.example.json
+  - name: AFI_Rickettsiales_Batch
+    subclass: WDL
+    primaryDescriptorPath: /wdl/AFI_Rickettsiales_Batch.wdl
+    testParameterFiles:
+      - /wdl/inputs/batch_mixed.example.json
