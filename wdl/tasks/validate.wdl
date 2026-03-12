@@ -6,7 +6,7 @@ task CompareExpectedConcordance {
     String sample_type
     String expected_taxon = ""
     File final_calls
-    String docker_image = "afi_pipeline:latest"
+    String docker_image = "phemarajata614/afi-terra:0.1.0"
   }
 
   command <<<
@@ -57,7 +57,7 @@ task SummarizeRoutineTaxa {
     String sample_id
     String sample_type
     File final_calls
-    String docker_image = "afi_pipeline:latest"
+    String docker_image = "phemarajata614/afi-terra:0.1.0"
   }
 
   command <<<

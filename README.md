@@ -2,6 +2,31 @@
 
 Metagenomic Rickettsiales detection workflow.
 
+Docker images used by WDL tasks:
+
+- AFI core image (fastp, minimap2, samtools, kraken2, python, pandas, scripts): `phemarajata614/afi-terra:0.1.0`
+- Centrifuger image (single-classifier path): `phemarajata614/centrifuger:1.1`
+
+Build and push AFI core image:
+
+`docker build --platform linux/amd64 -t phemarajata614/afi-terra:0.1.0 .`
+
+`docker push phemarajata614/afi-terra:0.1.0`
+
+Optional latest tag:
+
+`docker tag phemarajata614/afi-terra:0.1.0 phemarajata614/afi-terra:latest`
+
+`docker push phemarajata614/afi-terra:latest`
+
+Quick local tool check:
+
+`docker run --rm phemarajata614/afi-terra:0.1.0 bash -lc "fastp --version && minimap2 --version && samtools --version | head -n 1 && kraken2 --version && python3 -c 'import pandas; print(pandas.__version__)'"`
+
+Terra setup note:
+
+- You can keep WDL default image tags as above, or override task-level docker inputs where exposed (e.g., in classify/validate tasks) during method configuration.
+
 Main steps:
 
 1 Human read removal  

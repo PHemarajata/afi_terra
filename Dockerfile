@@ -1,18 +1,15 @@
-FROM ubuntu:22.04
+FROM mambaorg/micromamba:1.5.10-jammy
 
-RUN apt-get update && apt-get install -y \
-    python3 \
-    python3-pip \
-    samtools \
-    minimap2 \
+RUN micromamba install -y -n base -c conda-forge -c bioconda \
+    python=3.11 \
+    pandas \
     fastp \
-    wget \
-    curl \
-    git
-
-RUN pip3 install pandas
+    minimap2 \
+    samtools \
+    kraken2 \
+    && micromamba clean --all --yes
 
 WORKDIR /opt/afi
 COPY scripts /opt/afi/scripts
 
-ENV PATH="/opt/afi/scripts:$PATH"
+ENV PATH="/opt/afi/scripts:${PATH}"

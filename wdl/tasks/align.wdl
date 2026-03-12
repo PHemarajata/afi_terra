@@ -20,6 +20,6 @@ task MinimapRick16S {
   }
 
   runtime {
-    docker: "afi_pipeline:latest"
+    docker: "phemarajata614/afi-terra:0.1.0"
   }
 }

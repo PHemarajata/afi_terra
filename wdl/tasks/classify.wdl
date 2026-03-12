@@ -7,7 +7,7 @@ task RunKraken2_16G {
     File r2_fastq
     String kraken_db
     Int threads = 16
-    String docker_image = "afi_pipeline:latest"
+    String docker_image = "phemarajata614/afi-terra:0.1.0"
   }
 
   command <<<
@@ -36,7 +36,7 @@ task RunKraken2_Rick {
     File r2_fastq
     String kraken_db
     Int threads = 16
-    String docker_image = "afi_pipeline:latest"
+    String docker_image = "phemarajata614/afi-terra:0.1.0"
   }
 
   command <<<
@@ -63,7 +63,7 @@ task MergeDoubleDatabaseReports {
     String sample_id
     File report_16g
     File report_rick
-    String docker_image = "afi_pipeline:latest"
+    String docker_image = "phemarajata614/afi-terra:0.1.0"
   }
 
   command <<<
@@ -90,7 +90,7 @@ task RunCentrifuger {
     File r2_fastq
     String centrifuger_db
     Int threads = 16
-    String docker_image = "phemarajata614/centrifuger:1.1.0"
+    String docker_image = "phemarajata614/centrifuger:1.1"
   }
 
   command <<<
