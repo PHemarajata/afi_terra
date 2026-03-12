@@ -56,8 +56,14 @@ def normalize_row(row: dict[str, str], row_index: int) -> dict:
     }
 
     expected_taxon = row.get("expected_taxon", "").strip()
-    if expected_taxon:
-        sample["expected_taxon"] = expected_taxon
+    expected_taxa = row.get("expected_taxa", "").strip()
+
+    if expected_taxa and expected_taxon:
+        raise ValueError(f"Row {row_index}: provide either expected_taxon or expected_taxa, not both")
+
+    expected_value = expected_taxa or expected_taxon
+    if expected_value:
+        sample["expected_taxon"] = expected_value
 
     use_human_scrub = parse_bool(row.get("use_human_scrub"))
     if use_human_scrub is not None:

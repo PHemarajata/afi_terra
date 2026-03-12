@@ -1,0 +1,3 @@
+sample_id	sample_type	mode	classifier_mode	r1_fastq	r2_fastq	expected_taxon	expected_taxa	use_human_scrub
+PC001	PC_MIX8	validation	double	gs://YOUR_BUCKET/fastq/PC001_R1.fastq.gz	gs://YOUR_BUCKET/fastq/PC001_R2.fastq.gz		Orientia;Rickettsia;Leptospira;Burkholderia	true
+SAMPLE001	clinical	routine	single	gs://YOUR_BUCKET/fastq/SAMPLE001_R1.fastq.gz	gs://YOUR_BUCKET/fastq/SAMPLE001_R2.fastq.gz			true

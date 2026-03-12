@@ -166,3 +166,7 @@ Notes:
 - Control type handling:
 	- Validation mode supports PC_MIX8, MIXED4, and PC_SINGLE as positive control classes.
 	- Routine mode treats only PC_MIX8 as routine positive control class.
+- Multi-expected validation controls:
+	- For MIXED4/PC_MIX8/PC_SINGLE controls with multiple expected taxa, pass a delimited list in `expected_taxa` (sample-sheet) or `expected_taxon` (JSON/WDL).
+	- Supported delimiters: `;` or `,` or `|`.
+	- Concordance is `Concordant` only when all expected taxa are detected as Confirmed/Probable.

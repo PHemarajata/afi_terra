@@ -10,6 +10,7 @@ struct SampleSpec {
   File r1_fastq
   File r2_fastq
   String? expected_taxon
+  String? expected_taxa
   Boolean? use_human_scrub
 }
 
@@ -39,7 +40,7 @@ workflow AFI_Rickettsiales_Batch {
         use_human_scrub = select_first([sample.use_human_scrub, default_use_human_scrub]),
         r1_fastq = sample.r1_fastq,
         r2_fastq = sample.r2_fastq,
-        expected_taxon = select_first([sample.expected_taxon, ""]),
+        expected_taxon = select_first([sample.expected_taxa, sample.expected_taxon, ""]),
         rickettsiales_panel = rickettsiales_panel,
         ntc_background = ntc_background,
         kraken_db_16g = kraken_db_16g,

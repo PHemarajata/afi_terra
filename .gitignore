@@ -27,7 +27,7 @@ kraken16_reports_nofastp/
 align_rickettsiales_16S/align/
 align_rickettsiales_16S/logs/
 align_rickettsiales_16S/metrics/
-inputs/
+/inputs/
 validation/*.tsv
 
 # Keep validation markdown summaries if desired; ignore generated tables by default
