@@ -28,7 +28,10 @@ workflow AFI_Rickettsiales_Main {
     String? kraken_db_rick
     String? centrifuger_db
     String afi_core_docker = "phemarajata614/afi-terra:0.1.0"
-    String centrifuger_docker = "phemarajata614/centrifuger:1.1"
+    String centrifuger_docker = "phemarajata614/centrifuger:1.1.0"
+    Array[File] centrifuger_db_archives = []
+    String centrifuger_memory = "128G"
+    String centrifuger_disks = "local-disk 500 HDD"
 
     Int classify_threads = 16
   }
@@ -89,8 +92,11 @@ workflow AFI_Rickettsiales_Main {
         r1_fastq = FastpClean.clean_r1,
         r2_fastq = FastpClean.clean_r2,
         centrifuger_db = select_first([centrifuger_db]),
+        centrifuger_db_archives = centrifuger_db_archives,
         threads = classify_threads,
-        docker_image = centrifuger_docker
+        docker_image = centrifuger_docker,
+        memory = centrifuger_memory,
+        disks = centrifuger_disks
     }
   }
 

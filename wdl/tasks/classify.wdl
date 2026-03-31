@@ -89,20 +89,42 @@ task RunCentrifuger {
     File r1_fastq
     File r2_fastq
     String centrifuger_db
+    Array[File] centrifuger_db_archives = []
     Int threads = 16
-    String docker_image = "phemarajata614/centrifuger:1.1"
+    String docker_image = "phemarajata614/centrifuger:1.1.0"
+    String memory = "128G"
+    String disks = "local-disk 500 HDD"
   }
 
   command <<<
+  set -euo pipefail
+
+  db_prefix="~{centrifuger_db}"
+  if [[ -n "~{sep=' ' centrifuger_db_archives}" ]]; then
+    mkdir -p centrifuger_db
+    for archive in ~{sep=' ' centrifuger_db_archives}; do
+      tar -xzf "$archive" -C centrifuger_db
+    done
+
+    prefix_file="$(find centrifuger_db -type f \( -name "~{centrifuger_db}.1.cfr" -o -name "~{centrifuger_db}.1.cf" \) | head -n 1 || true)"
+    if [[ -z "$prefix_file" ]]; then
+      echo "Could not find localized Centrifuger index for prefix '~{centrifuger_db}' after extracting archive(s)." >&2
+      exit 1
+    fi
+
+    db_prefix="${prefix_file%.1.cfr}"
+    db_prefix="${db_prefix%.1.cf}"
+  fi
+
   centrifuger \
-    -x ~{centrifuger_db} \
+    -x "$db_prefix" \
     -1 ~{r1_fastq} \
     -2 ~{r2_fastq} \
     -t ~{threads} \
     > ~{sample_id}.centrifuger.classification.tsv
 
   centrifuger-kreport \
-    -x ~{centrifuger_db} \
+    -x "$db_prefix" \
     ~{sample_id}.centrifuger.classification.tsv \
     > ~{sample_id}.centrifuger.kreport.tsv
   >>>
@@ -114,5 +136,8 @@ task RunCentrifuger {
 
   runtime {
     docker: docker_image
+    cpu: threads
+    memory: memory
+    disks: disks
   }
 }

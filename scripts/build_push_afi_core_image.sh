@@ -17,6 +17,10 @@ repo_root="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 echo "Building ${image_ref} for ${platform} from ${repo_root}/Dockerfile"
 docker build --platform "${platform}" -t "${image_ref}" "${repo_root}"
 
+echo "Running smoke test for ${image_ref}"
+docker run --rm --entrypoint /bin/bash "${image_ref}" -lc \
+  "set -e; fastp --version; minimap2 --version; samtools --version | head -n 1; kraken2 --version; python3 -c 'import pandas; print(pandas.__version__)'"
+
 echo "Pushing ${image_ref}"
 docker push "${image_ref}"
 

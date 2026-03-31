@@ -12,4 +12,4 @@ RUN micromamba install -y -n base -c conda-forge -c bioconda \
 WORKDIR /opt/afi
 COPY scripts /opt/afi/scripts
 
-ENV PATH="/opt/afi/scripts:${PATH}"
+ENV PATH="/opt/conda/bin:/opt/afi/scripts:${PATH}"
