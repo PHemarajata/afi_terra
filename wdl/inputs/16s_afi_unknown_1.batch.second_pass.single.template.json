@@ -111,7 +111,7 @@
   ],
   "AFI_Rickettsiales_Batch.rickettsiales_panel": "gs://fc-36ebdf16-bf31-4fef-9963-fc780c8f7367/uploads/centrifuger_db/rickettsiales_panel_16S.clean.fa",
   "AFI_Rickettsiales_Batch.ntc_background": "gs://REPLACE_ME/ref/16s_afi_unknown_1.ntc_background.tsv",
-  "AFI_Rickettsiales_Batch.afi_core_docker": "phemarajata614/afi-terra:0.2.1",
+  "AFI_Rickettsiales_Batch.afi_core_docker": "phemarajata614/afi-terra:0.3.1",
   "AFI_Rickettsiales_Batch.centrifuger_docker": "phemarajata614/centrifuger:1.1.0",
   "AFI_Rickettsiales_Batch.centrifuger_db": "centrifuger_bact_arch_plus_rickettsiales",
   "AFI_Rickettsiales_Batch.centrifuger_db_archives": [
