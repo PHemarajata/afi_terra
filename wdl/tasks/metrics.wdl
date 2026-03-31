@@ -5,6 +5,7 @@ task ExtractMetrics {
   input {
     File bam
     File panel
+    String docker_image = "phemarajata614/afi-terra:0.1.0"
   }
 
   command <<<
@@ -19,6 +20,6 @@ task ExtractMetrics {
   }
 
   runtime {
-    docker: "phemarajata614/afi-terra:0.1.0"
+    docker: docker_image
   }
 }

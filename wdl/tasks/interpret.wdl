@@ -6,6 +6,7 @@ task InterpretCalls {
     String sample_id
     File metrics
     File ntc_table
+    String docker_image = "phemarajata614/afi-terra:0.1.0"
   }
 
   command <<<
@@ -21,6 +22,6 @@ task InterpretCalls {
   }
 
   runtime {
-    docker: "phemarajata614/afi-terra:0.1.0"
+    docker: docker_image
   }
 }

@@ -6,6 +6,7 @@ task MinimapRick16S {
     File r1
     File r2
     File panel
+    String docker_image = "phemarajata614/afi-terra:0.1.0"
   }
 
   command <<<
@@ -20,6 +21,6 @@ task MinimapRick16S {
   }
 
   runtime {
-    docker: "phemarajata614/afi-terra:0.1.0"
+    docker: docker_image
   }
 }

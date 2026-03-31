@@ -27,6 +27,8 @@ workflow AFI_Rickettsiales_Main {
     String? kraken_db_16g
     String? kraken_db_rick
     String? centrifuger_db
+    String afi_core_docker = "phemarajata614/afi-terra:0.1.0"
+    String centrifuger_docker = "phemarajata614/centrifuger:1.1"
 
     Int classify_threads = 16
   }
@@ -46,7 +48,8 @@ workflow AFI_Rickettsiales_Main {
   call prep.FastpClean as FastpClean {
     input:
       r1 = effective_r1,
-      r2 = effective_r2
+      r2 = effective_r2,
+      docker_image = afi_core_docker
   }
 
   if (classifier_mode == "double") {
@@ -56,7 +59,8 @@ workflow AFI_Rickettsiales_Main {
         r1_fastq = FastpClean.clean_r1,
         r2_fastq = FastpClean.clean_r2,
         kraken_db = select_first([kraken_db_16g]),
-        threads = classify_threads
+        threads = classify_threads,
+        docker_image = afi_core_docker
     }
 
     call cls.RunKraken2_Rick {
@@ -65,14 +69,16 @@ workflow AFI_Rickettsiales_Main {
         r1_fastq = FastpClean.clean_r1,
         r2_fastq = FastpClean.clean_r2,
         kraken_db = select_first([kraken_db_rick]),
-        threads = classify_threads
+        threads = classify_threads,
+        docker_image = afi_core_docker
     }
 
     call cls.MergeDoubleDatabaseReports {
       input:
         sample_id = sample_id,
         report_16g = RunKraken2_16G.kraken_report,
-        report_rick = RunKraken2_Rick.kraken_report
+        report_rick = RunKraken2_Rick.kraken_report,
+        docker_image = afi_core_docker
     }
   }
 
@@ -83,7 +89,8 @@ workflow AFI_Rickettsiales_Main {
         r1_fastq = FastpClean.clean_r1,
         r2_fastq = FastpClean.clean_r2,
         centrifuger_db = select_first([centrifuger_db]),
-        threads = classify_threads
+        threads = classify_threads,
+        docker_image = centrifuger_docker
     }
   }
 
@@ -91,20 +98,23 @@ workflow AFI_Rickettsiales_Main {
     input:
       r1 = FastpClean.clean_r1,
       r2 = FastpClean.clean_r2,
-      panel = rickettsiales_panel
+      panel = rickettsiales_panel,
+      docker_image = afi_core_docker
   }
 
   call met.ExtractMetrics {
     input:
       bam = MinimapRick16S.bam,
-      panel = rickettsiales_panel
+      panel = rickettsiales_panel,
+      docker_image = afi_core_docker
   }
 
   call ipt.InterpretCalls {
     input:
       sample_id = sample_id,
       metrics = ExtractMetrics.metrics,
-      ntc_table = ntc_background
+      ntc_table = ntc_background,
+      docker_image = afi_core_docker
   }
 
   if (mode == "validation") {
@@ -113,7 +123,8 @@ workflow AFI_Rickettsiales_Main {
         sample_id = sample_id,
         sample_type = sample_type,
         expected_taxon = expected_taxon,
-        final_calls = InterpretCalls.calls
+        final_calls = InterpretCalls.calls,
+        docker_image = afi_core_docker
     }
   }
 
@@ -122,7 +133,8 @@ workflow AFI_Rickettsiales_Main {
       input:
         sample_id = sample_id,
         sample_type = sample_type,
-        final_calls = InterpretCalls.calls
+        final_calls = InterpretCalls.calls,
+        docker_image = afi_core_docker
     }
   }
 
