@@ -6,7 +6,6 @@ RUN micromamba install -y -n base -c conda-forge -c bioconda \
     fastp \
     minimap2 \
     samtools \
-    kraken2 \
     && micromamba clean --all --yes
 
 WORKDIR /opt/afi
