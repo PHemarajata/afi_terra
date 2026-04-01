@@ -1,87 +1,9 @@
 version 1.0
 
-task RunKraken2_16G {
-  input {
-    String sample_id
-    File r1_fastq
-    File r2_fastq
-    String kraken_db
-    Int threads = 16
-    String docker_image = "phemarajata614/afi-terra:0.1.0"
-  }
-
-  command <<<
-  kraken2 \
-    --db ~{kraken_db} \
-    --paired ~{r1_fastq} ~{r2_fastq} \
-    --report ~{sample_id}.kk2_16g.report.tsv \
-    --output ~{sample_id}.kk2_16g.output.tsv \
-    --threads ~{threads}
-  >>>
-
-  output {
-    File kraken_report = "~{sample_id}.kk2_16g.report.tsv"
-    File kraken_output = "~{sample_id}.kk2_16g.output.tsv"
-  }
-
-  runtime {
-    docker: docker_image
-  }
-}
-
-task RunKraken2_Rick {
-  input {
-    String sample_id
-    File r1_fastq
-    File r2_fastq
-    String kraken_db
-    Int threads = 16
-    String docker_image = "phemarajata614/afi-terra:0.1.0"
-  }
-
-  command <<<
-  kraken2 \
-    --db ~{kraken_db} \
-    --paired ~{r1_fastq} ~{r2_fastq} \
-    --report ~{sample_id}.kk2_rick.report.tsv \
-    --output ~{sample_id}.kk2_rick.output.tsv \
-    --threads ~{threads}
-  >>>
-
-  output {
-    File kraken_report = "~{sample_id}.kk2_rick.report.tsv"
-    File kraken_output = "~{sample_id}.kk2_rick.output.tsv"
-  }
-
-  runtime {
-    docker: docker_image
-  }
-}
-
-task MergeDoubleDatabaseReports {
-  input {
-    String sample_id
-    File report_16g
-    File report_rick
-    String docker_image = "phemarajata614/afi-terra:0.1.0"
-  }
-
-  command <<<
-  {
-    echo -e "classifier\treport_file"
-    echo -e "kraken2_16g\t~{report_16g}"
-    echo -e "kraken2_rick\t~{report_rick}"
-  } > ~{sample_id}.double_classifier_reports.tsv
-  >>>
-
-  output {
-    File merged_report = "~{sample_id}.double_classifier_reports.tsv"
-  }
-
-  runtime {
-    docker: docker_image
-  }
-}
+# Centrifuge classification (single classifier — replaces Kraken2 dual-DB mode).
+# The database must include standard bacteria/archaea AND Rickettsiales so that
+# a single kreport covers all organisms needed for PC8 validity checking and
+# general taxonomic screening.
 
 task RunCentrifuger {
   input {
@@ -130,14 +52,42 @@ task RunCentrifuger {
   >>>
 
   output {
-    File classification_tsv = "~{sample_id}.centrifuger.classification.tsv"
+    File classification_tsv    = "~{sample_id}.centrifuger.classification.tsv"
     File classifier_report_tsv = "~{sample_id}.centrifuger.kreport.tsv"
   }
 
   runtime {
     docker: docker_image
-    cpu: threads
+    cpu:    threads
     memory: memory
-    disks: disks
+    disks:  disks
+  }
+}
+
+# Parse a Centrifuge/Kraken2-style kreport to a simple genus-level TSV.
+# Outputs: genus_counts.tsv  (columns: genus, reads)
+# Only rank-G rows are kept; clade read count (column 1) is used so that
+# reads assigned to child species are included under the genus.
+task ParseCentrifugerKreport {
+  input {
+    String sample_id
+    File kreport
+    String docker_image = "phemarajata614/afi-terra:0.4.0"
+  }
+
+  command <<<
+  python3 /opt/afi/scripts/parse_centrifuge_kreport.py \
+    --kreport ~{kreport} \
+    --out ~{sample_id}.genus_counts.tsv
+  >>>
+
+  output {
+    File genus_counts = "~{sample_id}.genus_counts.tsv"
+  }
+
+  runtime {
+    docker: docker_image
+    memory: "4G"
+    disks:  "local-disk 20 HDD"
   }
 }

@@ -6,7 +6,6 @@ import re
 from pathlib import Path
 
 VALID_MODES = {"validation", "routine"}
-VALID_CLASSIFIERS = {"single", "double"}
 
 
 def parse_bool(value: str | None) -> bool | None:
@@ -27,7 +26,6 @@ def normalize_row(row: dict[str, str], row_index: int) -> dict:
         "sample_id",
         "sample_type",
         "mode",
-        "classifier_mode",
         "r1_fastq",
         "r2_fastq",
     ]
@@ -40,17 +38,10 @@ def normalize_row(row: dict[str, str], row_index: int) -> dict:
     if mode not in VALID_MODES:
         raise ValueError(f"Row {row_index}: invalid mode '{row['mode']}', expected one of {sorted(VALID_MODES)}")
 
-    classifier_mode = row["classifier_mode"].strip().lower()
-    if classifier_mode not in VALID_CLASSIFIERS:
-        raise ValueError(
-            f"Row {row_index}: invalid classifier_mode '{row['classifier_mode']}', expected one of {sorted(VALID_CLASSIFIERS)}"
-        )
-
     sample = {
         "sample_id": row["sample_id"].strip(),
         "sample_type": row["sample_type"].strip(),
         "mode": mode,
-        "classifier_mode": classifier_mode,
         "r1_fastq": row["r1_fastq"].strip(),
         "r2_fastq": row["r2_fastq"].strip(),
     }
@@ -79,18 +70,12 @@ def build_inputs(args: argparse.Namespace, samples: list[dict]) -> dict:
 
     if args.rickettsiales_panel:
         inputs["AFI_Rickettsiales_Batch.rickettsiales_panel"] = args.rickettsiales_panel
-    if args.ntc_background:
-        inputs["AFI_Rickettsiales_Batch.ntc_background"] = args.ntc_background
 
     if args.default_use_human_scrub is not True:
         inputs["AFI_Rickettsiales_Batch.default_use_human_scrub"] = args.default_use_human_scrub
     if args.classify_threads != 16:
         inputs["AFI_Rickettsiales_Batch.classify_threads"] = args.classify_threads
 
-    if args.kraken_db_16g:
-        inputs["AFI_Rickettsiales_Batch.kraken_db_16g"] = args.kraken_db_16g
-    if args.kraken_db_rick:
-        inputs["AFI_Rickettsiales_Batch.kraken_db_rick"] = args.kraken_db_rick
     if args.centrifuger_db:
         inputs["AFI_Rickettsiales_Batch.centrifuger_db"] = args.centrifuger_db
 
@@ -182,7 +167,6 @@ def load_samples_from_mapping(args: argparse.Namespace) -> list[dict]:
                 "sample_id": sample_id,
                 "sample_type": sample_type,
                 "mode": mode,
-                "classifier_mode": args.default_classifier_mode,
                 "r1_fastq": r1,
                 "r2_fastq": r2,
             }
@@ -210,18 +194,13 @@ def main() -> None:
     parser.add_argument("--out-json", required=True, help="Output JSON path")
 
     parser.add_argument("--rickettsiales-panel", help="GS path to rickettsiales_16S_panel.fasta")
-    parser.add_argument("--ntc-background", help="GS path to ntc_background.tsv")
-
-    parser.add_argument("--kraken-db-16g", help="Kraken2 16G database path")
-    parser.add_argument("--kraken-db-rick", help="Kraken2 rickettsiales database path")
-    parser.add_argument("--centrifuger-db", help="Centrifuger database path")
+    parser.add_argument("--centrifuger-db", help="Centrifuger database path (must include Rickettsiales)")
 
     parser.add_argument("--default-use-human-scrub", action="store_true", default=True)
     parser.add_argument("--no-default-use-human-scrub", dest="default_use_human_scrub", action="store_false")
     parser.add_argument("--classify-threads", type=int, default=16)
 
     parser.add_argument("--mode-policy", choices=["auto", "all_validation", "all_routine"], default="auto")
-    parser.add_argument("--default-classifier-mode", choices=sorted(VALID_CLASSIFIERS), default="double")
     parser.add_argument("--fastq-uri-prefix", help="Required with --mapping-tsv, e.g. gs://bucket/fastq")
     parser.add_argument("--per-sample-use-human-scrub", choices=["true", "false"])
     parser.add_argument("--run-id", action="append", help="Optional run_id filter (repeatable), e.g. --run-id 3")

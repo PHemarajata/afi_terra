@@ -19,7 +19,7 @@ docker build --platform "${platform}" -t "${image_ref}" "${repo_root}"
 
 echo "Running smoke test for ${image_ref}"
 docker run --rm --entrypoint /bin/bash "${image_ref}" -lc \
-  "set -e; fastp --version; minimap2 --version; samtools --version | head -n 1; kraken2 --version; python3 -c 'import pandas; print(pandas.__version__)'"
+  "set -e; fastp --version; minimap2 --version; samtools --version | head -n 1; python3 -c 'import pandas; print(pandas.__version__)'; python3 /opt/afi/scripts/parse_centrifuge_kreport.py --help; python3 /opt/afi/scripts/build_ntc_background.py --help; python3 /opt/afi/scripts/call_taxa.py --help"
 
 echo "Pushing ${image_ref}"
 docker push "${image_ref}"
