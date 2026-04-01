@@ -68,6 +68,30 @@ def normalize_sample_type(value: str) -> str:
         return "CLINICAL"
     return str(value).strip()
 
+
+REPORT_SUFFIX_RE = re.compile(r"(_kraken2_report\.txt(\.gz)?|\.report\.txt(\.gz)?|_kreport\.txt(\.gz)?)$", re.IGNORECASE)
+
+
+def strip_report_suffix(name: str) -> str:
+    s = str(name).strip()
+    return REPORT_SUFFIX_RE.sub("", s)
+
+
+def canonical_report_key(name: str, drop_sample_index: bool = False) -> str:
+    """
+    Normalize report/sample-like names to improve cross-file matching.
+    Examples:
+      00126_S6_L001.report.txt -> 00126_S6
+      00126_kreport.txt        -> 00126
+      NC-20251016_S1_L001      -> NC-20251016_S1
+    If drop_sample_index=True, also removes trailing _S\\d+.
+    """
+    s = strip_report_suffix(name)
+    s = re.sub(r"_L\d+$", "", s)
+    if drop_sample_index:
+        s = re.sub(r"_S\d+$", "", s)
+    return s
+
 def resolve_report_path(report_dir: Path, report_name: str) -> Path:
     """
     Accept mapping names like:
@@ -107,7 +131,53 @@ def resolve_report_path(report_dir: Path, report_name: str) -> Path:
         if p2.exists():
             return p2
 
+    # Fallback: canonical key match within directory (handles names like 00126_kreport vs 00126_S6_L001.report)
+    requested_key = canonical_report_key(report_name)
+    requested_root = canonical_report_key(report_name, drop_sample_index=True)
+    files = [p for p in report_dir.iterdir() if p.is_file()]
+
+    by_key = defaultdict(list)
+    by_root = defaultdict(list)
+    for f in files:
+        k = canonical_report_key(f.name)
+        kr = canonical_report_key(f.name, drop_sample_index=True)
+        by_key[k].append(f)
+        by_root[kr].append(f)
+
+    key_hits = by_key.get(requested_key, [])
+    if len(key_hits) == 1:
+        return key_hits[0]
+
+    root_hits = by_root.get(requested_root, [])
+    if len(root_hits) == 1:
+        return root_hits[0]
+
     raise FileNotFoundError(f"Could not resolve report '{report_name}' in {report_dir}")
+
+
+def resolve_primary_report_path(row: pd.Series, kk16_dir: Path | None, centrifuge_dir: Path | None = None) -> Path:
+    report_name = str(row.get("kk_report_name_16GB", "")).strip()
+    sample_name = str(row.get("sample_name", ""))
+    if report_name == "" or report_name.lower() in {"nan", "none", "null"}:
+        raise FileNotFoundError(
+            f"Missing primary report mapping for sample '{sample_name}' in column kk_report_name_16GB. "
+            "Regenerate mapping TSV and review issues report."
+        )
+
+    source = str(row.get("primary_report_source", "kk16")).strip().lower()
+    if source == "centrifuge":
+        if centrifuge_dir is None:
+            raise FileNotFoundError(
+                f"Sample '{sample_name}' uses primary_report_source=centrifuge, but --centrifuge_kk_dir was not provided."
+            )
+        return resolve_report_path(centrifuge_dir, report_name)
+
+    if kk16_dir is None:
+        raise FileNotFoundError(
+            f"Sample '{sample_name}' uses primary_report_source=kk16, but --kk16_dir was not provided."
+        )
+
+    return resolve_report_path(kk16_dir, report_name)
 
 def parse_kraken_report_genus(path: Path) -> dict:
     """
@@ -148,8 +218,9 @@ def tier_from_fold(reads: int, ncmax: int, floor: int, fold: float) -> bool:
 # Module 1: Kraken 16GB
 # -----------------------------
 
-def module_kk16g(meta: pd.DataFrame, kk16_dir: Path,
-                floor: int = 500, fold: float = 5.0) -> pd.DataFrame:
+def module_kk16g(meta: pd.DataFrame, kk16_dir: Path | None,
+                floor: int = 500, fold: float = 5.0,
+                centrifuge_dir: Path | None = None) -> pd.DataFrame:
     """
     For each sample, compute per-genus reads from 16GB report.
     Compute NCmax per run_id, genus using only NC/NTC within that run.
@@ -166,15 +237,16 @@ def module_kk16g(meta: pd.DataFrame, kk16_dir: Path,
         run_id = int(r["run_id"])
         sname = r["sample_name"]
         stype = r["sample_type"]
-        rep = kk16_dir / r["kk_report_name_16GB"]
+        rep = resolve_primary_report_path(r, kk16_dir, centrifuge_dir)
 
-        if rep.name not in cache:
+        cache_key = str(rep)
+        if cache_key not in cache:
             if not rep.exists():
                 raise FileNotFoundError(f"Missing 16GB report: {rep}")
-            cache[rep.name] = parse_kraken_report_genus(rep)
+            cache[cache_key] = parse_kraken_report_genus(rep)
 
         if stype in ("NC", "NTC"):
-            for g, c in cache[rep.name].items():
+            for g, c in cache[cache_key].items():
                 if c > ncmax[run_id][g]:
                     ncmax[run_id][g] = c
 
@@ -182,8 +254,8 @@ def module_kk16g(meta: pd.DataFrame, kk16_dir: Path,
     for _, r in meta.iterrows():
         run_id = int(r["run_id"])
         sname = r["sample_name"]
-        rep = kk16_dir / r["kk_report_name_16GB"]
-        gcounts = cache[rep.name]
+        rep = resolve_primary_report_path(r, kk16_dir, centrifuge_dir)
+        gcounts = cache[str(rep)]
 
         # For validation: we mainly care about expected genera, but keep all genera for later expansion.
         for g, reads in gcounts.items():
@@ -206,7 +278,8 @@ def module_kk16g(meta: pd.DataFrame, kk16_dir: Path,
 # -----------------------------
 
 def module_kk_rick(meta: pd.DataFrame, kkr_dir: Path,
-                   floor: int = 100, fold: float = 3.0) -> pd.DataFrame:
+                   floor: int = 100, fold: float = 3.0,
+                   report_col: str = "kk_report_name_rick") -> pd.DataFrame:
     """
     Parse rickettsiales-custom Kraken2 reports.
 
@@ -230,7 +303,8 @@ def module_kk_rick(meta: pd.DataFrame, kkr_dir: Path,
     for _, r in meta.iterrows():
         run_id = int(r["run_id"])
         stype = str(r["sample_type"])
-        rep = resolve_report_path(kkr_dir, r["kk_report_name_rick"])
+        rep_name = r[report_col] if report_col in meta.columns else r["kk_report_name_16GB"]
+        rep = resolve_report_path(kkr_dir, rep_name)
 
         if rep.name not in cache:
             if not rep.exists():
@@ -254,7 +328,8 @@ def module_kk_rick(meta: pd.DataFrame, kkr_dir: Path,
     for _, r in meta.iterrows():
         run_id = int(r["run_id"])
         sname = str(r["sample_name"])
-        rep = resolve_report_path(kkr_dir, r["kk_report_name_rick"])
+        rep_name = r[report_col] if report_col in meta.columns else r["kk_report_name_16GB"]
+        rep = resolve_report_path(kkr_dir, rep_name)
         gcounts = cache[rep.name]
 
         # ORDER row (any rickettsiales DB taxon)
@@ -334,11 +409,8 @@ def module_align_rick16S(meta: pd.DataFrame, minimap_summary_tsv: Path,
     #   2) exact kk_report_name_16GB stem match
     #   3) stripped-lane fallback (_S\d+_L\d+ removed) ONLY when mapping is unambiguous
     meta_join = meta[["run_id", "sample_name", "kk_report_name_16GB"]].drop_duplicates().copy()
-    meta_join["report_stem"] = meta_join["kk_report_name_16GB"].astype(str).str.strip().str.replace(
-        r"(_kraken2_report\.txt(\.gz)?|\.report\.txt(\.gz)?|_kreport\.txt(\.gz)?)$",
-        "",
-        regex=True,
-    )
+    meta_join["report_stem"] = meta_join["kk_report_name_16GB"].astype(str).map(strip_report_suffix)
+    meta_join["report_key"] = meta_join["kk_report_name_16GB"].astype(str).map(canonical_report_key)
 
     meta_strip_all = meta_join[["run_id", "sample_name", "report_stem"]].copy()
     meta_strip_all["sample_stripped"] = meta_strip_all["report_stem"].str.replace(r"_S\d+_L\d+$", "", regex=True)
@@ -363,6 +435,7 @@ def module_align_rick16S(meta: pd.DataFrame, minimap_summary_tsv: Path,
     agg_merged["run_id"] = pd.NA
     agg_merged["sample_name"] = pd.NA
     agg_merged["map_stage"] = "unmapped"
+    agg_merged["sample_key"] = agg_merged["sample"].astype(str).map(canonical_report_key)
 
     # 1) exact sample_name match
     by_sample_name = meta_join.drop_duplicates(subset=["sample_name"]).set_index("sample_name")
@@ -401,6 +474,24 @@ def module_align_rick16S(meta: pd.DataFrame, minimap_summary_tsv: Path,
             agg_merged.loc[newly_matched, "map_stage"] = "lane_trim_report_stem"
 
     # 3) lane-stripped fallback (only unique keys to avoid ambiguous one-to-many matches)
+    unmatched = agg_merged["run_id"].isna()
+    if unmatched.any():
+        meta_key = meta_join[["run_id", "sample_name", "report_key"]].drop_duplicates()
+        unique_key_counts = meta_key.groupby("report_key")["run_id"].nunique()
+        unique_report_keys = unique_key_counts[unique_key_counts == 1].index
+        by_report_key = (
+            meta_key[meta_key["report_key"].isin(unique_report_keys)]
+            .drop_duplicates(subset=["report_key"])
+            .set_index("report_key")
+        )
+
+        sample_keys = agg_merged.loc[unmatched, "sample_key"]
+        agg_merged.loc[unmatched, "run_id"] = sample_keys.map(by_report_key["run_id"])
+        agg_merged.loc[unmatched, "sample_name"] = sample_keys.map(by_report_key["sample_name"])
+        newly_matched = unmatched & agg_merged["run_id"].notna()
+        agg_merged.loc[newly_matched, "map_stage"] = "canonical_key"
+
+    # 4) lane-stripped fallback (only unique keys to avoid ambiguous one-to-many matches)
     unmatched = agg_merged["run_id"].isna()
     if unmatched.any():
         meta_strip = meta_join[["run_id", "sample_name", "report_stem"]].copy()
@@ -825,7 +916,9 @@ def module_final_interpretation_routine(meta: pd.DataFrame,
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--mapping_tsv", required=True, help="AFI_optimizeProtocol.tsv")
-    ap.add_argument("--kk16_dir", required=True, help="Dir containing *_kraken2_report.txt")
+    ap.add_argument("--kk16_dir", required=False, help="Dir containing *_kraken2_report.txt")
+    ap.add_argument("--centrifuge_kk_dir", required=False,
+                    help="Dir containing centrifuge-converted kraken-like reports (used when mapping has primary_report_source=centrifuge)")
     ap.add_argument("--kkrick_dir", required=False,
                     help="Dir containing *.c0.report.txt (required for validation/routine, optional for single-kraken modes)")
     ap.add_argument("--minimap_summary", required=True, help="metrics/summary.tsv from align step")
@@ -852,7 +945,8 @@ def main():
     args = ap.parse_args()
 
     mapping_tsv = Path(args.mapping_tsv)
-    kk16_dir = Path(args.kk16_dir)
+    kk16_dir = Path(args.kk16_dir) if args.kk16_dir else None
+    centrifuge_dir = Path(args.centrifuge_kk_dir) if args.centrifuge_kk_dir else None
     kkr_dir = Path(args.kkrick_dir) if args.kkrick_dir else None
     minimap = Path(args.minimap_summary)
     out_prefix = Path(args.out_prefix)
@@ -872,8 +966,6 @@ def main():
     req = {"run_id", "sample_name", "kk_report_name_16GB"}
     if validation_mode:
         req.add("expected_results")
-    if not single_kraken_mode:
-        req.add("kk_report_name_rick")
 
     missing = req - set(meta.columns)
     if missing:
@@ -882,16 +974,32 @@ def main():
     if not single_kraken_mode and kkr_dir is None:
         raise SystemExit("--kkrick_dir is required for mode 'validation' and 'routine'.")
 
+    if "primary_report_source" in meta.columns:
+        src = set(meta["primary_report_source"].fillna("kk16").astype(str).str.strip().str.lower())
+        needs_kk16 = "kk16" in src or "" in src
+        needs_centrifuge = "centrifuge" in src
+    else:
+        needs_kk16 = True
+        needs_centrifuge = False
+
+    if needs_kk16 and kk16_dir is None:
+        raise SystemExit("This mapping requires kk16 primary reports; please provide --kk16_dir.")
+    if needs_centrifuge and centrifuge_dir is None:
+        raise SystemExit("This mapping requires centrifuge primary reports; please provide --centrifuge_kk_dir.")
+
     if "sample_type" in meta.columns and meta["sample_type"].notna().any():
         meta["sample_type"] = meta["sample_type"].map(normalize_sample_type)
     else:
         meta["sample_type"] = meta["sample_name"].map(infer_sample_type)
 
-    kk16 = module_kk16g(meta, kk16_dir, floor=args.kk16_floor, fold=args.kk16_fold)
+    kk16 = module_kk16g(meta, kk16_dir, floor=args.kk16_floor, fold=args.kk16_fold, centrifuge_dir=centrifuge_dir)
     if single_kraken_mode:
         kkr = pd.DataFrame(columns=["run_id", "sample_name", "genus", "kkr_reads", "kkr_ncmax", "kkr_pass"])
     else:
-        kkr = module_kk_rick(meta, kkr_dir, floor=args.kkr_floor, fold=args.kkr_fold)
+        kkr_report_col = "kk_report_name_rick" if "kk_report_name_rick" in meta.columns else "kk_report_name_16GB"
+        if kkr_report_col == "kk_report_name_16GB":
+            print("INFO: kk_report_name_rick not found; using kk_report_name_16GB to resolve rickettsiales reports.")
+        kkr = module_kk_rick(meta, kkr_dir, floor=args.kkr_floor, fold=args.kkr_fold, report_col=kkr_report_col)
 
     aln = module_align_rick16S(
         meta, minimap,
