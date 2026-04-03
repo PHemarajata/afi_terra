@@ -142,23 +142,21 @@ PY
 # ---------------------------------------------------------------------------
 # BuildNTCBackground
 #   Gather task — called once after the Phase 1 scatter.
-#   Accepts parallel arrays (sample_types, align_metrics, cfr_genus_counts),
-#   filters NTC/NC samples, computes per-genus max NTC reads from each source,
-#   and writes ntc_background.tsv for use in the Phase 2 scatter.
+#   Receives ONLY the NTC/NC sample files (pre-filtered in the scatter via
+#   a conditional declaration + select_all), so no sample_type array needed.
+#   Computes per-genus max NTC reads from alignment and centrifuge sources.
 # ---------------------------------------------------------------------------
 task BuildNTCBackground {
   input {
-    Array[String] sample_types
-    Array[File]   align_metrics
-    Array[File]   cfr_genus_counts
+    Array[File] ntc_align_metrics     # align_metrics.tsv for each NTC/NC sample
+    Array[File] ntc_cfr_genus_counts  # genus_counts.tsv  for each NTC/NC sample
     String docker_image = "phemarajata614/afi-terra:0.4.0"
   }
 
   command <<<
   python3 /opt/afi/scripts/build_ntc_background.py \
-    --sample-types-file ~{write_lines(sample_types)} \
-    --align-metrics-file ~{write_lines(align_metrics)} \
-    --cfr-genus-file ~{write_lines(cfr_genus_counts)} \
+    --align-metrics-file ~{write_lines(ntc_align_metrics)} \
+    --cfr-genus-file ~{write_lines(ntc_cfr_genus_counts)} \
     --out ntc_background.tsv
   >>>
 

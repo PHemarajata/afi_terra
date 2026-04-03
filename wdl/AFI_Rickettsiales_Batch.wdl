@@ -120,17 +120,26 @@ workflow AFI_Rickettsiales_Batch {
         docker_image = afi_core_docker
     }
 
+    # Expose metrics files only for NTC/NC samples so we can select_all them
+    # outside the scatter without needing the scatter variable (WDL 1.0 safe).
+    Boolean p1_is_ntc = (sample.sample_type == "NTC") || (sample.sample_type == "NC")
+    if (p1_is_ntc) {
+      File ntc_align_conditional = P1_Metrics.metrics
+      File ntc_cfr_conditional   = P1_ParseKreport.genus_counts
+    }
+
   } # end Phase 1 scatter
 
   # ===========================================================================
   # BuildNTCBackground: gather NTC outputs → ntc_background.tsv
   # ===========================================================================
+  # ntc_align_conditional and ntc_cfr_conditional are Array[File?] after the
+  # scatter; select_all filters to only the NTC/NC samples' files.
   call vld.BuildNTCBackground {
     input:
-      sample_types    = sample.sample_type,   # Array[String] from scatter
-      align_metrics   = P1_Metrics.metrics,   # Array[File]
-      cfr_genus_counts = P1_ParseKreport.genus_counts, # Array[File]
-      docker_image    = afi_core_docker
+      ntc_align_metrics    = select_all(ntc_align_conditional),
+      ntc_cfr_genus_counts = select_all(ntc_cfr_conditional),
+      docker_image         = afi_core_docker
   }
 
   # ===========================================================================
