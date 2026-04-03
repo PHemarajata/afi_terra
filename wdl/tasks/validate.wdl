@@ -183,6 +183,7 @@ task BuildNTCBackground {
 # ---------------------------------------------------------------------------
 task BuildRunSummary {
   input {
+    String         run_id               # propagated from workflow-level input
     Array[File]    calls_files
     Array[File?]   validation_summaries
     Array[File?]   routine_summaries
@@ -193,6 +194,8 @@ task BuildRunSummary {
   python3 - <<'PY'
 import csv
 import sys
+
+RUN_ID = "~{run_id}"
 
 def read_tsv(path: str) -> list[dict]:
     rows = []
@@ -237,6 +240,7 @@ for calls_path in calls_paths:
 
     summary = summary_by_id.get(sid, {})
     out_rows.append({
+        "run_id":            RUN_ID,
         "sample_id":         sid,
         "sample_type":       summary.get("sample_type", ""),
         "detected_taxa":     ",".join(detected),
@@ -247,7 +251,7 @@ for calls_path in calls_paths:
     })
 
 fieldnames = [
-    "sample_id", "sample_type", "detected_taxa", "n_detected",
+    "run_id", "sample_id", "sample_type", "detected_taxa", "n_detected",
     "validation_result", "pc8_pass", "run_pc8_valid",
 ]
 with open("run_summary.tsv", "w", newline="", encoding="utf-8") as fh:
@@ -255,7 +259,7 @@ with open("run_summary.tsv", "w", newline="", encoding="utf-8") as fh:
     writer.writeheader()
     writer.writerows(out_rows)
 
-print(f"run_summary.tsv: {len(out_rows)} samples, run_pc8_valid={run_pc8_valid}", file=sys.stderr)
+print(f"run_summary.tsv: {len(out_rows)} samples, run_id={RUN_ID}, run_pc8_valid={run_pc8_valid}", file=sys.stderr)
 PY
   >>>
 

@@ -18,8 +18,12 @@ echo "Building ${image_ref} for ${platform} from ${repo_root}/Dockerfile"
 docker build --platform "${platform}" -t "${image_ref}" "${repo_root}"
 
 echo "Running smoke test for ${image_ref}"
+# Note: fastp and minimap2 are no longer in this image.
+#   fastp   → staphb/fastp    (FastpClean task)
+#   minimap2 → staphb/minimap2 (MinimapRick16S task)
+# samtools is kept for ExtractMetrics (samtools idxstats / samtools depth).
 docker run --rm --entrypoint /bin/bash "${image_ref}" -lc \
-  "set -e; fastp --version; minimap2 --version; samtools --version | head -n 1; python3 -c 'import pandas; print(pandas.__version__)'; python3 /opt/afi/scripts/parse_centrifuge_kreport.py --help; python3 /opt/afi/scripts/build_ntc_background.py --help; python3 /opt/afi/scripts/call_taxa.py --help"
+  "set -e; samtools --version | head -n 1; python3 -c 'import pandas; print(pandas.__version__)'; python3 /opt/afi/scripts/parse_centrifuge_kreport.py --help; python3 /opt/afi/scripts/build_ntc_background.py --help; python3 /opt/afi/scripts/call_taxa.py --help; python3 /opt/afi/scripts/extract_rick16s_metrics.py --help"
 
 echo "Pushing ${image_ref}"
 docker push "${image_ref}"
