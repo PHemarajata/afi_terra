@@ -10,8 +10,8 @@ task RunCentrifuger {
     String sample_id
     File r1_fastq
     File r2_fastq
-    String centrifuger_db
-    Array[File] centrifuger_db_archives = []
+    String centrifuger_db = ""          # path prefix when archives are NOT used
+    Array[File] centrifuger_db_archives = []  # preferred: tar.gz archive(s); Terra localizes these
     Int threads = 16
     String docker_image = "phemarajata614/centrifuger:1.1.0"
     String memory = "128G"
@@ -28,9 +28,11 @@ task RunCentrifuger {
       tar -xzf "$archive" -C centrifuger_db
     done
 
-    prefix_file="$(find centrifuger_db -type f \( -name "~{centrifuger_db}.1.cfr" -o -name "~{centrifuger_db}.1.cf" \) | head -n 1 || true)"
+    # Auto-detect the index prefix from any .1.cfr / .1.cf file in the
+    # extracted directory — no need to know the internal naming convention.
+    prefix_file="$(find centrifuger_db -type f \( -name "*.1.cfr" -o -name "*.1.cf" \) | sort | head -n 1 || true)"
     if [[ -z "$prefix_file" ]]; then
-      echo "Could not find localized Centrifuger index for prefix '~{centrifuger_db}' after extracting archive(s)." >&2
+      echo "Could not find a Centrifuger index (.1.cfr or .1.cf) after extracting archive(s)." >&2
       exit 1
     fi
 
