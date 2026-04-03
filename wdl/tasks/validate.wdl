@@ -178,17 +178,13 @@ task BuildNTCBackground {
 #   Final gather task — produces a single run_summary.tsv that lists every
 #   sample and annotates all rows with the run's PC8 validity status.
 #
-#   Inputs:
-#     sample_ids       — parallel arrays from Phase 2 scatter
-#     sample_types
-#     calls_files      — each sample's calls.tsv
-#     validation_files — optional; present only for validation-mode samples
-#     routine_files    — optional; present only for routine-mode samples
+#   sample_id and sample_type are derived from the file contents:
+#     calls_files        — sample column gives sample_id
+#     validation/routine — sample_id + sample_type columns
+#   This avoids WDL 1.0 incompatible splat syntax (samples[*].field).
 # ---------------------------------------------------------------------------
 task BuildRunSummary {
   input {
-    Array[String]  sample_ids
-    Array[String]  sample_types
     Array[File]    calls_files
     Array[File?]   validation_summaries
     Array[File?]   routine_summaries
@@ -198,11 +194,8 @@ task BuildRunSummary {
   command <<<
   python3 - <<'PY'
 import csv
-import re
 import sys
-from pathlib import Path
 
-# ---- helper: read TSV safely -----------------------------------------------
 def read_tsv(path: str) -> list[dict]:
     rows = []
     with open(path, encoding="utf-8") as fh:
@@ -211,61 +204,48 @@ def read_tsv(path: str) -> list[dict]:
             rows.append(dict(row))
     return rows
 
-# ---- load parallel arrays written by WDL write_lines() --------------------
 def load_lines(path: str) -> list[str]:
     with open(path, encoding="utf-8") as fh:
-        return [l.rstrip("\n") for l in fh if l.strip()]
+        return [ln.rstrip("\n") for ln in fh if ln.strip()]
 
-sample_ids   = load_lines("~{write_lines(sample_ids)}")
-sample_types = load_lines("~{write_lines(sample_types)}")
-calls_paths  = load_lines("~{write_lines(calls_files)}")
-val_paths    = load_lines("~{write_lines(select_all(validation_summaries))}")
-rout_paths   = load_lines("~{write_lines(select_all(routine_summaries))}")
+calls_paths = load_lines("~{write_lines(calls_files)}")
+val_paths   = load_lines("~{write_lines(select_all(validation_summaries))}")
+rout_paths  = load_lines("~{write_lines(select_all(routine_summaries))}")
 
 POSITIVE_CALLS = {"Confirmed", "Probable", "Detected"}
 
-# Index validation summaries by sample_id
-val_by_id: dict[str, dict] = {}
-for p in val_paths:
+# Build lookup dicts keyed by sample_id from summaries
+# (gives us sample_type, validation_result, pc8_pass)
+summary_by_id: dict[str, dict] = {}
+for p in val_paths + rout_paths:
     for row in read_tsv(p):
         sid = row.get("sample_id", "").strip()
         if sid:
-            val_by_id[sid] = row
+            summary_by_id[sid] = row
 
-rout_by_id: dict[str, dict] = {}
-for p in rout_paths:
-    for row in read_tsv(p):
-        sid = row.get("sample_id", "").strip()
-        if sid:
-            rout_by_id[sid] = row
-
-# Determine run-level PC8 validity
+# Determine run-level PC8 validity from whichever PC_MIX8 sample was processed
 run_pc8_valid = "no_pc8_in_run"
-for sid, row in val_by_id.items():
+for row in summary_by_id.values():
     if row.get("sample_type", "").upper() == "PC_MIX8":
-        pc8_pass = row.get("pc8_pass", "not_applicable")
-        run_pc8_valid = pc8_pass  # "true" or "false"
+        run_pc8_valid = row.get("pc8_pass", "not_applicable")
         break
 
 out_rows = []
-for sid, stype, calls_path in zip(sample_ids, sample_types, calls_paths):
+for calls_path in calls_paths:
     calls = read_tsv(calls_path)
+    # sample_id from the 'sample' column in calls.tsv
+    sid = calls[0]["sample"] if calls else ""
     detected = sorted({r["genus"] for r in calls if r.get("call") in POSITIVE_CALLS})
 
-    # Pull per-sample details
-    val_row  = val_by_id.get(sid, {})
-    rout_row = rout_by_id.get(sid, {})
-    validation_result = val_row.get("validation_result", "")
-    pc8_pass_this     = val_row.get("pc8_pass", "")
-
+    summary = summary_by_id.get(sid, {})
     out_rows.append({
-        "sample_id":          sid,
-        "sample_type":        stype,
-        "detected_taxa":      ",".join(detected),
-        "n_detected":         len(detected),
-        "validation_result":  validation_result,
-        "pc8_pass":           pc8_pass_this,
-        "run_pc8_valid":      run_pc8_valid,
+        "sample_id":         sid,
+        "sample_type":       summary.get("sample_type", ""),
+        "detected_taxa":     ",".join(detected),
+        "n_detected":        len(detected),
+        "validation_result": summary.get("validation_result", ""),
+        "pc8_pass":          summary.get("pc8_pass", ""),
+        "run_pc8_valid":     run_pc8_valid,
     })
 
 fieldnames = [

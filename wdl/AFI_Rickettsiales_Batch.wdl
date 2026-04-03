@@ -186,8 +186,6 @@ workflow AFI_Rickettsiales_Batch {
   # ===========================================================================
   call vld.BuildRunSummary {
     input:
-      sample_ids           = samples[*].sample_id,
-      sample_types         = samples[*].sample_type,
       calls_files          = P2_Interpret.calls,
       validation_summaries = P2_Validate.validation_summary,
       routine_summaries    = P2_Routine.routine_summary,
