@@ -44,7 +44,9 @@ workflow AFI_Rickettsiales_Main {
     Int   cfr_floor = 500
     Float cfr_fold  = 5.0
 
-    String afi_core_docker   = "phemarajata614/afi-terra:0.4.0"
+    String afi_core_docker    = "phemarajata614/afi-terra:0.4.0"  # python + samtools + scripts
+    String fastp_docker       = "staphb/fastp:0.23.4"             # QC trimming
+    String minimap_docker     = "staphb/minimap2:2.28"            # alignment + samtools sort/index
     String centrifuger_docker = "phemarajata614/centrifuger:1.1.0"
     String centrifuger_memory = "128G"
     String centrifuger_disks  = "local-disk 500 HDD"
@@ -73,7 +75,7 @@ workflow AFI_Rickettsiales_Main {
     input:
       r1           = effective_r1,
       r2           = effective_r2,
-      docker_image = afi_core_docker
+      docker_image = fastp_docker
   }
 
   # -------------------------------------------------------------------------
@@ -107,7 +109,7 @@ workflow AFI_Rickettsiales_Main {
       r1           = FastpClean.clean_r1,
       r2           = FastpClean.clean_r2,
       panel        = rickettsiales_panel,
-      docker_image = afi_core_docker
+      docker_image = minimap_docker
   }
 
   call met.ExtractMetrics {

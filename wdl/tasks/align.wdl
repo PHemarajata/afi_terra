@@ -6,7 +6,9 @@ task MinimapRick16S {
     File r1
     File r2
     File panel
-    String docker_image = "phemarajata614/afi-terra:0.1.0"
+    # staphb/minimap2 bundles minimap2 + samtools — no need to carry those
+    # tools in the afi-terra image.  Maintained by StaPH-B.
+    String docker_image = "staphb/minimap2:2.28"
   }
 
   command <<<
@@ -22,5 +24,7 @@ task MinimapRick16S {
 
   runtime {
     docker: docker_image
+    memory: "16G"
+    disks:  "local-disk 100 HDD"
   }
 }

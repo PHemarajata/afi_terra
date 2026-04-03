@@ -5,7 +5,9 @@ task FastpClean {
   input {
     File r1
     File r2
-    String docker_image = "phemarajata614/afi-terra:0.1.0"
+    # staphb/fastp is a lean public container maintained by StaPH-B.
+    # It is separate from afi-terra so the core image stays python/samtools only.
+    String docker_image = "staphb/fastp:0.23.4"
   }
 
   command <<<
@@ -23,5 +25,7 @@ task FastpClean {
 
   runtime {
     docker: docker_image
+    memory: "8G"
+    disks:  "local-disk 100 HDD"
   }
 }
