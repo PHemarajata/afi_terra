@@ -8,17 +8,16 @@ version 1.0
 # in the set must have the following columns in the sample table:
 #
 #   sample_id    (String)  — entity name column
+#   run_id       (String)  — sequencing run identifier (can differ per sample
+#                            to process multiple runs in one batch submission)
 #   r1_fastq     (File)
 #   r2_fastq     (File)
 #   sample_type  (String)  — NTC | NC | PC_MIX8 | PC_SINGLE | MIXED4 | clinical | PC
 #   mode         (String)  — routine | validation
 #   expected_taxa (String) — semicolon-delimited genera for validation samples; "" otherwise
 #
-# The sample_set entity should carry:
-#   run_id       (String)  — unique identifier for the sequencing run
-#
 # Typical Terra input mapping
-#   AFI_Rickettsiales_Batch.run_id        → this.run_id
+#   AFI_Rickettsiales_Batch.run_ids       → this.samples.run_id
 #   AFI_Rickettsiales_Batch.sample_ids    → this.samples.sample_id
 #   AFI_Rickettsiales_Batch.r1_fastqs     → this.samples.r1_fastq
 #   AFI_Rickettsiales_Batch.r2_fastqs     → this.samples.r2_fastq
@@ -26,6 +25,9 @@ version 1.0
 #   AFI_Rickettsiales_Batch.modes         → this.samples.mode
 #   AFI_Rickettsiales_Batch.expected_taxa → this.samples.expected_taxa
 #   AFI_Rickettsiales_Batch.use_human_scrub → workspace.use_human_scrub  (or hardcode)
+#
+# Multi-run support: include samples from multiple run_ids in a single set.
+# run_summary.tsv will be grouped by run_id; pc8_valid is computed per run.
 #
 # Design: two-scatter with automatic NTC background computation.
 #
@@ -46,8 +48,10 @@ import "../NCBI_scrub_PE/tasks/quality_control/read_filtering/task_ncbi_scrub.wd
 workflow AFI_Rickettsiales_Batch {
 
   input {
-    # ── Run-level metadata ─────────────────────────────────────────────────────
-    String run_id   # unique identifier for this sequencing run (from sample_set)
+    # ── Per-sample run identifier (one per sample, same length as sample_ids) ──
+    # Map from the sample table run_id column.  Samples may belong to different
+    # runs; run_summary.tsv will group rows and compute pc8_valid per run_id.
+    Array[String] run_ids
 
     # ── Per-sample inputs (parallel arrays, same length) ──────────────────────
     # Map from Terra sample table columns.  All arrays must have equal length.
@@ -217,7 +221,7 @@ workflow AFI_Rickettsiales_Batch {
   # ===========================================================================
   call vld.BuildRunSummary {
     input:
-      run_id               = run_id,
+      run_ids              = run_ids,
       calls_files          = P2_Interpret.calls,
       validation_summaries = P2_Validate.validation_summary,
       routine_summaries    = P2_Routine.routine_summary,
