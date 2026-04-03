@@ -6,9 +6,8 @@ task MinimapRick16S {
     File r1
     File r2
     File panel
-    # Use the staphb/minimap2 image with the -samtools tag, which bundles
-    # both minimap2 and samtools (required for sort/index).
-    String docker_image = "staphb/minimap2:2.28-samtools"
+    # afi-terra image bundles minimap2 + samtools (required for sort/index).
+    String docker_image = "phemarajata614/afi-terra:0.4.1"
   }
 
   command <<<

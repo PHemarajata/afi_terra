@@ -72,7 +72,7 @@ task ParseCentrifugerKreport {
   input {
     String sample_id
     File kreport
-    String docker_image = "phemarajata614/afi-terra:0.4.0"
+    String docker_image = "phemarajata614/afi-terra:0.4.1"
   }
 
   command <<<

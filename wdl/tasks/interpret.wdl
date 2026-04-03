@@ -17,7 +17,7 @@ task InterpretCalls {
     Int   cfr_floor = 500
     Float cfr_fold  = 5.0
 
-    String docker_image = "phemarajata614/afi-terra:0.4.0"
+    String docker_image = "phemarajata614/afi-terra:0.4.1"
   }
 
   command <<<
