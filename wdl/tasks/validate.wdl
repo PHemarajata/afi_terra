@@ -11,7 +11,7 @@ task CompareExpectedConcordance {
     String sample_type
     String expected_taxon = ""
     File   final_calls
-    String docker_image = "phemarajata614/afi-terra:0.4.0"
+    String docker_image = "phemarajata614/afi-terra:0.4.1"
   }
 
   command <<<
@@ -96,7 +96,7 @@ task SummarizeRoutineTaxa {
     String sample_id
     String sample_type
     File   final_calls
-    String docker_image = "phemarajata614/afi-terra:0.4.0"
+    String docker_image = "phemarajata614/afi-terra:0.4.1"
   }
 
   command <<<
@@ -150,7 +150,7 @@ task BuildNTCBackground {
   input {
     Array[File] ntc_align_metrics     # align_metrics.tsv for each NTC/NC sample
     Array[File] ntc_cfr_genus_counts  # genus_counts.tsv  for each NTC/NC sample
-    String docker_image = "phemarajata614/afi-terra:0.4.0"
+    String docker_image = "phemarajata614/afi-terra:0.4.1"
   }
 
   command <<<
@@ -187,7 +187,7 @@ task BuildRunSummary {
     Array[File]    calls_files
     Array[File?]   validation_summaries
     Array[File?]   routine_summaries
-    String docker_image = "phemarajata614/afi-terra:0.4.0"
+    String docker_image = "phemarajata614/afi-terra:0.4.1"
   }
 
   command <<<

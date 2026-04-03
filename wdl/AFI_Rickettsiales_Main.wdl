@@ -44,9 +44,9 @@ workflow AFI_Rickettsiales_Main {
     Int   cfr_floor = 500
     Float cfr_fold  = 5.0
 
-    String afi_core_docker    = "phemarajata614/afi-terra:0.4.0"  # python + samtools + scripts
+    String afi_core_docker    = "phemarajata614/afi-terra:0.4.1"  # python + samtools + scripts
     String fastp_docker       = "staphb/fastp:0.23.4"             # QC trimming
-    String minimap_docker     = "staphb/minimap2:2.28-samtools"   # alignment + samtools sort/index
+    String minimap_docker     = "phemarajata614/afi-terra:0.4.1"  # alignment + samtools sort/index
     String centrifuger_docker = "phemarajata614/centrifuger:1.1.0"
     String centrifuger_memory = "128G"
     String centrifuger_disks  = "local-disk 500 HDD"
