@@ -31,11 +31,11 @@ task InterpretCalls {
     --align-fold ~{align_fold} \
     --cfr-floor ~{cfr_floor} \
     --cfr-fold ~{cfr_fold} \
-    --out calls.tsv
+    --out ~{sample_id}.calls.tsv
   >>>
 
   output {
-    File calls = "calls.tsv"
+    File calls = "~{sample_id}.calls.tsv"
   }
 
   runtime {

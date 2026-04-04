@@ -72,12 +72,12 @@ out = pd.DataFrame([{
     ),
 }])
 
-out.to_csv("validation_summary.tsv", sep="\t", index=False)
+out.to_csv("~{sample_id}.validation_summary.tsv", sep="\t", index=False)
 PY
   >>>
 
   output {
-    File   validation_summary = "validation_summary.tsv"
+    File   validation_summary = "~{sample_id}.validation_summary.tsv"
   }
 
   runtime {
@@ -124,12 +124,12 @@ out = pd.DataFrame([{
     ),
 }])
 
-out.to_csv("routine_summary.tsv", sep="\t", index=False)
+out.to_csv("~{sample_id}.routine_summary.tsv", sep="\t", index=False)
 PY
   >>>
 
   output {
-    File routine_summary = "routine_summary.tsv"
+    File routine_summary = "~{sample_id}.routine_summary.tsv"
   }
 
   runtime {
@@ -183,7 +183,7 @@ task BuildNTCBackground {
 # ---------------------------------------------------------------------------
 task BuildRunSummary {
   input {
-    String         run_id               # propagated from workflow-level input
+    Array[String]  run_ids              # per-sample run IDs (parallel to calls_files)
     Array[File]    calls_files
     Array[File?]   validation_summaries
     Array[File?]   routine_summaries
@@ -194,8 +194,6 @@ task BuildRunSummary {
   python3 - <<'PY'
 import csv
 import sys
-
-RUN_ID = "~{run_id}"
 
 def read_tsv(path: str) -> list[dict]:
     rows = []
@@ -224,30 +222,62 @@ for p in val_paths + rout_paths:
         if sid:
             summary_by_id[sid] = row
 
-# Determine run-level PC8 validity from whichever PC_MIX8 sample was processed
-run_pc8_valid = "no_pc8_in_run"
-for row in summary_by_id.values():
+# Associate each calls file with its run_id (parallel arrays)
+run_ids_list = load_lines("~{write_lines(run_ids)}")
+
+# Map sample_id → run_id from the parallel arrays
+sample_run_map: dict[str, str] = {}
+for run_id_val, calls_path in zip(run_ids_list, calls_paths):
+    calls_peek = read_tsv(calls_path)
+    sid = calls_peek[0]["sample"] if calls_peek else ""
+    if sid:
+        sample_run_map[sid] = run_id_val
+
+# Determine PC8 validity per run_id
+run_pc8_valid: dict[str, str] = {}
+for sid, row in summary_by_id.items():
     if row.get("sample_type", "").upper() == "PC_MIX8":
-        run_pc8_valid = row.get("pc8_pass", "not_applicable")
-        break
+        rid = sample_run_map.get(sid, "unknown")
+        run_pc8_valid[rid] = row.get("pc8_pass", "not_applicable")
+# Default for run_ids that had no PC_MIX8
+for rid in set(run_ids_list):
+    run_pc8_valid.setdefault(rid, "no_pc8_in_run")
 
 out_rows = []
 for calls_path in calls_paths:
     calls = read_tsv(calls_path)
-    # sample_id from the 'sample' column in calls.tsv
     sid = calls[0]["sample"] if calls else ""
-    detected = sorted({r["genus"] for r in calls if r.get("call") in POSITIVE_CALLS})
+    rid = sample_run_map.get(sid, run_ids_list[0] if run_ids_list else "")
+
+    # Collect reads for positive-call genera, sort by reads descending
+    detected_reads: list[tuple[str, int]] = []
+    for r in calls:
+        if r.get("call") in POSITIVE_CALLS:
+            try:
+                reads = int(r.get("reads", 0) or 0)
+            except (ValueError, TypeError):
+                reads = 0
+            detected_reads.append((r["genus"], reads))
+    detected_reads.sort(key=lambda x: x[1], reverse=True)
+
+    total_reads = sum(rd for _, rd in detected_reads)
+    if total_reads > 0:
+        detected_taxa_str = ",".join(
+            f"{g} ({rd/total_reads*100:.1f}%)" for g, rd in detected_reads
+        )
+    else:
+        detected_taxa_str = ",".join(g for g, _ in detected_reads)
 
     summary = summary_by_id.get(sid, {})
     out_rows.append({
-        "run_id":            RUN_ID,
+        "run_id":            rid,
         "sample_id":         sid,
         "sample_type":       summary.get("sample_type", ""),
-        "detected_taxa":     ",".join(detected),
-        "n_detected":        len(detected),
+        "detected_taxa":     detected_taxa_str,
+        "n_detected":        len(detected_reads),
         "validation_result": summary.get("validation_result", ""),
         "pc8_pass":          summary.get("pc8_pass", ""),
-        "run_pc8_valid":     run_pc8_valid,
+        "run_pc8_valid":     run_pc8_valid.get(rid, "no_pc8_in_run"),
     })
 
 fieldnames = [
@@ -259,7 +289,8 @@ with open("run_summary.tsv", "w", newline="", encoding="utf-8") as fh:
     writer.writeheader()
     writer.writerows(out_rows)
 
-print(f"run_summary.tsv: {len(out_rows)} samples, run_id={RUN_ID}, run_pc8_valid={run_pc8_valid}", file=sys.stderr)
+n_runs = len(set(run_ids_list))
+print(f"run_summary.tsv: {len(out_rows)} samples across {n_runs} run(s)", file=sys.stderr)
 PY
   >>>
 

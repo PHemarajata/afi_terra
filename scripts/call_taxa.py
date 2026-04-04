@@ -23,7 +23,14 @@ NTC background file format (from build_ntc_background.py):
   genus  align_ntc_reads  cfr_ntc_reads
 
 Output TSV columns:
-  sample  genus  source  reads  breadth  ntc_reads  call
+  sample  genus  source  reads  breadth  ntc_reads  call  cfr_reads  rescued
+
+  cfr_reads — centrifuge read count for the genus (alignment rows only;
+              blank for centrifuge rows where `reads` IS the cfr count).
+  rescued   — true when source=alignment, call is Confirmed/Probable, AND
+              centrifuge alone would NOT have reached the detection threshold
+              (i.e. cfr_reads < cfr_floor OR cfr_reads < cfr_fold × cfr_ntc_reads).
+              false for non-positive alignment calls; blank for centrifuge rows.
 """
 import argparse
 import csv
@@ -160,6 +167,10 @@ def main() -> None:
     align_rows   = load_align_metrics(args.align_metrics)
     cfr_rows     = load_cfr_genus(args.cfr_genus)
 
+    # Build a quick lookup of centrifuge reads for every genus (used for
+    # cfr_reads + rescued columns on alignment rows).
+    cfr_reads_by_genus: dict[str, int] = {r["genus"]: r["reads"] for r in cfr_rows}
+
     results = []
 
     # --- Module 3: alignment-based calls for Orientia / Rickettsia ---
@@ -173,6 +184,13 @@ def main() -> None:
             genus, row["reads"], row["breadth"], ntc,
             args.align_confirm_reads, args.align_confirm_breadth, args.align_fold,
         )
+        cfr_r = cfr_reads_by_genus.get(genus, 0)
+        cfr_ntc = ntc.get(genus, {}).get("cfr_ntc_reads", 0)
+        cfr_would_detect = (cfr_r >= args.cfr_floor and cfr_r >= args.cfr_fold * cfr_ntc)
+        if call in ("Confirmed", "Probable"):
+            rescued = "false" if cfr_would_detect else "true"
+        else:
+            rescued = "false"
         results.append({
             "sample":    args.sample,
             "genus":     genus,
@@ -181,11 +199,14 @@ def main() -> None:
             "breadth":   round(row["breadth"], 4),
             "ntc_reads": ntc_reads,
             "call":      call,
+            "cfr_reads": cfr_r,
+            "rescued":   rescued,
         })
 
     # Ensure both Rickettsiales genera always appear (Negative if absent from BAM)
     for genus in RICK_GENERA:
         if genus not in align_genera_seen:
+            cfr_r = cfr_reads_by_genus.get(genus, 0)
             results.append({
                 "sample":    args.sample,
                 "genus":     genus,
@@ -194,14 +215,16 @@ def main() -> None:
                 "breadth":   0.0,
                 "ntc_reads": ntc.get(genus, {}).get("align_ntc_reads", 0),
                 "call":      "Negative",
+                "cfr_reads": cfr_r,
+                "rescued":   "false",
             })
 
     # --- Module 1: centrifuge-based calls for all non-Rickettsiales genera ---
     for row in cfr_rows:
         genus = row["genus"]
         if genus in RICK_GENERA:
-            # Rickettsiales genera are handled via alignment above; skip here
-            # (centrifuge may still detect them but alignment is authoritative)
+            # Rickettsiales genera are handled via alignment above; skip here.
+            # Their centrifuge counts are captured in cfr_reads_by_genus above.
             continue
         call, ntc_reads = call_centrifuge(
             genus, row["reads"], ntc,
@@ -215,12 +238,15 @@ def main() -> None:
             "breadth":   "",   # not applicable for centrifuge
             "ntc_reads": ntc_reads,
             "call":      call,
+            "cfr_reads": "",   # reads IS the cfr count; no separate column needed
+            "rescued":   "",   # not applicable for centrifuge-source rows
         })
 
     with open(args.out, "w", newline="", encoding="utf-8") as fh:
         writer = csv.DictWriter(
             fh,
-            fieldnames=["sample", "genus", "source", "reads", "breadth", "ntc_reads", "call"],
+            fieldnames=["sample", "genus", "source", "reads", "breadth",
+                        "ntc_reads", "call", "cfr_reads", "rescued"],
             delimiter="\t",
         )
         writer.writeheader()
