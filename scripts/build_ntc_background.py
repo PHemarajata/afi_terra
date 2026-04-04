@@ -23,6 +23,7 @@ Output TSV columns (all modes):
 """
 import argparse
 import csv
+import os
 import sys
 from collections import defaultdict
 from pathlib import Path
@@ -160,7 +161,7 @@ def main() -> None:
 
     for rid, files in groups.items():
         align_max, cfr_max = compute_background(files["align"], files["cfr"])
-        out_path = str(out_dir / f"ntc_background_{rid}.tsv")
+        out_path = os.path.abspath(str(out_dir / f"ntc_background_{rid}.tsv"))
         n = write_background(align_max, cfr_max, out_path)
         ordered_run_ids.append(rid)
         bg_paths.append(out_path)
