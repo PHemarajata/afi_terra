@@ -156,22 +156,36 @@ workflow AFI_Rickettsiales_Batch {
 
     # Expose metrics only for NTC/NC samples so select_all() can filter them
     # outside the scatter without referencing the scatter variable (WDL 1.0 safe).
+    # Also expose the run_id so BuildNTCBackground can compute per-run backgrounds.
     Boolean p1_is_ntc = (sample_types[i] == "NTC") || (sample_types[i] == "NC")
     if (p1_is_ntc) {
-      File ntc_align_conditional = P1_Metrics.metrics
-      File ntc_cfr_conditional   = P1_ParseKreport.genus_counts
+      String ntc_run_id_conditional  = run_ids[i]
+      File   ntc_align_conditional   = P1_Metrics.metrics
+      File   ntc_cfr_conditional     = P1_ParseKreport.genus_counts
     }
 
   } # end Phase 1 scatter
 
   # ===========================================================================
-  # BuildNTCBackground: gather NTC outputs → ntc_background.tsv
+  # BuildNTCBackground: compute one background TSV per distinct run_id.
+  # NTC samples from different runs are never pooled together, so a high-
+  # signal NTC in run2 cannot raise the detection threshold for run1 samples.
   # ===========================================================================
   call vld.BuildNTCBackground {
     input:
+      ntc_run_ids          = select_all(ntc_run_id_conditional),
       ntc_align_metrics    = select_all(ntc_align_conditional),
       ntc_cfr_genus_counts = select_all(ntc_cfr_conditional),
       docker_image         = afi_core_docker
+  }
+
+  # Map each sample to the NTC background for its run_id.
+  call vld.MatchNTCBackground {
+    input:
+      all_sample_run_ids  = run_ids,
+      per_run_ids         = BuildNTCBackground.per_run_ids,
+      per_run_backgrounds = BuildNTCBackground.per_run_backgrounds,
+      docker_image        = afi_core_docker
   }
 
   # ===========================================================================
@@ -184,7 +198,7 @@ workflow AFI_Rickettsiales_Batch {
         sample_id             = sample_ids[i],
         align_metrics         = P1_Metrics.metrics[i],
         cfr_genus_counts      = P1_ParseKreport.genus_counts[i],
-        ntc_background        = BuildNTCBackground.ntc_background,
+        ntc_background        = MatchNTCBackground.per_sample_backgrounds[i],
         align_confirm_reads   = align_confirm_reads,
         align_confirm_breadth = align_confirm_breadth,
         align_fold            = align_fold,
@@ -247,8 +261,9 @@ workflow AFI_Rickettsiales_Batch {
     Array[File] minimap_bai   = P1_Minimap.bai
     Array[File] align_metrics = P1_Metrics.metrics
 
-    # NTC background (auto-computed from NTC/NC samples in this run)
-    File ntc_background = BuildNTCBackground.ntc_background
+    # NTC backgrounds — one per run_id (computed separately to prevent cross-run pooling)
+    Array[File]   ntc_backgrounds_per_run = BuildNTCBackground.per_run_backgrounds
+    Array[String] ntc_background_run_ids  = BuildNTCBackground.per_run_ids
 
     # Phase 2 — interpretation
     Array[File] calls = P2_Interpret.calls
