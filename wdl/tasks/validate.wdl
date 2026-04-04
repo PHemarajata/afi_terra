@@ -167,7 +167,7 @@ task BuildNTCBackground {
   >>>
 
   output {
-    Array[File]   per_run_backgrounds = read_lines("backgrounds.txt")
+    Array[File]   per_run_backgrounds = glob("per_run_backgrounds/ntc_background_*.tsv")
     Array[String] per_run_ids         = read_lines("run_ids.txt")
   }
 
@@ -232,7 +232,7 @@ PY
   >>>
 
   output {
-    Array[File] per_sample_backgrounds = read_lines("per_sample_backgrounds.txt")
+    Array[File] per_sample_backgrounds = glob("ntc_bg_*.tsv")
   }
 
   runtime {

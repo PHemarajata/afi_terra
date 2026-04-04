@@ -159,7 +159,8 @@ def main() -> None:
     ordered_run_ids: list[str] = []
     bg_paths: list[str] = []
 
-    for rid, files in groups.items():
+    for rid in sorted(groups.keys()):
+        files = groups[rid]
         align_max, cfr_max = compute_background(files["align"], files["cfr"])
         out_path = os.path.abspath(str(out_dir / f"ntc_background_{rid}.tsv"))
         n = write_background(align_max, cfr_max, out_path)
