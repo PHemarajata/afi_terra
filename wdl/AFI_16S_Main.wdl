@@ -2,7 +2,7 @@ version 1.0
 
 # Single-sample workflow.
 # For full batch runs with automatic NTC background computation,
-# use AFI_Rickettsiales_Batch.wdl instead.
+# use AFI_16S_Batch.wdl instead.
 #
 # When running standalone, supply a pre-computed ntc_background.tsv.
 # A placeholder file with all-zero rows is acceptable for first-pass runs
@@ -16,7 +16,7 @@ import "tasks/interpret.wdl"   as ipt
 import "tasks/validate.wdl"    as vld
 import "../NCBI_scrub_PE/tasks/quality_control/read_filtering/task_ncbi_scrub.wdl" as scrub
 
-workflow AFI_Rickettsiales_Main {
+workflow AFI_16S_Main {
 
   input {
     String  sample_id

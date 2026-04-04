@@ -7,8 +7,8 @@ Terra import options (to avoid missing-import errors):
 1) Recommended: Dockstore + GitHub
 
 - This repo includes .dockstore.yml with both workflows:
-	- /wdl/AFI_Rickettsiales_Main.wdl
-	- /wdl/AFI_Rickettsiales_Batch.wdl
+	- /wdl/AFI_16S_Main.wdl
+	- /wdl/AFI_16S_Batch.wdl
 - In Dockstore, link GitHub repository PHemarajata/afi_terra.
 - Create or refresh a workflow version from the Git tag/branch.
 - In Terra, import from Dockstore (TRS) instead of uploading a single WDL file.
@@ -18,11 +18,11 @@ Terra import options (to avoid missing-import errors):
 
 - Upload a zip that contains all imported files with relative paths preserved.
 - At minimum include:
-	- wdl/AFI_Rickettsiales_Batch.wdl
-	- wdl/AFI_Rickettsiales_Main.wdl
+	- wdl/AFI_16S_Batch.wdl
+	- wdl/AFI_16S_Main.wdl
 	- wdl/tasks/*.wdl
 	- NCBI_scrub_PE/tasks/quality_control/read_filtering/task_ncbi_scrub.wdl
-- Uploading only AFI_Rickettsiales_Batch.wdl will fail because it imports AFI_Rickettsiales_Main.wdl.
+- Uploading only AFI_16S_Batch.wdl will fail because it imports AFI_16S_Main.wdl.
 
 Docker images used by WDL tasks:
 
@@ -59,7 +59,7 @@ Main steps:
 
 Single-sample workflow:
 
-`wdl/AFI_Rickettsiales_Main.wdl`
+`wdl/AFI_16S_Main.wdl`
 
 - `mode`: `validation` or `routine`
 - `classifier_mode`: `single` (Centrifuger) or `double` (Kraken2 16G + Kraken2 Rick)
@@ -67,10 +67,10 @@ Single-sample workflow:
 
 Batch workflow (mixed validation + routine in one submission):
 
-`wdl/AFI_Rickettsiales_Batch.wdl`
+`wdl/AFI_16S_Batch.wdl`
 
 - Input: `Array[SampleSpec] samples`
-- Scatters each sample through `AFI_Rickettsiales_Main`
+- Scatters each sample through `AFI_16S_Main`
 - Supports per-sample `mode`, `classifier_mode`, `expected_taxon`, and optional scrub override
 
 Example inputs:
@@ -157,7 +157,7 @@ Suggested 2-pass pattern per run:
 	--ntc-metrics path/to/NTC2.metrics.tsv \
 	--out wdl/inputs/run3.ntc_background.tsv`
 
-4) Upload run3.ntc_background.tsv to GCS and re-run the same run3 batch config using that file for AFI_Rickettsiales_Batch.ntc_background.
+4) Upload run3.ntc_background.tsv to GCS and re-run the same run3 batch config using that file for AFI_16S_Batch.ntc_background.
 
 Notes:
 

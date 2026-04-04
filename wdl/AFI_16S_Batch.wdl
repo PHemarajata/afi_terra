@@ -1,6 +1,6 @@
 version 1.0
 
-# Batch workflow for the AFI Rickettsiales pipeline.
+# Batch workflow for the AFI 16S metagenomics pipeline.
 #
 # Terra data-model integration
 # ────────────────────────────
@@ -17,14 +17,14 @@ version 1.0
 #   expected_taxa (String) — semicolon-delimited genera for validation samples; "" otherwise
 #
 # Typical Terra input mapping
-#   AFI_Rickettsiales_Batch.run_ids       → this.samples.run_id
-#   AFI_Rickettsiales_Batch.sample_ids    → this.samples.sample_id
-#   AFI_Rickettsiales_Batch.r1_fastqs     → this.samples.r1_fastq
-#   AFI_Rickettsiales_Batch.r2_fastqs     → this.samples.r2_fastq
-#   AFI_Rickettsiales_Batch.sample_types  → this.samples.sample_type
-#   AFI_Rickettsiales_Batch.modes         → this.samples.mode
-#   AFI_Rickettsiales_Batch.expected_taxa → this.samples.expected_taxa
-#   AFI_Rickettsiales_Batch.use_human_scrub → workspace.use_human_scrub  (or hardcode)
+#   AFI_16S_Batch.run_ids       → this.samples.run_id
+#   AFI_16S_Batch.sample_ids    → this.samples.sample_id
+#   AFI_16S_Batch.r1_fastqs     → this.samples.r1_fastq
+#   AFI_16S_Batch.r2_fastqs     → this.samples.r2_fastq
+#   AFI_16S_Batch.sample_types  → this.samples.sample_type
+#   AFI_16S_Batch.modes         → this.samples.mode
+#   AFI_16S_Batch.expected_taxa → this.samples.expected_taxa
+#   AFI_16S_Batch.use_human_scrub → workspace.use_human_scrub  (or hardcode)
 #
 # Multi-run support: include samples from multiple run_ids in a single set.
 # run_summary.tsv will be grouped by run_id; pc8_valid is computed per run.
@@ -45,7 +45,7 @@ import "tasks/interpret.wdl"  as ipt
 import "tasks/validate.wdl"   as vld
 import "../NCBI_scrub_PE/tasks/quality_control/read_filtering/task_ncbi_scrub.wdl" as scrub
 
-workflow AFI_Rickettsiales_Batch {
+workflow AFI_16S_Batch {
 
   input {
     # ── Per-sample run identifier (one per sample, same length as sample_ids) ──
