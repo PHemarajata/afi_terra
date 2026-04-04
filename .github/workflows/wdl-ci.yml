@@ -27,5 +27,5 @@ jobs:
 
       - name: Validate WDL files
         run: |
-          miniwdl check wdl/AFI_Rickettsiales_Main.wdl
-          miniwdl check wdl/AFI_Rickettsiales_Batch.wdl
+          miniwdl check wdl/AFI_16S_Main.wdl
+          miniwdl check wdl/AFI_16S_Batch.wdl

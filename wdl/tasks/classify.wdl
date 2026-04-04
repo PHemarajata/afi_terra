@@ -12,10 +12,10 @@ task RunCentrifuger {
     File r2_fastq
     String centrifuger_db = ""          # path prefix when archives are NOT used
     Array[File] centrifuger_db_archives = []  # preferred: tar.gz archive(s); Terra localizes these
-    Int threads = 16
+    Int threads = 8
     String docker_image = "phemarajata614/centrifuger:1.1.0"
-    String memory = "128G"
-    String disks = "local-disk 500 HDD"
+    String memory = "96G"
+    String disks = "local-disk 375 HDD"
   }
 
   command <<<
