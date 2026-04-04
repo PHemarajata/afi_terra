@@ -144,12 +144,17 @@ PY
 #   Gather task — called once after the Phase 1 scatter.
 #   Receives ONLY the NTC/NC sample files (pre-filtered in the scatter via
 #   a conditional declaration + select_all), so no sample_type array needed.
-#   Computes per-genus max NTC reads from alignment and centrifuge sources.
+#   Computes per-run, per-genus max NTC reads from alignment + centrifuge.
+#
+#   ntc_run_ids is parallel to ntc_align_metrics / ntc_cfr_genus_counts.
+#   One ntc_background TSV is written per distinct run_id so that samples
+#   from different runs are never cross-contaminated by each other's NTCs.
 # ---------------------------------------------------------------------------
 task BuildNTCBackground {
   input {
-    Array[File] ntc_align_metrics     # align_metrics.tsv for each NTC/NC sample
-    Array[File] ntc_cfr_genus_counts  # genus_counts.tsv  for each NTC/NC sample
+    Array[String] ntc_run_ids         # run_id for each NTC/NC sample (parallel to below)
+    Array[File]   ntc_align_metrics   # align_metrics.tsv for each NTC/NC sample
+    Array[File]   ntc_cfr_genus_counts # genus_counts.tsv for each NTC/NC sample
     String docker_image = "phemarajata614/afi-terra:0.4.1"
   }
 
@@ -157,16 +162,82 @@ task BuildNTCBackground {
   python3 /opt/afi/scripts/build_ntc_background.py \
     --align-metrics-file ~{write_lines(ntc_align_metrics)} \
     --cfr-genus-file ~{write_lines(ntc_cfr_genus_counts)} \
-    --out ntc_background.tsv
+    --run-ids-file ~{write_lines(ntc_run_ids)} \
+    --out-dir per_run_backgrounds
   >>>
 
   output {
-    File ntc_background = "ntc_background.tsv"
+    Array[File]   per_run_backgrounds = read_lines("backgrounds.txt")
+    Array[String] per_run_ids         = read_lines("run_ids.txt")
   }
 
   runtime {
     docker: docker_image
     memory: "4G"
+    disks:  "local-disk 20 HDD"
+  }
+}
+
+# ---------------------------------------------------------------------------
+# MatchNTCBackground
+#   Maps each sample in the batch to the NTC background for its run_id.
+#   Returns a per-sample Array[File] in the same order as sample_ids so
+#   Phase 2 can index directly: per_sample_backgrounds[i].
+# ---------------------------------------------------------------------------
+task MatchNTCBackground {
+  input {
+    Array[String] all_sample_run_ids   # one per sample, same order as sample_ids
+    Array[String] per_run_ids          # from BuildNTCBackground
+    Array[File]   per_run_backgrounds  # parallel to per_run_ids
+    String docker_image = "phemarajata614/afi-terra:0.4.1"
+  }
+
+  command <<<
+  python3 - <<'PY'
+import shutil, sys
+
+def load_lines(path):
+    with open(path, encoding="utf-8") as f:
+        return [l.rstrip("\n") for l in f if l.strip()]
+
+per_run_ids  = load_lines("~{write_lines(per_run_ids)}")
+per_run_bgs  = load_lines("~{write_lines(per_run_backgrounds)}")
+sample_rids  = load_lines("~{write_lines(all_sample_run_ids)}")
+
+bg_map = dict(zip(per_run_ids, per_run_bgs))
+missing = sorted({rid for rid in sample_rids if rid not in bg_map})
+if missing:
+    print(
+        f"ERROR: no NTC background computed for run_id(s): {missing}. "
+        "Ensure every run_id in the sample table has at least one NTC or NC sample.",
+        file=sys.stderr,
+    )
+    sys.exit(1)
+
+output_files = []
+for i, rid in enumerate(sample_rids):
+    dest = f"ntc_bg_{i:04d}.tsv"
+    shutil.copy(bg_map[rid], dest)
+    output_files.append(dest)
+
+with open("per_sample_backgrounds.txt", "w", encoding="utf-8") as fh:
+    fh.write("\n".join(output_files) + "\n")
+
+print(
+    f"Matched {len(output_files)} samples to NTC backgrounds "
+    f"across {len(bg_map)} run_id(s): {list(bg_map)}",
+    file=sys.stderr,
+)
+PY
+  >>>
+
+  output {
+    Array[File] per_sample_backgrounds = read_lines("per_sample_backgrounds.txt")
+  }
+
+  runtime {
+    docker: docker_image
+    memory: "2G"
     disks:  "local-disk 20 HDD"
   }
 }
