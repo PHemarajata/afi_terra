@@ -56,8 +56,44 @@ missing_exp    = sorted(g for g in expected_genera if g.lower() not in detected_
 unexpected_det = sorted(g for g in detected        if g.lower() not in expected_lower)
 tp_rows        = len(detected_exp)
 
+# ---------------------------------------------------------------------------
+# Order-level Rickettsiales rescue
+# ---------------------------------------------------------------------------
+# The V1–V2 16S region cannot reliably resolve Orientia from Rickettsia at
+# genus level.  If an expected genus is Rickettsiales (Orientia or Rickettsia)
+# and ANY Rickettsiales genus has alignment evidence meeting the breadth/reads
+# thresholds — regardless of NTC comparison — count as Concordant at order
+# level.  This ports the "any_align" rescue from afi_validate_modular.py.
+#
+# align_confirmed in final_calls.tsv = reads >= confirm_reads AND
+# breadth >= confirm_breadth WITHOUT the NTC fold gate (computed by call_taxa.py).
+RICK_GENERA_SET = {"orientia", "rickettsia"}
+
+rick_aln_rows = calls[
+    (calls["source"] == "alignment") &
+    (calls["genus"].str.lower().isin(RICK_GENERA_SET))
+]
+any_rick_align_confirmed = any(
+    str(v).lower() == "true"
+    for v in rick_aln_rows.get("align_confirmed", pd.Series(dtype=str))
+)
+
+order_rescued  = []
+truly_missing  = []
+for g in missing_exp:
+    if g.lower() in RICK_GENERA_SET and any_rick_align_confirmed:
+        order_rescued.append(g)
+    else:
+        truly_missing.append(g)
+
+# Build rescue_mechanisms string (empty when no rescue was needed)
+rescue_parts = []
+if order_rescued:
+    rescue_parts.append(f"Rickettsiales_order({','.join(order_rescued)})")
+rescue_mechanisms = ";".join(rescue_parts)
+
 if sample_type.upper() in VALIDATION_TYPES and expected_list:
-    validation_result = "Concordant" if len(missing_exp) == 0 else "Discordant"
+    validation_result = "Concordant" if not truly_missing else "Discordant"
 else:
     validation_result = "Not_applicable"
 
@@ -76,9 +112,11 @@ out = pd.DataFrame([{
     "detected_taxa":           ",".join(detected),
     "detected_expected_taxa":  ",".join(detected_exp),
     "detected_expected_count": tp_rows,
-    "missing_expected_taxa":   ",".join(missing_exp),
+    "missing_expected_taxa":   ",".join(truly_missing),
+    "order_rescue_taxa":       ",".join(order_rescued),
     "unexpected_detected_taxa":",".join(unexpected_det),
     "validation_result":       validation_result,
+    "rescue_mechanisms":       rescue_mechanisms,
     "pc8_pass":                pc8_pass,
     "validation_control_class": (
         sample_type if sample_type.upper() in {"PC_MIX8", "MIXED4", "PC_SINGLE", "PC"}
@@ -358,16 +396,19 @@ for calls_path in calls_paths:
         "run_id":            rid,
         "sample_id":         sid,
         "sample_type":       summary.get("sample_type", ""),
+        "expected_taxa":     summary.get("expected_taxon", ""),
         "detected_taxa":     detected_taxa_str,
         "n_detected":        len(detected_reads),
         "validation_result": summary.get("validation_result", ""),
+        "rescue_mechanisms": summary.get("rescue_mechanisms", ""),
         "pc8_pass":          summary.get("pc8_pass", ""),
         "run_pc8_valid":     run_pc8_valid.get(rid, "no_pc8_in_run"),
     })
 
 fieldnames = [
-    "run_id", "sample_id", "sample_type", "detected_taxa", "n_detected",
-    "validation_result", "pc8_pass", "run_pc8_valid",
+    "run_id", "sample_id", "sample_type",
+    "expected_taxa", "detected_taxa", "n_detected",
+    "validation_result", "rescue_mechanisms", "pc8_pass", "run_pc8_valid",
 ]
 with open("run_summary.tsv", "w", newline="", encoding="utf-8") as fh:
     writer = csv.DictWriter(fh, fieldnames=fieldnames, delimiter="\t")
