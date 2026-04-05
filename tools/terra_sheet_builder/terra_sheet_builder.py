@@ -11,6 +11,8 @@ Screen 2  — Sample metadata table with run_id dropdown, sample_type combo,
 """
 
 import csv
+import difflib
+import io
 import os
 import re
 import sys
@@ -78,28 +80,145 @@ FASTQ_SUFFIXES = {".fastq", ".fastq.gz", ".fq", ".fq.gz"}
 # Helpers
 # ---------------------------------------------------------------------------
 
+def is_fastq(p: Path) -> bool:
+    return "".join(p.suffixes[-2:]) in {".fastq.gz", ".fq.gz"} or p.suffix in {".fastq", ".fq"}
+
+
 def discover_pairs(folder: str) -> list[tuple[str, str, str]]:
-    """Return list of (sample_id, r1_path, r2_path) from a folder."""
+    """Return (sample_id, r1_path, r2_path) for every R1/R2 pair in a folder."""
     p = Path(folder)
-    r1_files = sorted(
-        f for f in p.iterdir()
-        if f.suffix in FASTQ_SUFFIXES or "".join(f.suffixes) in FASTQ_SUFFIXES
-        if R1_PATTERNS.search(f.name)
-    )
+    r1_files = sorted(f for f in p.iterdir() if is_fastq(f) and R1_PATTERNS.search(f.name))
+    return _pair_r1_list(r1_files, p)
+
+
+def pair_fastqs_from_files(file_paths: list[str]) -> list[tuple[str, str, str]]:
+    """Auto-pair a flat list of FASTQ paths by R1/R2 name convention."""
+    paths = [Path(f) for f in file_paths]
+    r1_files = sorted(f for f in paths if R1_PATTERNS.search(f.name))
+    # Build a lookup for R2 candidates
+    r2_lookup: dict[str, Path] = {f.name: f for f in paths if R2_PATTERNS.search(f.name)}
     pairs = []
     for r1 in r1_files:
         r2_name = R1_PATTERNS.sub(lambda m: m.group().replace("R1", "R2"), r1.name)
-        r2 = p / r2_name
-        if not r2.exists():
-            # Try .gz variant
-            r2_gz = p / (r2_name + ".gz")
-            if r2_gz.exists():
-                r2 = r2_gz
-            else:
-                continue
-        stem = R1_PATTERNS.split(r1.name)[0]
-        pairs.append((stem, str(r1), str(r2)))
+        r2 = r2_lookup.get(r2_name) or r2_lookup.get(r2_name + ".gz")
+        if r2:
+            stem = R1_PATTERNS.split(r1.name)[0]
+            pairs.append((stem, str(r1), str(r2)))
     return pairs
+
+
+def _pair_r1_list(r1_files: list[Path], folder: Path) -> list[tuple[str, str, str]]:
+    pairs = []
+    for r1 in r1_files:
+        r2_name = R1_PATTERNS.sub(lambda m: m.group().replace("R1", "R2"), r1.name)
+        r2 = folder / r2_name
+        if not r2.exists():
+            r2_gz = folder / (r2_name + ".gz")
+            r2 = r2_gz if r2_gz.exists() else None
+        if r2:
+            stem = R1_PATTERNS.split(r1.name)[0]
+            pairs.append((stem, str(r1), str(r2)))
+    return pairs
+
+
+def fuzzy_match_sample(
+    sample_id: str,
+    candidates: list[Path],
+    cutoff: float = 0.6,
+) -> tuple[Path | None, Path | None]:
+    """
+    Find the best-matching R1/R2 pair for *sample_id* among *candidates*.
+
+    Strategy (in order):
+      1. Exact prefix match:  filename starts with sample_id + separator
+      2. Substring match:     sample_id appears anywhere in the filename stem
+      3. difflib fuzzy match: highest ratio among R1-candidate stems
+    Returns (r1_path, r2_path) or (None, None) if nothing scores above *cutoff*.
+    """
+    r1_cands = [f for f in candidates if R1_PATTERNS.search(f.name)]
+    if not r1_cands:
+        return None, None
+
+    sid_lower = sample_id.lower()
+
+    def stem_of(f: Path) -> str:
+        return R1_PATTERNS.split(f.name)[0].lower()
+
+    # 1. Exact prefix
+    for r1 in r1_cands:
+        st = stem_of(r1)
+        if st == sid_lower or st.startswith(sid_lower + "_") or st.startswith(sid_lower + "-"):
+            r2 = _find_r2(r1, candidates)
+            if r2:
+                return r1, r2
+
+    # 2. Substring
+    for r1 in r1_cands:
+        if sid_lower in stem_of(r1):
+            r2 = _find_r2(r1, candidates)
+            if r2:
+                return r1, r2
+
+    # 3. difflib
+    stems = [stem_of(r1) for r1 in r1_cands]
+    matches = difflib.get_close_matches(sid_lower, stems, n=1, cutoff=cutoff)
+    if matches:
+        best = r1_cands[stems.index(matches[0])]
+        r2 = _find_r2(best, candidates)
+        if r2:
+            return best, r2
+
+    return None, None
+
+
+def _find_r2(r1: Path, candidates: list[Path]) -> Path | None:
+    r2_name = R1_PATTERNS.sub(lambda m: m.group().replace("R1", "R2"), r1.name)
+    r2_lookup = {f.name: f for f in candidates if R2_PATTERNS.search(f.name)}
+    return r2_lookup.get(r2_name) or r2_lookup.get(r2_name + ".gz")
+
+
+def parse_mapping_tsv(path: str) -> tuple[list[str], list[dict]]:
+    """
+    Parse a mapping TSV into (column_names, rows).
+
+    Accepted column names (case-insensitive, flexible):
+      run_id / run
+      sample_id / sample_name / sample
+      r1_fastq / r1 / fastq_r1 / read1
+      r2_fastq / r2 / fastq_r2 / read2
+
+    Returns normalised dicts with keys: run_id, sample_id, r1 (may be ""), r2 (may be "").
+    """
+    ALIASES = {
+        "run_id":    {"run_id", "run", "run_name"},
+        "sample_id": {"sample_id", "sample", "sample_name"},
+        "r1":        {"r1_fastq", "r1", "fastq_r1", "read1", "r1_path"},
+        "r2":        {"r2_fastq", "r2", "fastq_r2", "read2", "r2_path"},
+    }
+
+    with open(path, newline="", encoding="utf-8") as fh:
+        # Sniff delimiter
+        sample = fh.read(4096)
+        fh.seek(0)
+        dialect = csv.Sniffer().sniff(sample, delimiters="\t,")
+        reader = csv.DictReader(fh, dialect=dialect)
+        raw_cols = reader.fieldnames or []
+
+        col_map: dict[str, str] = {}   # raw header → canonical key
+        for raw in raw_cols:
+            for canon, aliases in ALIASES.items():
+                if raw.strip().lower() in aliases:
+                    col_map[raw] = canon
+                    break
+
+        rows = []
+        for raw_row in reader:
+            row: dict[str, str] = {"run_id": "", "sample_id": "", "r1": "", "r2": ""}
+            for raw_col, canon in col_map.items():
+                row[canon] = (raw_row.get(raw_col) or "").strip()
+            rows.append(row)
+
+    return raw_cols, rows
 
 
 def unique_sample_id(base: str, existing: set[str]) -> str:
@@ -153,12 +272,33 @@ class Screen1(QWidget):
         # ── Part C: per-run folder selection (hidden until Part B done) ──
         self._part_c_outer = QGroupBox("Step 3 — Select FASTQ files for each run")
         self._part_c_outer.hide()
+        c_outer_layout = QVBoxLayout(self._part_c_outer)
+
+        # Global TSV import row
+        tsv_row = QHBoxLayout()
+        lbl_tsv = QLabel("Import all runs at once:")
+        btn_tsv = QPushButton("Import from TSV…")
+        btn_tsv.setToolTip(
+            "TSV must have a 'run_id' column and a 'sample_id' column.\n"
+            "Optionally include 'r1_fastq' / 'r2_fastq' columns for direct paths,\n"
+            "or choose a FASTQ folder for fuzzy filename matching."
+        )
+        btn_tsv.clicked.connect(self._import_all_from_tsv)
+        tsv_row.addWidget(lbl_tsv)
+        tsv_row.addWidget(btn_tsv)
+        tsv_row.addStretch()
+        c_outer_layout.addLayout(tsv_row)
+
+        sep = QFrame()
+        sep.setFrameShape(QFrame.HLine)
+        sep.setFrameShadow(QFrame.Sunken)
+        c_outer_layout.addWidget(sep)
+
         self._part_c_scroll = QScrollArea()
         self._part_c_scroll.setWidgetResizable(True)
         self._part_c_inner = QWidget()
         self._part_c_layout = QVBoxLayout(self._part_c_inner)
         self._part_c_scroll.setWidget(self._part_c_inner)
-        c_outer_layout = QVBoxLayout(self._part_c_outer)
         c_outer_layout.addWidget(self._part_c_scroll)
         self._btn_next_c = QPushButton("Next →  (proceed to sample metadata)")
         self._btn_next_c.clicked.connect(self._go_to_screen2)
@@ -228,18 +368,18 @@ class Screen1(QWidget):
 
         btn_layout = QHBoxLayout()
         btn_browse = QPushButton("Browse folder…")
-        btn_add = QPushButton("Add files manually…")
+        btn_add    = QPushButton("Add files…")
         btn_layout.addWidget(btn_browse)
         btn_layout.addWidget(btn_add)
         btn_layout.addStretch()
         box_layout.addLayout(btn_layout)
         box_layout.addWidget(table)
 
-        section = {"widget": box, "run_name": run_name, "table": table, "rows": []}
+        section = {"widget": box, "run_name": run_name, "table": table}
         self._run_folder_sections.append(section)
 
         btn_browse.clicked.connect(lambda checked=False, s=section: self._browse_folder(s))
-        btn_add.clicked.connect(lambda checked=False, s=section: self._add_files_manually(s))
+        btn_add.clicked.connect(lambda checked=False, s=section: self._add_files_multi(s))
 
         return section
 
@@ -258,19 +398,39 @@ class Screen1(QWidget):
         for stem, r1, r2 in pairs:
             self._add_row(section, stem, r1, r2)
 
-    def _add_files_manually(self, section: dict):
-        r1, _ = QFileDialog.getOpenFileName(
-            self, "Select R1 FASTQ", "", "FASTQ files (*.fastq *.fastq.gz *.fq *.fq.gz)"
+    def _add_files_multi(self, section: dict):
+        """Multi-select any number of FASTQ files; auto-pair by R1/R2 naming."""
+        files, _ = QFileDialog.getOpenFileNames(
+            self,
+            "Select FASTQ files (R1 and/or R2)",
+            "",
+            "FASTQ files (*.fastq *.fastq.gz *.fq *.fq.gz)",
         )
-        if not r1:
+        if not files:
             return
-        r2, _ = QFileDialog.getOpenFileName(
-            self, "Select R2 FASTQ", "", "FASTQ files (*.fastq *.fastq.gz *.fq *.fq.gz)"
-        )
-        if not r2:
+        pairs = pair_fastqs_from_files(files)
+        if not pairs:
+            # Fallback: if user selected files that don't match R1/R2 patterns,
+            # let them pair one R1 + one R2 manually.
+            if len(files) == 2:
+                f0, f1 = Path(files[0]), Path(files[1])
+                if R1_PATTERNS.search(f0.name):
+                    r1, r2 = files[0], files[1]
+                elif R1_PATTERNS.search(f1.name):
+                    r1, r2 = files[1], files[0]
+                else:
+                    r1, r2 = files[0], files[1]
+                stem = R1_PATTERNS.split(Path(r1).name)[0] or Path(r1).name
+                self._add_row(section, stem, r1, r2)
+            else:
+                QMessageBox.warning(
+                    self, "No pairs found",
+                    "Could not detect R1/R2 pairs from the selected files.\n"
+                    "Expected filenames containing _R1_ or _R2_."
+                )
             return
-        stem = R1_PATTERNS.split(Path(r1).name)[0]
-        self._add_row(section, stem, r1, r2)
+        for stem, r1, r2 in pairs:
+            self._add_row(section, stem, r1, r2)
 
     def _add_row(self, section: dict, sample_id: str, r1: str, r2: str):
         table: QTableWidget = section["table"]
@@ -279,33 +439,154 @@ class Screen1(QWidget):
         table.setItem(row, 0, QTableWidgetItem(sample_id))
         table.setItem(row, 1, QTableWidgetItem(r1))
         table.setItem(row, 2, QTableWidgetItem(r2))
+        # Remove button: look up own row index at click time so it survives
+        # other rows being deleted above it.
         btn_rm = QPushButton("✕")
         btn_rm.setFixedWidth(30)
-        btn_rm.clicked.connect(lambda checked=False, r=row, t=table: self._remove_row(t, r))
+        def _make_remover(t: QTableWidget, b: QPushButton):
+            def remove():
+                for r in range(t.rowCount()):
+                    if t.cellWidget(r, 3) is b:
+                        t.removeRow(r)
+                        break
+            return remove
+        btn_rm.clicked.connect(_make_remover(table, btn_rm))
         table.setCellWidget(row, 3, btn_rm)
-        section["rows"].append({"sample_id": sample_id, "r1": r1, "r2": r2})
 
     def _remove_row(self, table: QTableWidget, row: int):
         table.removeRow(row)
 
+    # ── TSV global import ──
+
+    def _import_all_from_tsv(self):
+        """
+        Import samples for ALL runs from a mapping TSV.
+
+        Accepted columns (case-insensitive):
+          run_id / run
+          sample_id / sample_name / sample
+          r1_fastq / r1 / fastq_r1 / read1     (optional)
+          r2_fastq / r2 / fastq_r2 / read2     (optional)
+
+        If r1/r2 columns are absent or empty the user is asked to choose
+        a FASTQ folder and sample names are matched to filenames with fuzzy
+        matching (exact prefix → substring → difflib).
+        """
+        tsv_path, _ = QFileDialog.getOpenFileName(
+            self, "Select mapping TSV", "", "TSV / CSV files (*.tsv *.csv *.txt)"
+        )
+        if not tsv_path:
+            return
+
+        try:
+            _, rows = parse_mapping_tsv(tsv_path)
+        except Exception as exc:
+            QMessageBox.critical(self, "TSV parse error", str(exc))
+            return
+
+        if not rows:
+            QMessageBox.warning(self, "Empty TSV", "No data rows found in the file.")
+            return
+
+        # Determine whether direct paths or fuzzy matching needed
+        has_paths = any(r["r1"] for r in rows)
+
+        folder_candidates: list[Path] = []
+        if not has_paths:
+            folder = QFileDialog.getExistingDirectory(
+                self, "Select FASTQ folder for fuzzy matching"
+            )
+            if not folder:
+                return
+            folder_candidates = [
+                f for f in Path(folder).iterdir() if is_fastq(f)
+            ]
+            if not folder_candidates:
+                QMessageBox.warning(
+                    self, "No FASTQ files",
+                    "No FASTQ files found in the selected folder."
+                )
+                return
+
+        # Build a mapping run_name → section
+        section_map = {s["run_name"]: s for s in self._run_folder_sections}
+
+        unmatched: list[str] = []
+        unknown_runs: set[str] = set()
+        matched = 0
+
+        for row in rows:
+            run_id    = row["run_id"]
+            sample_id = row["sample_id"]
+            if not run_id or not sample_id:
+                continue
+
+            section = section_map.get(run_id)
+            if section is None:
+                unknown_runs.add(run_id)
+                continue
+
+            if has_paths and row["r1"] and row["r2"]:
+                self._add_row(section, sample_id, row["r1"], row["r2"])
+                matched += 1
+            elif has_paths and row["r1"]:
+                # Only R1 supplied — try to derive R2
+                r1 = Path(row["r1"])
+                r2_name = R1_PATTERNS.sub(
+                    lambda m: m.group().replace("R1", "R2"), r1.name
+                )
+                r2 = r1.parent / r2_name
+                if r2.exists():
+                    self._add_row(section, sample_id, str(r1), str(r2))
+                    matched += 1
+                else:
+                    unmatched.append(f"{run_id}/{sample_id} (R2 not found)")
+            else:
+                # Fuzzy match against folder
+                r1_path, r2_path = fuzzy_match_sample(sample_id, folder_candidates)
+                if r1_path and r2_path:
+                    self._add_row(section, sample_id, str(r1_path), str(r2_path))
+                    matched += 1
+                else:
+                    unmatched.append(f"{run_id}/{sample_id}")
+
+        # Report
+        lines = [f"Imported {matched} sample(s)."]
+        if unknown_runs:
+            lines.append(
+                f"\nRun IDs in TSV not found in this batch "
+                f"(check spelling):\n  " + "\n  ".join(sorted(unknown_runs))
+            )
+        if unmatched:
+            lines.append(
+                f"\nNo FASTQ match found for:\n  " + "\n  ".join(unmatched)
+            )
+        if unknown_runs or unmatched:
+            QMessageBox.warning(self, "Import complete with warnings", "\n".join(lines))
+        else:
+            QMessageBox.information(self, "Import complete", "\n".join(lines))
+
     # ── Part C → Screen 2 ──
 
     def _go_to_screen2(self):
-        # Collect all rows from all sections
+        # Collect all rows from all section tables
         all_rows = []
         for section in self._run_folder_sections:
             table: QTableWidget = section["table"]
             run_name = section["run_name"]
             for r in range(table.rowCount()):
-                sample_id = (table.item(r, 0) or QTableWidgetItem("")).text().strip()
-                r1 = (table.item(r, 1) or QTableWidgetItem("")).text().strip()
-                r2 = (table.item(r, 2) or QTableWidgetItem("")).text().strip()
+                def cell(col: int) -> str:
+                    item = table.item(r, col)
+                    return item.text().strip() if item else ""
+                sample_id = cell(0)
+                r1        = cell(1)
+                r2        = cell(2)
                 if sample_id and r1 and r2:
                     all_rows.append({
                         "sample_id": sample_id,
-                        "run_id": run_name,
-                        "r1": r1,
-                        "r2": r2,
+                        "run_id":    run_name,
+                        "r1":        r1,
+                        "r2":        r2,
                     })
         if not all_rows:
             QMessageBox.warning(
