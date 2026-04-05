@@ -35,11 +35,25 @@ detected = sorted(set(
 # Parse expected taxa (delimited by ; , |)
 expected_list = [x.strip() for x in re.split(r"[;,|]", expected) if x.strip()]
 
-detected_set   = set(detected)
-expected_set   = set(expected_list)
-detected_exp   = sorted(expected_set & detected_set)
-missing_exp    = sorted(expected_set - detected_set)
-unexpected_det = sorted(detected_set - expected_set)
+# Concordance is genus-level: the pipeline detects at genus resolution, so we
+# extract the first word from each expected taxon string before comparing.
+# Examples:
+#   "Orientia tsutsugamushi" → "Orientia"
+#   "Leptospira spp"        → "Leptospira"
+#   "Rickettsia"            → "Rickettsia"  (already genus)
+#   "Burkholderia pseudomallei" → "Burkholderia"
+# dict.fromkeys preserves order while deduplicating (handles MIXED4 where
+# Streptococcus pneumoniae + Streptococcus suis → one "Streptococcus" entry).
+def to_genus(t: str) -> str:
+    return t.strip().split()[0] if t.strip() else ""
+
+expected_genera  = list(dict.fromkeys(to_genus(t) for t in expected_list if to_genus(t)))
+detected_lower   = {g.lower() for g in detected}
+expected_lower   = {g.lower() for g in expected_genera}
+
+detected_exp   = sorted(g for g in expected_genera if g.lower() in detected_lower)
+missing_exp    = sorted(g for g in expected_genera if g.lower() not in detected_lower)
+unexpected_det = sorted(g for g in detected        if g.lower() not in expected_lower)
 tp_rows        = len(detected_exp)
 
 if sample_type.upper() in VALIDATION_TYPES and expected_list:
