@@ -230,6 +230,108 @@ def unique_sample_id(base: str, existing: set[str]) -> str:
     return f"{base}_{i}"
 
 
+def parse_terra_tsv(path: str) -> dict:
+    """
+    Parse a previously-exported Terra Sheet Builder TSV for re-editing.
+
+    Returns dict with keys:
+      table_name   – str, from entity:{table_name}_id header
+      analysis_date – str "YYYY-MM-DD" (from analysis_comments, or "")
+      initials      – str (from analysis_comments, or "")
+      run_names     – list[str], unique run_ids in order of first appearance
+      rows          – list[dict] with sample_id, run_id, sample_type, mode,
+                      expected_taxa, r1, r2
+      errors        – list[str] of validation problems
+    """
+    with open(path, newline="", encoding="utf-8") as fh:
+        reader = csv.DictReader(fh, delimiter="\t")
+        headers = reader.fieldnames or []
+        raw_rows = list(reader)
+
+    if not headers:
+        raise ValueError("TSV has no column headers.")
+
+    entity_col = headers[0]
+    m = re.match(r"^entity:(.+?)_id$", entity_col)
+    table_name = m.group(1) if m else ""
+
+    rows: list[dict] = []
+    run_names_seen: list[str] = []
+    errors: list[str] = []
+
+    for i, raw in enumerate(raw_rows, start=1):
+        sid  = (raw.get(entity_col)           or "").strip()
+        rid  = (raw.get("run_id")              or "").strip()
+        st   = (raw.get("sample_type")         or "").strip()
+        mode = (raw.get("mode")                or "").strip()
+        exp  = (raw.get("expected_taxa")        or "").strip()
+        r1   = (raw.get("r1_fastq")            or "").strip()
+        r2   = (raw.get("r2_fastq")            or "").strip()
+        cmt  = (raw.get("analysis_comments")   or "").strip()
+
+        if rid and rid not in run_names_seen:
+            run_names_seen.append(rid)
+
+        label = f"Row {i}" + (f" ({sid})" if sid else "")
+
+        if st not in SAMPLE_TYPES:
+            errors.append(
+                f"{label}: unrecognized sample_type '{st}'. "
+                f"Expected one of: {', '.join(SAMPLE_TYPES)}"
+            )
+        if mode not in ("routine", "validation", ""):
+            errors.append(
+                f"{label}: unrecognized mode '{mode}'. "
+                "Expected 'routine' or 'validation'."
+            )
+        if mode == "validation" and not exp:
+            errors.append(
+                f"{label}: mode=validation but expected_taxa is empty."
+            )
+        if mode == "routine" and exp:
+            errors.append(
+                f"{label}: mode=routine but expected_taxa is '{exp}'. "
+                "This value will be cleared on export."
+            )
+
+        rows.append({
+            "sample_id":    sid,
+            "run_id":       rid,
+            "sample_type":  st,
+            "mode":         mode,
+            "expected_taxa": exp,
+            "r1":           r1,
+            "r2":           r2,
+            "analysis_comments": cmt,
+        })
+
+    # Duplicate sample_id check
+    sids = [r["sample_id"] for r in rows]
+    dupes = sorted({s for s in sids if sids.count(s) > 1 and s})
+    if dupes:
+        errors.append(f"Duplicate sample_ids: {', '.join(dupes)}")
+
+    # Extract date / initials from first analysis_comments
+    analysis_date = ""
+    initials = ""
+    if rows:
+        cmt = rows[0]["analysis_comments"]
+        dm = re.search(r"(\d{4}-\d{2}-\d{2})", cmt)
+        if dm:
+            analysis_date = dm.group(1)
+            after = cmt[dm.end():].lstrip("_")
+            initials = after.split("_")[0] if after else ""
+
+    return {
+        "table_name":    table_name,
+        "analysis_date": analysis_date,
+        "initials":      initials,
+        "run_names":     run_names_seen,
+        "rows":          rows,
+        "errors":        errors,
+    }
+
+
 # ---------------------------------------------------------------------------
 # Screen 1
 # ---------------------------------------------------------------------------
@@ -671,19 +773,38 @@ class Screen2(QWidget):
         self._table.horizontalHeader().setSectionResizeMode(COL_EXPECTED, QHeaderView.Stretch)
         self._table.setSelectionMode(QAbstractItemView.ExtendedSelection)
         self._table.setSelectionBehavior(QAbstractItemView.SelectItems)
+        # Double-click (or F2) required to enter edit mode — prevents accidental
+        # keystrokes from corrupting cell values while scrolling or navigating.
+        self._table.setEditTriggers(
+            QAbstractItemView.DoubleClicked | QAbstractItemView.EditKeyPressed
+        )
+        # Smooth pixel-by-pixel scrolling
+        self._table.setVerticalScrollMode(QAbstractItemView.ScrollPerPixel)
+        self._table.setHorizontalScrollMode(QAbstractItemView.ScrollPerPixel)
+        self._table.setAlternatingRowColors(True)
+        self._table.verticalHeader().setDefaultSectionSize(28)
         self._table.itemChanged.connect(self._on_item_changed)
         layout.addWidget(self._table)
+
+        # Hint label below table
+        hint = QLabel("Tip: double-click a cell (or select + press F2) to edit it.")
+        hint.setStyleSheet("color: #666; font-size: 11px;")
+        layout.addWidget(hint)
 
         # ── Buttons ──
         btn_row = QHBoxLayout()
         self._btn_back = QPushButton("← Back")
         self._btn_back.clicked.connect(self._go_back)
+        self._btn_load = QPushButton("📂 Load existing TSV…")
+        self._btn_load.setToolTip("Load a previously-exported Terra TSV for editing.")
+        self._btn_load.clicked.connect(self._load_existing_tsv)
         self._btn_validate = QPushButton("✓ Validate")
         self._btn_validate.clicked.connect(self._validate)
         self._btn_export = QPushButton("⬇ Export TSV")
         self._btn_export.setEnabled(False)
         self._btn_export.clicked.connect(self._export)
         btn_row.addWidget(self._btn_back)
+        btn_row.addWidget(self._btn_load)
         btn_row.addStretch()
         btn_row.addWidget(self._btn_validate)
         btn_row.addWidget(self._btn_export)
@@ -714,19 +835,21 @@ class Screen2(QWidget):
             seen.add(sid)
             r = self._table.rowCount()
             self._table.insertRow(r)
-            self._set_cell(r, COL_SAMPLE_ID, sid)
+            self._set_cell(r, COL_SAMPLE_ID, sid,
+                           file_data={"r1": row_data["r1"], "r2": row_data["r2"]})
             self._set_cell(r, COL_RUN_ID, row_data["run_id"])
             self._set_cell(r, COL_SAMPLE_TYPE, "clinical")
             self._set_cell(r, COL_MODE, AUTO_FILL["clinical"][0])
             self._set_cell(r, COL_EXPECTED, AUTO_FILL["clinical"][1])
         self._blocking_itemChanged = False
 
-    def _set_cell(self, row: int, col: int, value: str):
+    def _set_cell(self, row: int, col: int, value: str, file_data: dict | None = None):
         item = QTableWidgetItem(value)
-        if col in (COL_SAMPLE_ID, COL_EXPECTED):
-            item.setFlags(item.flags() | Qt.ItemIsEditable)
-        elif col in (COL_RUN_ID, COL_SAMPLE_TYPE, COL_MODE):
-            item.setFlags(item.flags() | Qt.ItemIsEditable)
+        item.setFlags(item.flags() | Qt.ItemIsEditable)
+        # Store r1/r2 on the sample_id cell so export can retrieve them
+        # even if the user renames the sample_id.
+        if col == COL_SAMPLE_ID and file_data is not None:
+            item.setData(Qt.UserRole, file_data)
         self._table.setItem(row, col, item)
 
     # ── Live table name validation ──
@@ -846,14 +969,6 @@ class Screen2(QWidget):
         initials    = self._initials_edit.text().strip()
         comment     = f"{table_name}_{analysis_dt}_{initials}"
 
-        # Build a lookup from sample_id → r1/r2
-        r1_map: dict[str, str] = {}
-        r2_map: dict[str, str] = {}
-        for row_data in self._rows:
-            sid = row_data["sample_id"]
-            r1_map[sid] = row_data["r1"]
-            r2_map[sid] = row_data["r2"]
-
         save_path, _ = QFileDialog.getSaveFileName(
             self, "Save TSV", f"{table_name}.tsv", "TSV files (*.tsv)"
         )
@@ -875,9 +990,17 @@ class Screen2(QWidget):
                 st   = self._cell_text(r, COL_SAMPLE_TYPE)
                 mode = self._cell_text(r, COL_MODE)
                 exp  = self._cell_text(r, COL_EXPECTED)
-                # Look up r1/r2 by original sample_id (before dedup rename)
-                r1 = r1_map.get(sid, "")
-                r2 = r2_map.get(sid, "")
+                # Routine samples must always have empty expected_taxa
+                if mode == "routine":
+                    exp = ""
+                # r1/r2 stored in UserRole on the sample_id cell
+                # (survives user renaming the sample_id)
+                file_data = {}
+                id_item = self._table.item(r, COL_SAMPLE_ID)
+                if id_item:
+                    file_data = id_item.data(Qt.UserRole) or {}
+                r1 = file_data.get("r1", "")
+                r2 = file_data.get("r2", "")
                 writer.writerow({
                     f"entity:{table_name}_id": sid,
                     "run_id":           rid,
@@ -892,6 +1015,95 @@ class Screen2(QWidget):
         QMessageBox.information(
             self, "Exported",
             f"Saved {n} rows to:\n{save_path}"
+        )
+
+    # ── Load existing TSV ──
+
+    def _load_existing_tsv(self):
+        """Load a previously-exported Terra TSV back into the editor."""
+        path, _ = QFileDialog.getOpenFileName(
+            self, "Load existing Terra TSV", "",
+            "TSV files (*.tsv *.txt);;All files (*)"
+        )
+        if not path:
+            return
+
+        try:
+            data = parse_terra_tsv(path)
+        except Exception as exc:
+            QMessageBox.critical(self, "Load error",
+                                 f"Could not parse TSV:\n{exc}")
+            return
+
+        if not data["rows"]:
+            QMessageBox.warning(self, "Empty TSV", "No data rows found in the file.")
+            return
+
+        # Show issues and ask user whether to proceed
+        if data["errors"]:
+            msg = (
+                "The following issues were found in the TSV:\n\n"
+                + "\n".join(f"  • {e}" for e in data["errors"])
+                + "\n\nYou can still load and fix these in the editor.\n"
+                  "Proceed?"
+            )
+            reply = QMessageBox.warning(
+                self, "TSV issues found", msg,
+                QMessageBox.Ok | QMessageBox.Cancel,
+                QMessageBox.Ok,
+            )
+            if reply != QMessageBox.Ok:
+                return
+
+        # ── Populate header fields ──
+        if data["table_name"]:
+            self._table_name_edit.setText(data["table_name"])
+        if data["analysis_date"]:
+            qd = QDate.fromString(data["analysis_date"], "yyyy-MM-dd")
+            if qd.isValid():
+                self._date_edit.setDate(qd)
+        if data["initials"]:
+            self._initials_edit.setText(data["initials"])
+
+        # ── Update run_names and reinstall delegates ──
+        run_names = data["run_names"]
+        self._run_names = run_names
+        run_delegate  = ComboDelegate(run_names, self._table)
+        type_delegate = ComboDelegate(SAMPLE_TYPES, self._table)
+        self._table.setItemDelegateForColumn(COL_RUN_ID, run_delegate)
+        self._table.setItemDelegateForColumn(COL_SAMPLE_TYPE, type_delegate)
+
+        # ── Populate table rows ──
+        self._blocking_itemChanged = True
+        self._table.setRowCount(0)
+        # Also rebuild _rows so that the Back → re-populate path still works
+        self._rows = []
+        for r_data in data["rows"]:
+            self._rows.append({
+                "sample_id": r_data["sample_id"],
+                "run_id":    r_data["run_id"],
+                "r1":        r_data["r1"],
+                "r2":        r_data["r2"],
+            })
+            r = self._table.rowCount()
+            self._table.insertRow(r)
+            self._set_cell(r, COL_SAMPLE_ID, r_data["sample_id"],
+                           file_data={"r1": r_data["r1"], "r2": r_data["r2"]})
+            self._set_cell(r, COL_RUN_ID,      r_data["run_id"])
+            self._set_cell(r, COL_SAMPLE_TYPE,  r_data["sample_type"])
+            self._set_cell(r, COL_MODE,         r_data["mode"])
+            self._set_cell(r, COL_EXPECTED,     r_data["expected_taxa"])
+        self._blocking_itemChanged = False
+
+        self._validated = False
+        self._btn_export.setEnabled(False)
+
+        n = len(data["rows"])
+        suffix = (f"\n\nPlease fix {len(data['errors'])} issue(s) before exporting."
+                  if data["errors"] else "")
+        QMessageBox.information(
+            self, "Loaded",
+            f"Loaded {n} row(s) from {Path(path).name}.{suffix}"
         )
 
     # ── Back ──
