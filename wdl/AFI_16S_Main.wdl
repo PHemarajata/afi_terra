@@ -180,7 +180,8 @@ workflow AFI_16S_Main {
     File align_metrics = ExtractMetrics.metrics
 
     # Interpretation
-    File calls = InterpretCalls.calls
+    File calls         = InterpretCalls.calls
+    File taxa_evidence = InterpretCalls.taxa_evidence
 
     # Summaries
     File? validation_summary = CompareExpectedConcordance.validation_summary
