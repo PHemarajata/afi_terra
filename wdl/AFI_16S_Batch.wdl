@@ -266,7 +266,8 @@ workflow AFI_16S_Batch {
     Array[String] ntc_background_run_ids  = BuildNTCBackground.per_run_ids
 
     # Phase 2 — interpretation
-    Array[File] calls = P2_Interpret.calls
+    Array[File] calls            = P2_Interpret.calls
+    Array[File] taxa_evidence_files = P2_Interpret.taxa_evidence
 
     # Phase 2 — per-sample summaries
     Array[File?] validation_summaries = P2_Validate.validation_summary
