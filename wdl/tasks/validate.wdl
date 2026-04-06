@@ -78,22 +78,56 @@ any_rick_align_confirmed = any(
     for v in rick_aln_rows.get("align_confirmed", pd.Series(dtype=str))
 )
 
-order_rescued  = []
-truly_missing  = []
+# Broader Rickettsiales order set for centrifuge rescue
+RICK_ORDER_SET = {
+    "orientia", "rickettsia", "anaplasma", "ehrlichia",
+    "neorickettsia", "neoehrlichia", "wolbachia"
+}
+CFR_FLOOR = 500
+
+# Pass 1: alignment rescue (existing logic)
+order_rescued = []
+truly_missing = []
 for g in missing_exp:
     if g.lower() in RICK_GENERA_SET and any_rick_align_confirmed:
         order_rescued.append(g)
     else:
         truly_missing.append(g)
 
+# Pass 2: centrifuge rescue
+# Sub-case A: cfr_reads on alignment rows covers Orientia/Rickettsia
+# (centrifuge rows for these genera are suppressed in call_taxa.py)
+any_rick_cfr = any(
+    int(float(str(r.get("cfr_reads", 0) or 0))) >= CFR_FLOOR
+    for _, r in rick_aln_rows.iterrows()
+)
+# Sub-case B: centrifuge Detected rows for broader Rickettsiales genera
+if not any_rick_cfr:
+    rick_cfr_rows = calls[
+        (calls["source"] == "centrifuge") &
+        (calls["genus"].str.lower().isin(RICK_ORDER_SET)) &
+        (calls["call"] == "Detected")
+    ]
+    any_rick_cfr = not rick_cfr_rows.empty
+
+cfr_rescued   = []
+still_missing = []
+for g in truly_missing:
+    if g.lower() in RICK_ORDER_SET and any_rick_cfr:
+        cfr_rescued.append(g)
+    else:
+        still_missing.append(g)
+
 # Build rescue_mechanisms string (empty when no rescue was needed)
 rescue_parts = []
 if order_rescued:
     rescue_parts.append(f"Rickettsiales_order({','.join(order_rescued)})")
+if cfr_rescued:
+    rescue_parts.append(f"Rickettsiales_cfr_rescue({','.join(cfr_rescued)})")
 rescue_mechanisms = ";".join(rescue_parts)
 
 if sample_type.upper() in VALIDATION_TYPES and expected_list:
-    validation_result = "Concordant" if not truly_missing else "Discordant"
+    validation_result = "Concordant" if not still_missing else "Discordant"
 else:
     validation_result = "Not_applicable"
 
@@ -112,8 +146,8 @@ out = pd.DataFrame([{
     "detected_taxa":           ",".join(detected),
     "detected_expected_taxa":  ",".join(detected_exp),
     "detected_expected_count": tp_rows,
-    "missing_expected_taxa":   ",".join(truly_missing),
-    "order_rescue_taxa":       ",".join(order_rescued),
+    "missing_expected_taxa":   ",".join(still_missing),
+    "order_rescue_taxa":       ",".join(order_rescued + cfr_rescued),
     "unexpected_detected_taxa":",".join(unexpected_det),
     "validation_result":       validation_result,
     "rescue_mechanisms":       rescue_mechanisms,
