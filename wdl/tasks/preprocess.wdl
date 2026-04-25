@@ -5,18 +5,15 @@ task FastpClean {
   input {
     File r1
     File r2
-    Int threads = 4
     # staphb/fastp is a lean public container maintained by StaPH-B.
     # It is separate from afi-terra so the core image stays python/samtools only.
     String docker_image = "staphb/fastp:0.23.4"
   }
 
   command <<<
-  set -euo pipefail
   fastp \
     -i ~{r1} \
     -I ~{r2} \
-    -w ~{threads} \
     -o clean_R1.fastq.gz \
     -O clean_R2.fastq.gz
   >>>
@@ -28,7 +25,6 @@ task FastpClean {
 
   runtime {
     docker: docker_image
-    cpu:    threads
     memory: "8G"
     disks:  "local-disk 100 HDD"
   }
