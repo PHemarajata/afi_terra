@@ -464,3 +464,169 @@ PY
     disks:  "local-disk 20 HDD"
   }
 }
+
+# ---------------------------------------------------------------------------
+# BuildSampleResultsBundle
+#   Final gather task — creates a sample-oriented manifest plus one tarball
+#   with per-sample folders. This gives Terra set tables a single, searchable
+#   download surface instead of long Array[File] cells.
+# ---------------------------------------------------------------------------
+task BuildSampleResultsBundle {
+  input {
+    Array[String] run_ids
+    Array[String] sample_ids
+    Array[String] sample_types
+    Array[String] modes
+    Array[File] calls_files
+    Array[File] taxa_evidence_files
+    Array[File] centrifuger_kreports
+    Array[File] centrifuger_genus_counts
+    Array[File] align_metrics
+    Array[File] minimap_bams
+    Array[File] minimap_bais
+    Array[File?] validation_summaries
+    Array[File?] routine_summaries
+    String docker_image = "phemarajata614/afi-terra:0.4.1"
+  }
+
+  command <<<
+  python3 - <<'PY'
+import csv
+import re
+import shutil
+import tarfile
+from pathlib import Path
+
+POSITIVE_CALLS = {"Confirmed", "Probable", "Detected"}
+
+def load_lines(path: str) -> list[str]:
+    with open(path, encoding="utf-8") as fh:
+        return [ln.rstrip("\n") for ln in fh if ln.strip()]
+
+def read_tsv(path: str) -> list[dict]:
+    with open(path, encoding="utf-8") as fh:
+        return [dict(row) for row in csv.DictReader(fh, delimiter="\t")]
+
+def safe_name(value: str) -> str:
+    text = value.strip() or "sample"
+    return re.sub(r"[^A-Za-z0-9._-]+", "_", text)
+
+def copy_artifact(src: str, dest: Path) -> str:
+    dest.parent.mkdir(parents=True, exist_ok=True)
+    shutil.copy2(src, dest)
+    return dest.as_posix()
+
+run_ids = load_lines("~{write_lines(run_ids)}")
+sample_ids = load_lines("~{write_lines(sample_ids)}")
+sample_types = load_lines("~{write_lines(sample_types)}")
+modes = load_lines("~{write_lines(modes)}")
+calls_paths = load_lines("~{write_lines(calls_files)}")
+taxa_evidence_paths = load_lines("~{write_lines(taxa_evidence_files)}")
+kreport_paths = load_lines("~{write_lines(centrifuger_kreports)}")
+genus_count_paths = load_lines("~{write_lines(centrifuger_genus_counts)}")
+align_metric_paths = load_lines("~{write_lines(align_metrics)}")
+bam_paths = load_lines("~{write_lines(minimap_bams)}")
+bai_paths = load_lines("~{write_lines(minimap_bais)}")
+validation_paths = load_lines("~{write_lines(select_all(validation_summaries))}")
+routine_paths = load_lines("~{write_lines(select_all(routine_summaries))}")
+
+expected_len = len(sample_ids)
+for label, values in {
+    "run_ids": run_ids,
+    "sample_types": sample_types,
+    "modes": modes,
+    "calls_files": calls_paths,
+    "taxa_evidence_files": taxa_evidence_paths,
+    "centrifuger_kreports": kreport_paths,
+    "centrifuger_genus_counts": genus_count_paths,
+    "align_metrics": align_metric_paths,
+    "minimap_bams": bam_paths,
+    "minimap_bais": bai_paths,
+}.items():
+    if len(values) != expected_len:
+        raise SystemExit(f"{label} length {len(values)} does not match sample_ids length {expected_len}")
+
+validation_by_id: dict[str, str] = {}
+routine_by_id: dict[str, str] = {}
+for path in validation_paths:
+    for row in read_tsv(path):
+        sid = row.get("sample_id", "").strip()
+        if sid:
+            validation_by_id[sid] = path
+for path in routine_paths:
+    for row in read_tsv(path):
+        sid = row.get("sample_id", "").strip()
+        if sid:
+            routine_by_id[sid] = path
+
+bundle_root = Path("sample_results")
+bundle_root.mkdir(exist_ok=True)
+manifest_rows = []
+
+for idx, sample_id in enumerate(sample_ids):
+    sample_dir = bundle_root / safe_name(sample_id)
+
+    calls = read_tsv(calls_paths[idx])
+    detected = sorted({row.get("genus", "") for row in calls if row.get("call") in POSITIVE_CALLS and row.get("genus", "")})
+
+    calls_rel = copy_artifact(calls_paths[idx], sample_dir / f"{safe_name(sample_id)}.calls.tsv")
+    taxa_evidence_rel = copy_artifact(taxa_evidence_paths[idx], sample_dir / f"{safe_name(sample_id)}.taxa_evidence.tsv")
+    kreport_rel = copy_artifact(kreport_paths[idx], sample_dir / f"{safe_name(sample_id)}.centrifuger.kreport.tsv")
+    genus_rel = copy_artifact(genus_count_paths[idx], sample_dir / f"{safe_name(sample_id)}.centrifuger.genus_counts.tsv")
+    metrics_rel = copy_artifact(align_metric_paths[idx], sample_dir / f"{safe_name(sample_id)}.align_metrics.tsv")
+    bam_rel = copy_artifact(bam_paths[idx], sample_dir / f"{safe_name(sample_id)}.minimap.bam")
+    bai_rel = copy_artifact(bai_paths[idx], sample_dir / f"{safe_name(sample_id)}.minimap.bam.bai")
+
+    validation_rel = ""
+    if sample_id in validation_by_id:
+        validation_rel = copy_artifact(validation_by_id[sample_id], sample_dir / f"{safe_name(sample_id)}.validation_summary.tsv")
+
+    routine_rel = ""
+    if sample_id in routine_by_id:
+        routine_rel = copy_artifact(routine_by_id[sample_id], sample_dir / f"{safe_name(sample_id)}.routine_summary.tsv")
+
+    manifest_rows.append({
+        "run_id": run_ids[idx],
+        "sample_id": sample_id,
+        "sample_type": sample_types[idx],
+        "mode": modes[idx],
+        "detected_taxa": ",".join(detected),
+        "n_detected": str(len(detected)),
+        "calls_path": calls_rel,
+        "taxa_evidence_path": taxa_evidence_rel,
+        "centrifuger_kreport_path": kreport_rel,
+        "centrifuger_genus_counts_path": genus_rel,
+        "align_metrics_path": metrics_rel,
+        "minimap_bam_path": bam_rel,
+        "minimap_bai_path": bai_rel,
+        "validation_summary_path": validation_rel,
+        "routine_summary_path": routine_rel,
+    })
+
+fieldnames = [
+    "run_id", "sample_id", "sample_type", "mode", "detected_taxa", "n_detected",
+    "calls_path", "taxa_evidence_path", "centrifuger_kreport_path", "centrifuger_genus_counts_path",
+    "align_metrics_path", "minimap_bam_path", "minimap_bai_path",
+    "validation_summary_path", "routine_summary_path",
+]
+with open("sample_result_manifest.tsv", "w", newline="", encoding="utf-8") as fh:
+    writer = csv.DictWriter(fh, fieldnames=fieldnames, delimiter="\t")
+    writer.writeheader()
+    writer.writerows(manifest_rows)
+
+with tarfile.open("sample_results_bundle.tar.gz", "w:gz") as tar:
+    tar.add(bundle_root, arcname=bundle_root.name)
+PY
+  >>>
+
+  output {
+    File sample_result_manifest = "sample_result_manifest.tsv"
+    File sample_results_bundle = "sample_results_bundle.tar.gz"
+  }
+
+  runtime {
+    docker: docker_image
+    memory: "8G"
+    disks:  "local-disk 250 HDD"
+  }
+}

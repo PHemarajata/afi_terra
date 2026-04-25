@@ -39,6 +39,7 @@ def normalize_row(row: dict[str, str], row_index: int) -> dict:
         raise ValueError(f"Row {row_index}: invalid mode '{row['mode']}', expected one of {sorted(VALID_MODES)}")
 
     sample = {
+        "run_id": row.get("run_id", "").strip(),
         "sample_id": row["sample_id"].strip(),
         "sample_type": row["sample_type"].strip(),
         "mode": mode,
@@ -65,16 +66,25 @@ def normalize_row(row: dict[str, str], row_index: int) -> dict:
 
 def build_inputs(args: argparse.Namespace, samples: list[dict]) -> dict:
     inputs = {
-        "AFI_16S_Batch.samples": samples,
+        "AFI_16S_Batch.run_ids": [sample.get("run_id") or args.default_run_id for sample in samples],
+        "AFI_16S_Batch.sample_ids": [sample["sample_id"] for sample in samples],
+        "AFI_16S_Batch.r1_fastqs": [sample["r1_fastq"] for sample in samples],
+        "AFI_16S_Batch.r2_fastqs": [sample["r2_fastq"] for sample in samples],
+        "AFI_16S_Batch.sample_types": [sample["sample_type"] for sample in samples],
+        "AFI_16S_Batch.modes": [sample["mode"] for sample in samples],
+        "AFI_16S_Batch.expected_taxa": [
+            sample.get("expected_taxa", sample.get("expected_taxon", "")) for sample in samples
+        ],
     }
 
     if args.rickettsiales_panel:
         inputs["AFI_16S_Batch.rickettsiales_panel"] = args.rickettsiales_panel
 
     if args.default_use_human_scrub is not True:
-        inputs["AFI_16S_Batch.default_use_human_scrub"] = args.default_use_human_scrub
+        inputs["AFI_16S_Batch.use_human_scrub"] = args.default_use_human_scrub
     if args.classify_threads != 16:
         inputs["AFI_16S_Batch.classify_threads"] = args.classify_threads
+    inputs["AFI_16S_Batch.centrifuger_resource_profile"] = args.centrifuger_resource_profile
 
     if args.centrifuger_db:
         inputs["AFI_16S_Batch.centrifuger_db"] = args.centrifuger_db
@@ -164,6 +174,7 @@ def load_samples_from_mapping(args: argparse.Namespace) -> list[dict]:
             r2 = f"{args.fastq_uri_prefix.rstrip('/')}/{sample_id}_R2.fastq.gz"
 
             item = {
+                "run_id": (row.get("run_id") or args.default_run_id).strip(),
                 "sample_id": sample_id,
                 "sample_type": sample_type,
                 "mode": mode,
@@ -199,6 +210,13 @@ def main() -> None:
     parser.add_argument("--default-use-human-scrub", action="store_true", default=True)
     parser.add_argument("--no-default-use-human-scrub", dest="default_use_human_scrub", action="store_false")
     parser.add_argument("--classify-threads", type=int, default=16)
+    parser.add_argument("--default-run-id", default="run_1", help="Run ID used when the source TSV lacks run_id")
+    parser.add_argument(
+        "--centrifuger-resource-profile",
+        choices=["low_cost", "balanced", "high_sensitivity", "custom"],
+        default="balanced",
+        help="Centrifuger resource profile. Use custom to honor manual classify/memory/disk WDL inputs.",
+    )
 
     parser.add_argument("--mode-policy", choices=["auto", "all_validation", "all_routine"], default="auto")
     parser.add_argument("--fastq-uri-prefix", help="Required with --mapping-tsv, e.g. gs://bucket/fastq")

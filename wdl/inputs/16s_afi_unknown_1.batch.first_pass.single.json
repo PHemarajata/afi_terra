@@ -117,8 +117,6 @@
   "AFI_16S_Batch.centrifuger_db_archives": [
     "gs://fc-36ebdf16-bf31-4fef-9963-fc780c8f7367/uploads/centrifuger_db/centrifuger_index.tar.gz"
   ],
-  "AFI_16S_Batch.centrifuger_memory": "128G",
-  "AFI_16S_Batch.centrifuger_disks": "local-disk 500 HDD",
-  "AFI_16S_Batch.default_use_human_scrub": true,
-  "AFI_16S_Batch.classify_threads": 16
+  "AFI_16S_Batch.centrifuger_resource_profile": "balanced",
+  "AFI_16S_Batch.use_human_scrub": true
 }

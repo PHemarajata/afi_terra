@@ -48,6 +48,7 @@ workflow AFI_16S_Main {
     String fastp_docker       = "staphb/fastp:0.23.4"             # QC trimming
     String minimap_docker     = "phemarajata614/afi-terra:0.4.1"  # alignment + samtools sort/index
     String centrifuger_docker = "phemarajata614/centrifuger:1.1.0"
+    String centrifuger_resource_profile = "balanced" # low_cost | balanced | high_sensitivity | custom
     String centrifuger_memory = "128G"
     String centrifuger_disks  = "local-disk 500 HDD"
     Int    classify_threads   = 16
@@ -55,6 +56,24 @@ workflow AFI_16S_Main {
     Int    minimap_threads    = 8
     String minimap_sort_memory_per_thread = "1G"
   }
+
+  Int effective_classify_threads =
+    if (centrifuger_resource_profile == "low_cost") then 4
+    else if (centrifuger_resource_profile == "balanced") then 8
+    else if (centrifuger_resource_profile == "high_sensitivity") then 16
+    else classify_threads
+
+  String effective_centrifuger_memory =
+    if (centrifuger_resource_profile == "low_cost") then "48G"
+    else if (centrifuger_resource_profile == "balanced") then "64G"
+    else if (centrifuger_resource_profile == "high_sensitivity") then "128G"
+    else centrifuger_memory
+
+  String effective_centrifuger_disks =
+    if (centrifuger_resource_profile == "low_cost") then "local-disk 200 HDD"
+    else if (centrifuger_resource_profile == "balanced") then "local-disk 250 HDD"
+    else if (centrifuger_resource_profile == "high_sensitivity") then "local-disk 500 HDD"
+    else centrifuger_disks
 
   # -------------------------------------------------------------------------
   # Step 1: Optional human read dehosting
@@ -92,10 +111,10 @@ workflow AFI_16S_Main {
       r2_fastq              = FastpClean.clean_r2,
       centrifuger_db        = centrifuger_db,
       centrifuger_db_archives = centrifuger_db_archives,
-      threads               = classify_threads,
+      threads               = effective_classify_threads,
       docker_image          = centrifuger_docker,
-      memory                = centrifuger_memory,
-      disks                 = centrifuger_disks
+      memory                = effective_centrifuger_memory,
+      disks                 = effective_centrifuger_disks
   }
 
   call cls.ParseCentrifugerKreport {

@@ -62,26 +62,25 @@ Single-sample workflow:
 `wdl/AFI_16S_Main.wdl`
 
 - `mode`: `validation` or `routine`
-- `classifier_mode`: `single` (Centrifuger) or `double` (Kraken2 16G + Kraken2 Rick)
 - `use_human_scrub`: `true` or `false` (defaults to `true`)
-- Performance knobs:
-	- `classify_threads` (default `16`)
-	- `fastp_threads` (default `4`)
-	- `minimap_threads` (default `8`)
-	- `minimap_sort_memory_per_thread` (default `1G`)
+- `centrifuger_resource_profile`: `balanced` by default; use `low_cost`, `balanced`, `high_sensitivity`, or `custom`
+- Other performance knobs: `fastp_threads`, `minimap_threads`, and `minimap_sort_memory_per_thread`
 
 Batch workflow (mixed validation + routine in one submission):
 
 `wdl/AFI_16S_Batch.wdl`
 
-- Input: `Array[SampleSpec] samples`
-- Scatters each sample through `AFI_16S_Main`
-- Supports per-sample `mode`, `classifier_mode`, `expected_taxon`, and optional scrub override
-- Run-wide performance knobs:
-	- `classify_threads` (default `16`)
-	- `fastp_threads` (default `4`)
-	- `minimap_threads` (default `8`)
-	- `minimap_sort_memory_per_thread` (default `1G`)
+- Inputs: parallel arrays from the Terra sample table (`run_ids`, `sample_ids`, FASTQs, `sample_types`, `modes`, and `expected_taxa`)
+- Scatters each sample through preprocessing, Centrifuger, 16S alignment, interpretation, and summary tasks
+- Supports per-sample `run_id`, `mode`, and `expected_taxa`, plus run-wide scrub and performance settings
+- Top-level outputs include `sample_result_manifest.tsv` and `sample_results_bundle.tar.gz`; use these in Terra set tables to find and download sample-specific results without expanding long `Array[File]` cells.
+
+Centrifuger resource profiles:
+
+- `low_cost`: 4 threads, `48G`, `local-disk 200 HDD`
+- `balanced` default: 8 threads, `64G`, `local-disk 250 HDD`
+- `high_sensitivity`: 16 threads, `128G`, `local-disk 500 HDD`
+- `custom`: honors manual `classify_threads`, `centrifuger_memory`, and `centrifuger_disks` inputs
 
 Example inputs:
 
@@ -101,10 +100,8 @@ TSV to batch JSON helper:
 	--sample-sheet wdl/inputs/batch_samples.template.tsv \
 	--out-json wdl/inputs/batch_generated.example.json \
 	--rickettsiales-panel gs://YOUR_BUCKET/ref/rickettsiales_16S_panel.fasta \
-	--ntc-background gs://YOUR_BUCKET/ref/ntc_background.tsv \
-	--kraken-db-16g gs://YOUR_BUCKET/db/kraken2_16g \
-	--kraken-db-rick gs://YOUR_BUCKET/db/kraken2_rickettsiales \
-	--centrifuger-db gs://YOUR_BUCKET/db/centrifuger_bact_arch_plus_rickettsiales`
+	--centrifuger-db centrifuger_bact_arch_plus_rickettsiales \
+	--centrifuger-resource-profile balanced`
 
 Direct from AFI mapping table (auto mode from expected results):
 
@@ -112,12 +109,9 @@ Direct from AFI mapping table (auto mode from expected results):
 	--mapping-tsv AFI_optimizeProtocol.tsv \
 	--out-json wdl/inputs/batch_from_AFI_optimizeProtocol.auto.json \
 	--rickettsiales-panel gs://YOUR_BUCKET/ref/rickettsiales_16S_panel.fasta \
-	--ntc-background gs://YOUR_BUCKET/ref/ntc_background.tsv \
-	--kraken-db-16g gs://YOUR_BUCKET/db/kraken2_16g \
-	--kraken-db-rick gs://YOUR_BUCKET/db/kraken2_rickettsiales \
-	--centrifuger-db gs://YOUR_BUCKET/db/centrifuger_bact_arch_plus_rickettsiales \
+	--centrifuger-db centrifuger_bact_arch_plus_rickettsiales \
+	--centrifuger-resource-profile balanced \
 	--fastq-uri-prefix gs://YOUR_BUCKET/fastq \
-	--default-classifier-mode double \
 	--mode-policy auto \
 	--per-sample-use-human-scrub true`
 
@@ -154,7 +148,7 @@ Suggested 2-pass pattern per run:
 	--run-id 3 \
 	--out-json wdl/inputs/run3.batch.json \
 	--fastq-uri-prefix gs://YOUR_BUCKET/fastq \
-	--default-classifier-mode single \
+	--centrifuger-resource-profile balanced \
 	--mode-policy auto \
 	--per-sample-use-human-scrub true`
 
@@ -172,6 +166,7 @@ Suggested 2-pass pattern per run:
 Notes:
 
 - Keep NTC and PC8 in each run submission so controls are processed with the same run.
+- In Terra set tables, prefer the `sample_result_manifest` and `sample_results_bundle` outputs for sample-level review and download.
 - In mode auto, rows with expected_results become validation and rows without expected_results become routine.
 - Control type handling:
 	- Validation mode supports PC_MIX8, MIXED4, and PC_SINGLE as positive control classes.
