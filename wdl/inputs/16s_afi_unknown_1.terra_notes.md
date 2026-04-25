@@ -42,7 +42,7 @@ Before first pass:
 6. The bucket currently contains `centrifuger_index.tar.gz`, not an extracted index prefix, so the JSONs now provide both:
 	- `AFI_16S_Batch.centrifuger_db = centrifuger_bact_arch_plus_rickettsiales`
 	- `AFI_16S_Batch.centrifuger_db_archives = [gs://fc-36ebdf16-bf31-4fef-9963-fc780c8f7367/uploads/centrifuger_db/centrifuger_index.tar.gz]`
-7. The Centrifuger task uses `AFI_16S_Batch.centrifuger_resource_profile = balanced`, which resolves to 8 threads, `64G` RAM, and `local-disk 250 HDD`. Use `high_sensitivity` for 16 threads, `128G`, and `local-disk 500 HDD`, or `custom` to honor manual resource inputs.
+7. The Centrifuger task now requests `128G` RAM and `local-disk 500 HDD`, because the archive in GCS is about `67 GiB` compressed and Terra was previously launching the task on a `1 CPU / 2 GB` VM.
 8. Upload `16s_afi_unknown_1.batch.first_pass.single.json` into Terra and launch the batch run.
 
 After first pass:
@@ -55,8 +55,6 @@ After first pass:
 6. Re-run the same batch with the second-pass JSON.
 
 Note: `RunCentrifuger` now supports archive-backed Terra runs by extracting `AFI_16S_Batch.centrifuger_db_archives` and resolving the local prefix from `AFI_16S_Batch.centrifuger_db` before invoking `centrifuger -x`.
-
-Download note: batch runs now produce `sample_result_manifest.tsv` and `sample_results_bundle.tar.gz`. The manifest has one row per sample and points to files inside the bundle, so you can search by `sample_id` instead of widening long Terra array columns such as taxa evidence outputs.
 
 Reason for the new Centrifuger changes: the attached Terra log showed `centrifuger` segfaulting while pointed at `gs://.../centrifuger_bact_arch_plus_rickettsiales`, but `gsutil ls` against that bucket showed only `centrifuger_index.tar.gz` and `rickettsiales_panel_16S.clean.fa`. The same log also showed Terra running the classifier on `custom-1-2048`, which is far too small for this database.
 

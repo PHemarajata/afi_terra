@@ -1,7 +1,5 @@
 {
   "AFI_16S_Batch.run_summary": "this.run_summary",
-  "AFI_16S_Batch.sample_result_manifest": "this.sample_result_manifest",
-  "AFI_16S_Batch.sample_results_bundle": "this.sample_results_bundle",
   "AFI_16S_Batch.ntc_backgrounds_per_run": "this.ntc_backgrounds",
   "AFI_16S_Batch.ntc_background_run_ids": "this.ntc_background_run_ids",
 

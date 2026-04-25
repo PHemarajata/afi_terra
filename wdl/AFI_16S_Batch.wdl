@@ -90,28 +90,9 @@ workflow AFI_16S_Batch {
     String fastp_docker       = "staphb/fastp:0.23.4"             # QC trimming
     String minimap_docker     = "phemarajata614/afi-terra:0.4.1"  # alignment + samtools sort/index
     String centrifuger_docker = "phemarajata614/centrifuger:1.1.0"
-    String centrifuger_resource_profile = "balanced" # low_cost | balanced | high_sensitivity | custom
     String centrifuger_memory = "128G"
     String centrifuger_disks  = "local-disk 500 HDD"
   }
-
-  Int effective_classify_threads =
-    if (centrifuger_resource_profile == "low_cost") then 4
-    else if (centrifuger_resource_profile == "balanced") then 8
-    else if (centrifuger_resource_profile == "high_sensitivity") then 16
-    else classify_threads
-
-  String effective_centrifuger_memory =
-    if (centrifuger_resource_profile == "low_cost") then "48G"
-    else if (centrifuger_resource_profile == "balanced") then "64G"
-    else if (centrifuger_resource_profile == "high_sensitivity") then "128G"
-    else centrifuger_memory
-
-  String effective_centrifuger_disks =
-    if (centrifuger_resource_profile == "low_cost") then "local-disk 200 HDD"
-    else if (centrifuger_resource_profile == "balanced") then "local-disk 250 HDD"
-    else if (centrifuger_resource_profile == "high_sensitivity") then "local-disk 500 HDD"
-    else centrifuger_disks
 
   # ===========================================================================
   # Phase 1 scatter: preprocessing + classification + alignment + metrics
@@ -149,10 +130,10 @@ workflow AFI_16S_Batch {
         r2_fastq                = P1_Fastp.clean_r2,
         centrifuger_db          = centrifuger_db,
         centrifuger_db_archives = centrifuger_db_archives,
-        threads                 = effective_classify_threads,
+        threads                 = classify_threads,
         docker_image            = centrifuger_docker,
-        memory                  = effective_centrifuger_memory,
-        disks                   = effective_centrifuger_disks
+        memory                  = centrifuger_memory,
+        disks                   = centrifuger_disks
     }
 
     call cls.ParseCentrifugerKreport as P1_ParseKreport {
@@ -267,24 +248,6 @@ workflow AFI_16S_Batch {
       docker_image         = afi_core_docker
   }
 
-  call vld.BuildSampleResultsBundle {
-    input:
-      run_ids                  = run_ids,
-      sample_ids               = sample_ids,
-      sample_types             = sample_types,
-      modes                    = modes,
-      calls_files              = P2_Interpret.calls,
-      taxa_evidence_files      = P2_Interpret.taxa_evidence,
-      centrifuger_kreports     = P1_Centrifuger.classifier_report_tsv,
-      centrifuger_genus_counts = P1_ParseKreport.genus_counts,
-      align_metrics            = P1_Metrics.metrics,
-      minimap_bams             = P1_Minimap.bam,
-      minimap_bais             = P1_Minimap.bai,
-      validation_summaries     = P2_Validate.validation_summary,
-      routine_summaries        = P2_Routine.routine_summary,
-      docker_image             = afi_core_docker
-  }
-
   # ===========================================================================
   # Outputs
   # ===========================================================================
@@ -318,9 +281,5 @@ workflow AFI_16S_Batch {
 
     # Run-level summary with run_id + PC8 validity
     File run_summary = BuildRunSummary.run_summary
-
-    # Sample-oriented download surface for Terra set tables
-    File sample_result_manifest = BuildSampleResultsBundle.sample_result_manifest
-    File sample_results_bundle  = BuildSampleResultsBundle.sample_results_bundle
   }
 }
