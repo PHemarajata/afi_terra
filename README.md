@@ -64,6 +64,11 @@ Single-sample workflow:
 - `mode`: `validation` or `routine`
 - `classifier_mode`: `single` (Centrifuger) or `double` (Kraken2 16G + Kraken2 Rick)
 - `use_human_scrub`: `true` or `false` (defaults to `true`)
+- Performance knobs:
+	- `classify_threads` (default `16`)
+	- `fastp_threads` (default `4`)
+	- `minimap_threads` (default `8`)
+	- `minimap_sort_memory_per_thread` (default `1G`)
 
 Batch workflow (mixed validation + routine in one submission):
 
@@ -72,6 +77,11 @@ Batch workflow (mixed validation + routine in one submission):
 - Input: `Array[SampleSpec] samples`
 - Scatters each sample through `AFI_16S_Main`
 - Supports per-sample `mode`, `classifier_mode`, `expected_taxon`, and optional scrub override
+- Run-wide performance knobs:
+	- `classify_threads` (default `16`)
+	- `fastp_threads` (default `4`)
+	- `minimap_threads` (default `8`)
+	- `minimap_sort_memory_per_thread` (default `1G`)
 
 Example inputs:
 

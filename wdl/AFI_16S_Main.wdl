@@ -51,6 +51,9 @@ workflow AFI_16S_Main {
     String centrifuger_memory = "128G"
     String centrifuger_disks  = "local-disk 500 HDD"
     Int    classify_threads   = 16
+    Int    fastp_threads      = 4
+    Int    minimap_threads    = 8
+    String minimap_sort_memory_per_thread = "1G"
   }
 
   # -------------------------------------------------------------------------
@@ -75,6 +78,7 @@ workflow AFI_16S_Main {
     input:
       r1           = effective_r1,
       r2           = effective_r2,
+      threads      = fastp_threads,
       docker_image = fastp_docker
   }
 
@@ -109,6 +113,8 @@ workflow AFI_16S_Main {
       r1           = FastpClean.clean_r1,
       r2           = FastpClean.clean_r2,
       panel        = rickettsiales_panel,
+      threads      = minimap_threads,
+      sort_memory_per_thread = minimap_sort_memory_per_thread,
       docker_image = minimap_docker
   }
 

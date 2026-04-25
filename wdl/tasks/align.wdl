@@ -6,13 +6,16 @@ task MinimapRick16S {
     File r1
     File r2
     File panel
+    Int threads = 8
+    String sort_memory_per_thread = "1G"
     # afi-terra image bundles minimap2 + samtools (required for sort/index).
     String docker_image = "phemarajata614/afi-terra:0.4.1"
   }
 
   command <<<
-  minimap2 -ax sr ~{panel} ~{r1} ~{r2} \
-  | samtools sort -o align.bam
+  set -euo pipefail
+  minimap2 -t ~{threads} -ax sr ~{panel} ~{r1} ~{r2} \
+  | samtools sort -@ ~{threads} -m ~{sort_memory_per_thread} -o align.bam
   samtools index align.bam
   >>>
 
@@ -23,6 +26,7 @@ task MinimapRick16S {
 
   runtime {
     docker: docker_image
+    cpu:    threads
     memory: "16G"
     disks:  "local-disk 100 HDD"
   }
