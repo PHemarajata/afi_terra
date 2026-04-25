@@ -81,6 +81,9 @@ workflow AFI_16S_Batch {
     # Single switch applies to every sample; set via workspace attribute or JSON.
     Boolean use_human_scrub   = true
     Int     classify_threads  = 16
+    Int     fastp_threads     = 4
+    Int     minimap_threads   = 8
+    String  minimap_sort_memory_per_thread = "1G"
 
     # ── Docker images ──────────────────────────────────────────────────────────
     String afi_core_docker    = "phemarajata614/afi-terra:0.4.1"  # python + samtools + scripts
@@ -116,6 +119,7 @@ workflow AFI_16S_Batch {
       input:
         r1           = p1_r1,
         r2           = p1_r2,
+        threads      = fastp_threads,
         docker_image = fastp_docker
     }
 
@@ -144,6 +148,8 @@ workflow AFI_16S_Batch {
         r1           = P1_Fastp.clean_r1,
         r2           = P1_Fastp.clean_r2,
         panel        = rickettsiales_panel,
+        threads      = minimap_threads,
+        sort_memory_per_thread = minimap_sort_memory_per_thread,
         docker_image = minimap_docker
     }
 
