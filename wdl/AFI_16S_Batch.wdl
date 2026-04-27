@@ -1,6 +1,6 @@
 version 1.0
 
-# Batch workflow for the AFI Rickettsiales pipeline.
+# Batch workflow for the AFI 16S metagenomics pipeline.
 #
 # Terra data-model integration
 # ────────────────────────────
@@ -8,24 +8,26 @@ version 1.0
 # in the set must have the following columns in the sample table:
 #
 #   sample_id    (String)  — entity name column
+#   run_id       (String)  — sequencing run identifier (can differ per sample
+#                            to process multiple runs in one batch submission)
 #   r1_fastq     (File)
 #   r2_fastq     (File)
 #   sample_type  (String)  — NTC | NC | PC_MIX8 | PC_SINGLE | MIXED4 | clinical | PC
 #   mode         (String)  — routine | validation
 #   expected_taxa (String) — semicolon-delimited genera for validation samples; "" otherwise
 #
-# The sample_set entity should carry:
-#   run_id       (String)  — unique identifier for the sequencing run
-#
 # Typical Terra input mapping
-#   AFI_Rickettsiales_Batch.run_id        → this.run_id
-#   AFI_Rickettsiales_Batch.sample_ids    → this.samples.sample_id
-#   AFI_Rickettsiales_Batch.r1_fastqs     → this.samples.r1_fastq
-#   AFI_Rickettsiales_Batch.r2_fastqs     → this.samples.r2_fastq
-#   AFI_Rickettsiales_Batch.sample_types  → this.samples.sample_type
-#   AFI_Rickettsiales_Batch.modes         → this.samples.mode
-#   AFI_Rickettsiales_Batch.expected_taxa → this.samples.expected_taxa
-#   AFI_Rickettsiales_Batch.use_human_scrub → workspace.use_human_scrub  (or hardcode)
+#   AFI_16S_Batch.run_ids       → this.samples.run_id
+#   AFI_16S_Batch.sample_ids    → this.samples.sample_id
+#   AFI_16S_Batch.r1_fastqs     → this.samples.r1_fastq
+#   AFI_16S_Batch.r2_fastqs     → this.samples.r2_fastq
+#   AFI_16S_Batch.sample_types  → this.samples.sample_type
+#   AFI_16S_Batch.modes         → this.samples.mode
+#   AFI_16S_Batch.expected_taxa → this.samples.expected_taxa
+#   AFI_16S_Batch.use_human_scrub → workspace.use_human_scrub  (or hardcode)
+#
+# Multi-run support: include samples from multiple run_ids in a single set.
+# run_summary.tsv will be grouped by run_id; pc8_valid is computed per run.
 #
 # Design: two-scatter with automatic NTC background computation.
 #
@@ -43,11 +45,13 @@ import "tasks/interpret.wdl"  as ipt
 import "tasks/validate.wdl"   as vld
 import "../NCBI_scrub_PE/tasks/quality_control/read_filtering/task_ncbi_scrub.wdl" as scrub
 
-workflow AFI_Rickettsiales_Batch {
+workflow AFI_16S_Batch {
 
   input {
-    # ── Run-level metadata ─────────────────────────────────────────────────────
-    String run_id   # unique identifier for this sequencing run (from sample_set)
+    # ── Per-sample run identifier (one per sample, same length as sample_ids) ──
+    # Map from the sample table run_id column.  Samples may belong to different
+    # runs; run_summary.tsv will group rows and compute pc8_valid per run_id.
+    Array[String] run_ids
 
     # ── Per-sample inputs (parallel arrays, same length) ──────────────────────
     # Map from Terra sample table columns.  All arrays must have equal length.
@@ -79,9 +83,9 @@ workflow AFI_Rickettsiales_Batch {
     Int     classify_threads  = 16
 
     # ── Docker images ──────────────────────────────────────────────────────────
-    String afi_core_docker    = "phemarajata614/afi-terra:0.4.0"  # python + samtools + scripts
+    String afi_core_docker    = "phemarajata614/afi-terra:0.4.1"  # python + samtools + scripts
     String fastp_docker       = "staphb/fastp:0.23.4"             # QC trimming
-    String minimap_docker     = "staphb/minimap2:2.28"            # alignment + samtools sort/index
+    String minimap_docker     = "phemarajata614/afi-terra:0.4.1"  # alignment + samtools sort/index
     String centrifuger_docker = "phemarajata614/centrifuger:1.1.0"
     String centrifuger_memory = "128G"
     String centrifuger_disks  = "local-disk 500 HDD"
@@ -152,22 +156,36 @@ workflow AFI_Rickettsiales_Batch {
 
     # Expose metrics only for NTC/NC samples so select_all() can filter them
     # outside the scatter without referencing the scatter variable (WDL 1.0 safe).
+    # Also expose the run_id so BuildNTCBackground can compute per-run backgrounds.
     Boolean p1_is_ntc = (sample_types[i] == "NTC") || (sample_types[i] == "NC")
     if (p1_is_ntc) {
-      File ntc_align_conditional = P1_Metrics.metrics
-      File ntc_cfr_conditional   = P1_ParseKreport.genus_counts
+      String ntc_run_id_conditional  = run_ids[i]
+      File   ntc_align_conditional   = P1_Metrics.metrics
+      File   ntc_cfr_conditional     = P1_ParseKreport.genus_counts
     }
 
   } # end Phase 1 scatter
 
   # ===========================================================================
-  # BuildNTCBackground: gather NTC outputs → ntc_background.tsv
+  # BuildNTCBackground: compute one background TSV per distinct run_id.
+  # NTC samples from different runs are never pooled together, so a high-
+  # signal NTC in run2 cannot raise the detection threshold for run1 samples.
   # ===========================================================================
   call vld.BuildNTCBackground {
     input:
+      ntc_run_ids          = select_all(ntc_run_id_conditional),
       ntc_align_metrics    = select_all(ntc_align_conditional),
       ntc_cfr_genus_counts = select_all(ntc_cfr_conditional),
       docker_image         = afi_core_docker
+  }
+
+  # Map each sample to the NTC background for its run_id.
+  call vld.MatchNTCBackground {
+    input:
+      all_sample_run_ids  = run_ids,
+      per_run_ids         = BuildNTCBackground.per_run_ids,
+      per_run_backgrounds = BuildNTCBackground.per_run_backgrounds,
+      docker_image        = afi_core_docker
   }
 
   # ===========================================================================
@@ -180,7 +198,7 @@ workflow AFI_Rickettsiales_Batch {
         sample_id             = sample_ids[i],
         align_metrics         = P1_Metrics.metrics[i],
         cfr_genus_counts      = P1_ParseKreport.genus_counts[i],
-        ntc_background        = BuildNTCBackground.ntc_background,
+        ntc_background        = MatchNTCBackground.per_sample_backgrounds[i],
         align_confirm_reads   = align_confirm_reads,
         align_confirm_breadth = align_confirm_breadth,
         align_fold            = align_fold,
@@ -217,7 +235,7 @@ workflow AFI_Rickettsiales_Batch {
   # ===========================================================================
   call vld.BuildRunSummary {
     input:
-      run_id               = run_id,
+      run_ids              = run_ids,
       calls_files          = P2_Interpret.calls,
       validation_summaries = P2_Validate.validation_summary,
       routine_summaries    = P2_Routine.routine_summary,
@@ -243,11 +261,13 @@ workflow AFI_Rickettsiales_Batch {
     Array[File] minimap_bai   = P1_Minimap.bai
     Array[File] align_metrics = P1_Metrics.metrics
 
-    # NTC background (auto-computed from NTC/NC samples in this run)
-    File ntc_background = BuildNTCBackground.ntc_background
+    # NTC backgrounds — one per run_id (computed separately to prevent cross-run pooling)
+    Array[File]   ntc_backgrounds_per_run = BuildNTCBackground.per_run_backgrounds
+    Array[String] ntc_background_run_ids  = BuildNTCBackground.per_run_ids
 
     # Phase 2 — interpretation
-    Array[File] calls = P2_Interpret.calls
+    Array[File] calls            = P2_Interpret.calls
+    Array[File] taxa_evidence_files = P2_Interpret.taxa_evidence
 
     # Phase 2 — per-sample summaries
     Array[File?] validation_summaries = P2_Validate.validation_summary

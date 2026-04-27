@@ -23,7 +23,14 @@ NTC background file format (from build_ntc_background.py):
   genus  align_ntc_reads  cfr_ntc_reads
 
 Output TSV columns:
-  sample  genus  source  reads  breadth  ntc_reads  call
+  sample  genus  source  reads  breadth  ntc_reads  call  cfr_reads  rescued
+
+  cfr_reads — centrifuge read count for the genus (alignment rows only;
+              blank for centrifuge rows where `reads` IS the cfr count).
+  rescued   — true when source=alignment, call is Confirmed/Probable, AND
+              centrifuge alone would NOT have reached the detection threshold
+              (i.e. cfr_reads < cfr_floor OR cfr_reads < cfr_fold × cfr_ntc_reads).
+              false for non-positive alignment calls; blank for centrifuge rows.
 """
 import argparse
 import csv
@@ -107,10 +114,16 @@ def load_cfr_genus(path: str) -> list[dict]:
 
 
 def call_alignment(genus: str, reads: int, breadth: float, ntc: dict,
-                   confirm_reads: int, confirm_breadth: float, fold: float) -> tuple[str, int]:
-    """Return (call, ntc_reads) for an alignment-source genus."""
+                   confirm_reads: int, confirm_breadth: float, fold: float) -> tuple[str, int, bool]:
+    """Return (call, ntc_reads, align_confirmed) for an alignment-source genus.
+
+    align_confirmed is True when reads and breadth meet the confirmation thresholds
+    WITHOUT considering the NTC fold comparison.  This NTC-free flag is used by the
+    order-level Rickettsiales rescue rule in CompareExpectedConcordance.
+    """
     ntc_reads = ntc.get(genus, {}).get("align_ntc_reads", 0)
-    if reads >= confirm_reads and breadth >= confirm_breadth and reads >= fold * ntc_reads:
+    align_confirmed = (reads >= confirm_reads and breadth >= confirm_breadth)
+    if align_confirmed and reads >= fold * ntc_reads:
         call = "Confirmed"
     elif reads >= 50 and breadth >= 0.20 and reads > ntc_reads:
         call = "Probable"
@@ -118,7 +131,7 @@ def call_alignment(genus: str, reads: int, breadth: float, ntc: dict,
         call = "Not_Confirmed"
     else:
         call = "Negative"
-    return call, ntc_reads
+    return call, ntc_reads, align_confirmed
 
 
 def call_centrifuge(genus: str, reads: int, ntc: dict,
@@ -160,6 +173,10 @@ def main() -> None:
     align_rows   = load_align_metrics(args.align_metrics)
     cfr_rows     = load_cfr_genus(args.cfr_genus)
 
+    # Build a quick lookup of centrifuge reads for every genus (used for
+    # cfr_reads + rescued columns on alignment rows).
+    cfr_reads_by_genus: dict[str, int] = {r["genus"]: r["reads"] for r in cfr_rows}
+
     results = []
 
     # --- Module 3: alignment-based calls for Orientia / Rickettsia ---
@@ -169,58 +186,76 @@ def main() -> None:
         if genus not in RICK_GENERA:
             continue
         align_genera_seen.add(genus)
-        call, ntc_reads = call_alignment(
+        call, ntc_reads, align_confirmed = call_alignment(
             genus, row["reads"], row["breadth"], ntc,
             args.align_confirm_reads, args.align_confirm_breadth, args.align_fold,
         )
+        cfr_r = cfr_reads_by_genus.get(genus, 0)
+        cfr_ntc = ntc.get(genus, {}).get("cfr_ntc_reads", 0)
+        cfr_would_detect = (cfr_r >= args.cfr_floor and cfr_r >= args.cfr_fold * cfr_ntc)
+        if call in ("Confirmed", "Probable"):
+            rescued = "false" if cfr_would_detect else "true"
+        else:
+            rescued = "false"
         results.append({
-            "sample":    args.sample,
-            "genus":     genus,
-            "source":    "alignment",
-            "reads":     row["reads"],
-            "breadth":   round(row["breadth"], 4),
-            "ntc_reads": ntc_reads,
-            "call":      call,
+            "sample":          args.sample,
+            "genus":           genus,
+            "source":          "alignment",
+            "reads":           row["reads"],
+            "breadth":         round(row["breadth"], 4),
+            "ntc_reads":       ntc_reads,
+            "call":            call,
+            "cfr_reads":       cfr_r,
+            "rescued":         rescued,
+            "align_confirmed": str(align_confirmed).lower(),
         })
 
     # Ensure both Rickettsiales genera always appear (Negative if absent from BAM)
     for genus in RICK_GENERA:
         if genus not in align_genera_seen:
+            cfr_r = cfr_reads_by_genus.get(genus, 0)
             results.append({
-                "sample":    args.sample,
-                "genus":     genus,
-                "source":    "alignment",
-                "reads":     0,
-                "breadth":   0.0,
-                "ntc_reads": ntc.get(genus, {}).get("align_ntc_reads", 0),
-                "call":      "Negative",
+                "sample":          args.sample,
+                "genus":           genus,
+                "source":          "alignment",
+                "reads":           0,
+                "breadth":         0.0,
+                "ntc_reads":       ntc.get(genus, {}).get("align_ntc_reads", 0),
+                "call":            "Negative",
+                "cfr_reads":       cfr_r,
+                "rescued":         "false",
+                "align_confirmed": "false",
             })
 
     # --- Module 1: centrifuge-based calls for all non-Rickettsiales genera ---
     for row in cfr_rows:
         genus = row["genus"]
         if genus in RICK_GENERA:
-            # Rickettsiales genera are handled via alignment above; skip here
-            # (centrifuge may still detect them but alignment is authoritative)
+            # Rickettsiales genera are handled via alignment above; skip here.
+            # Their centrifuge counts are captured in cfr_reads_by_genus above.
             continue
         call, ntc_reads = call_centrifuge(
             genus, row["reads"], ntc,
             args.cfr_floor, args.cfr_fold,
         )
         results.append({
-            "sample":    args.sample,
-            "genus":     genus,
-            "source":    "centrifuge",
-            "reads":     row["reads"],
-            "breadth":   "",   # not applicable for centrifuge
-            "ntc_reads": ntc_reads,
-            "call":      call,
+            "sample":          args.sample,
+            "genus":           genus,
+            "source":          "centrifuge",
+            "reads":           row["reads"],
+            "breadth":         "",   # not applicable for centrifuge
+            "ntc_reads":       ntc_reads,
+            "call":            call,
+            "cfr_reads":       "",   # reads IS the cfr count; no separate column needed
+            "rescued":         "",   # not applicable for centrifuge-source rows
+            "align_confirmed": "",   # not applicable for centrifuge-source rows
         })
 
     with open(args.out, "w", newline="", encoding="utf-8") as fh:
         writer = csv.DictWriter(
             fh,
-            fieldnames=["sample", "genus", "source", "reads", "breadth", "ntc_reads", "call"],
+            fieldnames=["sample", "genus", "source", "reads", "breadth",
+                        "ntc_reads", "call", "cfr_reads", "rescued", "align_confirmed"],
             delimiter="\t",
         )
         writer.writeheader()

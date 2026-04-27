@@ -1,0 +1,22 @@
+{
+  "AFI_16S_Batch.run_summary": "this.run_summary",
+  "AFI_16S_Batch.ntc_backgrounds_per_run": "this.ntc_backgrounds",
+  "AFI_16S_Batch.ntc_background_run_ids": "this.ntc_background_run_ids",
+
+  "AFI_16S_Batch.calls": "this.calls",
+  "AFI_16S_Batch.taxa_evidence_files": "this.taxa_evidence_files",
+  "AFI_16S_Batch.validation_summaries": "this.validation_summaries",
+  "AFI_16S_Batch.routine_summaries": "this.routine_summaries",
+
+  "AFI_16S_Batch.centrifuger_kreports": "this.centrifuger_kreports",
+  "AFI_16S_Batch.centrifuger_genus_counts": "this.centrifuger_genus_counts",
+  "AFI_16S_Batch.align_metrics": "this.align_metrics",
+
+  "AFI_16S_Batch.clean_r1": "this.clean_r1",
+  "AFI_16S_Batch.clean_r2": "this.clean_r2",
+  "AFI_16S_Batch.scrubbed_r1": "this.scrubbed_r1",
+  "AFI_16S_Batch.scrubbed_r2": "this.scrubbed_r2",
+
+  "AFI_16S_Batch.minimap_bam": "this.minimap_bam",
+  "AFI_16S_Batch.minimap_bai": "this.minimap_bai"
+}

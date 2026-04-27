@@ -57,10 +57,10 @@ README
 # Main WDL
 ############################
 
-cat << 'WDL' > wdl/AFI_Rickettsiales_Main.wdl
+cat << 'WDL' > wdl/AFI_16S_Main.wdl
 version 1.0
 
-workflow AFI_Rickettsiales_Main {
+workflow AFI_16S_Main {
 
   input {
     String sample_id

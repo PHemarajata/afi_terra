@@ -6,9 +6,8 @@ task MinimapRick16S {
     File r1
     File r2
     File panel
-    # staphb/minimap2 bundles minimap2 + samtools — no need to carry those
-    # tools in the afi-terra image.  Maintained by StaPH-B.
-    String docker_image = "staphb/minimap2:2.28"
+    # afi-terra image bundles minimap2 + samtools (required for sort/index).
+    String docker_image = "phemarajata614/afi-terra:0.4.1"
   }
 
   command <<<

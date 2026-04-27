@@ -2,7 +2,7 @@ version 1.0
 
 # Single-sample workflow.
 # For full batch runs with automatic NTC background computation,
-# use AFI_Rickettsiales_Batch.wdl instead.
+# use AFI_16S_Batch.wdl instead.
 #
 # When running standalone, supply a pre-computed ntc_background.tsv.
 # A placeholder file with all-zero rows is acceptable for first-pass runs
@@ -16,7 +16,7 @@ import "tasks/interpret.wdl"   as ipt
 import "tasks/validate.wdl"    as vld
 import "../NCBI_scrub_PE/tasks/quality_control/read_filtering/task_ncbi_scrub.wdl" as scrub
 
-workflow AFI_Rickettsiales_Main {
+workflow AFI_16S_Main {
 
   input {
     String  sample_id
@@ -44,9 +44,9 @@ workflow AFI_Rickettsiales_Main {
     Int   cfr_floor = 500
     Float cfr_fold  = 5.0
 
-    String afi_core_docker    = "phemarajata614/afi-terra:0.4.0"  # python + samtools + scripts
+    String afi_core_docker    = "phemarajata614/afi-terra:0.4.1"  # python + samtools + scripts
     String fastp_docker       = "staphb/fastp:0.23.4"             # QC trimming
-    String minimap_docker     = "staphb/minimap2:2.28"            # alignment + samtools sort/index
+    String minimap_docker     = "phemarajata614/afi-terra:0.4.1"  # alignment + samtools sort/index
     String centrifuger_docker = "phemarajata614/centrifuger:1.1.0"
     String centrifuger_memory = "128G"
     String centrifuger_disks  = "local-disk 500 HDD"
@@ -180,7 +180,8 @@ workflow AFI_Rickettsiales_Main {
     File align_metrics = ExtractMetrics.metrics
 
     # Interpretation
-    File calls = InterpretCalls.calls
+    File calls         = InterpretCalls.calls
+    File taxa_evidence = InterpretCalls.taxa_evidence
 
     # Summaries
     File? validation_summary = CompareExpectedConcordance.validation_summary

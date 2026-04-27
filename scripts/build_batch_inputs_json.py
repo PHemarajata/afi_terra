@@ -65,19 +65,19 @@ def normalize_row(row: dict[str, str], row_index: int) -> dict:
 
 def build_inputs(args: argparse.Namespace, samples: list[dict]) -> dict:
     inputs = {
-        "AFI_Rickettsiales_Batch.samples": samples,
+        "AFI_16S_Batch.samples": samples,
     }
 
     if args.rickettsiales_panel:
-        inputs["AFI_Rickettsiales_Batch.rickettsiales_panel"] = args.rickettsiales_panel
+        inputs["AFI_16S_Batch.rickettsiales_panel"] = args.rickettsiales_panel
 
     if args.default_use_human_scrub is not True:
-        inputs["AFI_Rickettsiales_Batch.default_use_human_scrub"] = args.default_use_human_scrub
+        inputs["AFI_16S_Batch.default_use_human_scrub"] = args.default_use_human_scrub
     if args.classify_threads != 16:
-        inputs["AFI_Rickettsiales_Batch.classify_threads"] = args.classify_threads
+        inputs["AFI_16S_Batch.classify_threads"] = args.classify_threads
 
     if args.centrifuger_db:
-        inputs["AFI_Rickettsiales_Batch.centrifuger_db"] = args.centrifuger_db
+        inputs["AFI_16S_Batch.centrifuger_db"] = args.centrifuger_db
 
     return inputs
 
@@ -187,7 +187,7 @@ def load_samples_from_mapping(args: argparse.Namespace) -> list[dict]:
 
 def main() -> None:
     parser = argparse.ArgumentParser(
-        description="Build Terra input JSON for AFI_Rickettsiales_Batch from a sample sheet TSV."
+        description="Build Terra input JSON for AFI_16S_Batch from a sample sheet TSV."
     )
     parser.add_argument("--sample-sheet", help="TSV with one sample per row")
     parser.add_argument("--mapping-tsv", help="AFI mapping TSV (e.g., AFI_optimizeProtocol.tsv)")
