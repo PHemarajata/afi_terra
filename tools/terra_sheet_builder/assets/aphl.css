@@ -1,0 +1,264 @@
+/*
+ * APHL Design System — Colors & Typography
+ * Association of Public Health Laboratories
+ * Based on APHL Branding & Communications Policy (6th ed., 2023)
+ *
+ * Font substitutions (Google Fonts):
+ *   Franklin Gothic → Libre Franklin
+ *   Helvetica Neue  → Barlow
+ * Request actual font files from APHL MarCom for production use.
+ */
+
+@import url('https://fonts.googleapis.com/css2?family=Libre+Franklin:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&display=swap');
+
+/* ─── Helvetica Neue (official APHL header/display font) ────── */
+@font-face { font-family: 'Helvetica Neue'; src: url('fonts/HelveticaNeueUltraLight.otf') format('opentype'); font-weight: 100; font-style: normal; }
+@font-face { font-family: 'Helvetica Neue'; src: url('fonts/HelveticaNeueUltraLightItalic.otf') format('opentype'); font-weight: 100; font-style: italic; }
+@font-face { font-family: 'Helvetica Neue'; src: url('fonts/HelveticaNeueThin.otf') format('opentype'); font-weight: 200; font-style: normal; }
+@font-face { font-family: 'Helvetica Neue'; src: url('fonts/HelveticaNeueThinItalic.otf') format('opentype'); font-weight: 200; font-style: italic; }
+@font-face { font-family: 'Helvetica Neue'; src: url('fonts/HelveticaNeueLight.otf') format('opentype'); font-weight: 300; font-style: normal; }
+@font-face { font-family: 'Helvetica Neue'; src: url('fonts/HelveticaNeueLightItalic.otf') format('opentype'); font-weight: 300; font-style: italic; }
+@font-face { font-family: 'Helvetica Neue'; src: url('fonts/HelveticaNeueRoman.otf') format('opentype'); font-weight: 400; font-style: normal; }
+@font-face { font-family: 'Helvetica Neue'; src: url('fonts/HelveticaNeueItalic.ttf') format('truetype'); font-weight: 400; font-style: italic; }
+@font-face { font-family: 'Helvetica Neue'; src: url('fonts/HelveticaNeueMedium.otf') format('opentype'); font-weight: 500; font-style: normal; }
+@font-face { font-family: 'Helvetica Neue'; src: url('fonts/HelveticaNeueMediumItalic.otf') format('opentype'); font-weight: 500; font-style: italic; }
+@font-face { font-family: 'Helvetica Neue'; src: url('fonts/HelveticaNeueBold.otf') format('opentype'); font-weight: 700; font-style: normal; }
+@font-face { font-family: 'Helvetica Neue'; src: url('fonts/HelveticaNeueBoldItalic.otf') format('opentype'); font-weight: 700; font-style: italic; }
+@font-face { font-family: 'Helvetica Neue'; src: url('fonts/HelveticaNeueHeavy.otf') format('opentype'); font-weight: 800; font-style: normal; }
+@font-face { font-family: 'Helvetica Neue'; src: url('fonts/HelveticaNeueHeavyItalic.otf') format('opentype'); font-weight: 800; font-style: italic; }
+@font-face { font-family: 'Helvetica Neue'; src: url('fonts/HelveticaNeueBlack.otf') format('opentype'); font-weight: 900; font-style: normal; }
+@font-face { font-family: 'Helvetica Neue'; src: url('fonts/HelveticaNeueBlackItalic.otf') format('opentype'); font-weight: 900; font-style: italic; }
+
+/* ─── Franklin Gothic (official APHL body font) ─────────────── */
+@font-face { font-family: 'Franklin Gothic'; src: url('fonts/FranklinGothic.ttf') format('truetype'); font-weight: 400; font-style: normal; }
+@font-face { font-family: 'Franklin Gothic'; src: url('fonts/FranklinGothicITALIC.ttf') format('truetype'); font-weight: 400; font-style: italic; }
+@font-face { font-family: 'Franklin Gothic'; src: url('fonts/FRANKGO.ttf') format('truetype'); font-weight: 600; font-style: normal; }
+@font-face { font-family: 'Franklin Gothic'; src: url('fonts/fgwo____.ttf') format('truetype'); font-weight: 600; font-style: italic; }
+@font-face { font-family: 'Franklin Gothic Condensed'; src: url('fonts/Franklin Gothic Condensed.ttf') format('truetype'); font-weight: 400; font-style: normal; }
+
+/* ─── BASE COLOR TOKENS ─────────────────────────────────────── */
+:root {
+  /* Primary Brand */
+  --aphl-teal:          #00A0AF;
+  --aphl-rust:          #B42E34;
+
+  /* Teal Scale */
+  --aphl-teal-light:    #A3CCCC;
+  --aphl-teal-medium:   #006E79;
+  --aphl-teal-dark:     #005057;
+
+  /* Rust Scale */
+  --aphl-rust-light:    #F3D1D2;
+  --aphl-rust-dark:     #862226;
+
+  /* Secondary / Program Colors */
+  --aphl-green:         #68BD49;   /* Environmental Health, Food Safety */
+  --aphl-orange:        #E37C1D;   /* Global Health, Newborn Screening */
+  --aphl-yellow:        #EBAB21;   /* Informatics */
+  --aphl-purple:        #532E63;   /* Preparedness */
+  --aphl-purple-light:  #9960A7;   /* Workforce */
+
+  /* Template Theme Accents (from PPTX) */
+  --aphl-accent-teal:   #00A0AF;
+  --aphl-accent-red:    #B42E34;
+  --aphl-accent-orange: #EF9528;
+  --aphl-accent-green:  #7AC143;
+  --aphl-accent-purple: #532E63;
+  --aphl-accent-yellow: #FFC000;
+
+  /* Neutrals */
+  --aphl-black:         #000000;
+  --aphl-gray-dark:     #404040;   /* body text */
+  --aphl-gray-mid:      #8A8A8A;   /* secondary text */
+  --aphl-gray-light:    #E2E9EC;   /* backgrounds, table alt rows */
+  --aphl-white:         #FFFFFF;
+
+  /* ─── SEMANTIC COLOR ROLES ──────────────────────────────── */
+  --color-bg:           var(--aphl-white);
+  --color-bg-subtle:    var(--aphl-gray-light);
+  --color-bg-brand:     var(--aphl-teal-medium);   /* slide headers/titles */
+  --color-bg-dark:      var(--aphl-teal-dark);
+
+  --color-fg:           var(--aphl-gray-dark);     /* body text */
+  --color-fg-secondary: var(--aphl-gray-mid);
+  --color-fg-inverse:   var(--aphl-white);
+
+  --color-heading:      var(--aphl-teal-medium);   /* H1 / slide titles */
+  --color-accent:       var(--aphl-teal);           /* links, highlights */
+  --color-accent-warm:  var(--aphl-rust);           /* warm accent */
+  --color-border:       var(--aphl-gray-light);
+  --color-rule:         var(--aphl-teal);           /* horizontal rules */
+
+  --color-link:         var(--aphl-teal);
+  --color-link-visited: var(--aphl-teal-dark);
+
+  /* ─── TYPOGRAPHY TOKENS ─────────────────────────────────── */
+  /* Font families */
+  --font-display:       'Helvetica Neue', Helvetica, Arial, sans-serif;
+  --font-heading:       'Helvetica Neue', 'Libre Franklin', 'Franklin Gothic Medium', Arial, sans-serif;
+  --font-body:          'Franklin Gothic', 'Libre Franklin', 'Franklin Gothic Book', Arial, sans-serif;
+  --font-mono:          'Courier New', Courier, monospace;
+
+  /* Font weights */
+  --fw-regular:         400;
+  --fw-medium:          500;
+  --fw-semibold:        600;
+  --fw-bold:            700;
+  --fw-heavy:           800;
+
+  /* Type scale */
+  --text-xs:            0.75rem;    /* 12px */
+  --text-sm:            0.875rem;   /* 14px */
+  --text-base:          1rem;       /* 16px */
+  --text-md:            1.125rem;   /* 18px */
+  --text-lg:            1.25rem;    /* 20px */
+  --text-xl:            1.5rem;     /* 24px */
+  --text-2xl:           1.875rem;   /* 30px */
+  --text-3xl:           2.25rem;    /* 36px */
+  --text-4xl:           3rem;       /* 48px */
+  --text-5xl:           3.75rem;    /* 60px */
+
+  /* Line heights */
+  --lh-tight:           1.2;
+  --lh-snug:            1.35;
+  --lh-normal:          1.55;
+  --lh-relaxed:         1.75;
+
+  /* Letter spacing (APHL: −3 to −10 for titles; −3 for body) */
+  --ls-tight:           -0.03em;    /* titles */
+  --ls-tighter:         -0.05em;    /* display */
+  --ls-normal:          0;
+
+  /* ─── SPACING TOKENS ─────────────────────────────────────── */
+  --space-1:   0.25rem;   /* 4px */
+  --space-2:   0.5rem;    /* 8px */
+  --space-3:   0.75rem;   /* 12px */
+  --space-4:   1rem;      /* 16px */
+  --space-5:   1.25rem;   /* 20px */
+  --space-6:   1.5rem;    /* 24px */
+  --space-8:   2rem;      /* 32px */
+  --space-10:  2.5rem;    /* 40px */
+  --space-12:  3rem;      /* 48px */
+  --space-16:  4rem;      /* 64px */
+
+  /* ─── BORDER & SHAPE ─────────────────────────────────────── */
+  --radius-none:   0;          /* APHL default — all rectangles */
+  --radius-sm:     2px;        /* rare subtle rounding */
+  --border-width:  1px;
+  --border-color:  var(--aphl-gray-light);
+
+  /* ─── SHADOWS ────────────────────────────────────────────── */
+  --shadow-none:   none;       /* primary style — flat */
+  --shadow-sm:     0 1px 3px rgba(0,0,0,0.12);
+  --shadow-md:     0 4px 16px rgba(0,0,0,0.12);
+}
+
+/* ─── SEMANTIC TYPE STYLES ──────────────────────────────────── */
+
+h1, .h1 {
+  font-family:    var(--font-heading);
+  font-weight:    var(--fw-bold);
+  font-size:      var(--text-3xl);
+  line-height:    var(--lh-tight);
+  letter-spacing: var(--ls-tight);
+  color:          var(--color-heading);
+  text-wrap:      pretty;
+}
+
+h2, .h2 {
+  font-family:    var(--font-heading);
+  font-weight:    var(--fw-semibold);
+  font-size:      var(--text-2xl);
+  line-height:    var(--lh-snug);
+  letter-spacing: var(--ls-tight);
+  color:          var(--color-heading);
+  text-wrap:      pretty;
+}
+
+h3, .h3 {
+  font-family:    var(--font-heading);
+  font-weight:    var(--fw-semibold);
+  font-size:      var(--text-xl);
+  line-height:    var(--lh-snug);
+  color:          var(--color-fg);
+}
+
+h4, .h4 {
+  font-family:    var(--font-heading);
+  font-weight:    var(--fw-medium);
+  font-size:      var(--text-lg);
+  line-height:    var(--lh-snug);
+  color:          var(--color-fg);
+}
+
+p, .body {
+  font-family:    var(--font-body);
+  font-weight:    var(--fw-regular);
+  font-size:      var(--text-base);
+  line-height:    var(--lh-normal);
+  color:          var(--color-fg);
+  text-wrap:      pretty;
+}
+
+.body-sm {
+  font-family:    var(--font-body);
+  font-size:      var(--text-sm);
+  line-height:    var(--lh-normal);
+  color:          var(--color-fg-secondary);
+}
+
+.caption {
+  font-family:    var(--font-body);
+  font-size:      var(--text-xs);
+  line-height:    var(--lh-relaxed);
+  color:          var(--color-fg-secondary);
+}
+
+.callout {
+  font-family:    var(--font-heading);
+  font-weight:    var(--fw-bold);
+  font-size:      var(--text-2xl);
+  line-height:    var(--lh-tight);
+  letter-spacing: var(--ls-tight);
+  color:          var(--aphl-teal);
+}
+
+a {
+  color:           var(--color-link);
+  text-decoration: underline;
+}
+a:visited {
+  color:           var(--color-link-visited);
+}
+
+code, .mono {
+  font-family:    var(--font-mono);
+  font-size:      0.9em;
+  background:     var(--aphl-gray-light);
+  padding:        0.1em 0.3em;
+}
+
+/* ─── SLIDE TYPOGRAPHY (presentations) ──────────────────────── */
+.slide-title {
+  font-family:    var(--font-heading);
+  font-weight:    var(--fw-bold);
+  font-size:      2.5rem;
+  line-height:    var(--lh-tight);
+  letter-spacing: var(--ls-tight);
+  color:          var(--aphl-white);
+}
+
+.slide-heading {
+  font-family:    var(--font-heading);
+  font-weight:    var(--fw-semibold);
+  font-size:      1.75rem;
+  color:          var(--aphl-teal-medium);
+  letter-spacing: var(--ls-tight);
+}
+
+.slide-body {
+  font-family:    var(--font-body);
+  font-size:      1.1rem;
+  line-height:    1.6;
+  color:          var(--aphl-gray-dark);
+}
