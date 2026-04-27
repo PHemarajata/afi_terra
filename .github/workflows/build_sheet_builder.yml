@@ -11,9 +11,6 @@ jobs:
   # ── macOS (Apple Silicon) ────────────────────────────────────────────────
   build-macos:
     runs-on: macos-14        # Apple Silicon (M1) runner
-    defaults:
-      run:
-        working-directory: tools/terra_sheet_builder
     steps:
       - uses: actions/checkout@v4
 
@@ -22,9 +19,10 @@ jobs:
           python-version: "3.12"
 
       - name: Install dependencies
-        run: pip install -r requirements.txt pyinstaller
+        run: pip install -r tools/terra_sheet_builder/requirements.txt pyinstaller
 
       - name: Build .app
+        working-directory: tools/terra_sheet_builder
         run: |
           pyinstaller \
             --onefile \
@@ -35,9 +33,8 @@ jobs:
             terra_sheet_builder.py
 
       - name: Zip artifact
-        run: |
-          cd dist
-          zip -r AFI_SheetBuilder_macOS_arm64.zip AFI_SheetBuilder.app
+        working-directory: tools/terra_sheet_builder/dist
+        run: zip -r AFI_SheetBuilder_macOS_arm64.zip AFI_SheetBuilder.app
 
       - uses: actions/upload-artifact@v4
         with:
@@ -48,9 +45,6 @@ jobs:
   # ── Linux (AMD64) ────────────────────────────────────────────────────────
   build-linux:
     runs-on: ubuntu-22.04
-    defaults:
-      run:
-        working-directory: tools/terra_sheet_builder
     steps:
       - uses: actions/checkout@v4
 
@@ -69,9 +63,10 @@ jobs:
             libdbus-1-3
 
       - name: Install dependencies
-        run: pip install -r requirements.txt pyinstaller
+        run: pip install -r tools/terra_sheet_builder/requirements.txt pyinstaller
 
       - name: Build binary
+        working-directory: tools/terra_sheet_builder
         run: |
           pyinstaller \
             --onefile \
@@ -89,9 +84,6 @@ jobs:
   # ── Windows (x64) ────────────────────────────────────────────────────────
   build-windows:
     runs-on: windows-latest
-    defaults:
-      run:
-        working-directory: tools/terra_sheet_builder
     steps:
       - uses: actions/checkout@v4
 
@@ -100,9 +92,10 @@ jobs:
           python-version: "3.12"
 
       - name: Install dependencies
-        run: pip install -r requirements.txt pyinstaller
+        run: pip install -r tools/terra_sheet_builder/requirements.txt pyinstaller
 
       - name: Build .exe
+        working-directory: tools/terra_sheet_builder
         run: |
           pyinstaller `
             --onefile `
