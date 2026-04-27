@@ -20,7 +20,7 @@ from datetime import date
 from pathlib import Path
 
 from PySide6.QtCore import Qt, QDate, QModelIndex, QAbstractTableModel, QSortFilterProxyModel
-from PySide6.QtGui import QColor, QBrush, QFont, QPixmap, QIcon
+from PySide6.QtGui import QColor, QBrush, QPainter, QPixmap, QIcon
 from PySide6.QtWidgets import (
     QApplication, QMainWindow, QWidget, QStackedWidget,
     QVBoxLayout, QHBoxLayout, QGridLayout, QFormLayout,
@@ -299,10 +299,17 @@ def parse_terra_tsv(path: str) -> dict:
 class APHLHeader(QWidget):
     """Branded teal header bar with APHL logo and app title."""
 
+    _BG = QColor("#006E79")
+
+    def paintEvent(self, event):
+        """Fill background with APHL teal — reliable under all Qt styles."""
+        painter = QPainter(self)
+        painter.fillRect(self.rect(), self._BG)
+
     def __init__(self, parent=None):
         super().__init__(parent)
         self.setFixedHeight(52)
-        self.setStyleSheet("background-color: #006E79;")
+        self.setAutoFillBackground(False)  # handled in paintEvent
 
         layout = QHBoxLayout(self)
         layout.setContentsMargins(20, 0, 20, 0)
@@ -338,7 +345,7 @@ class APHLHeader(QWidget):
         sep = QFrame()
         sep.setFrameShape(QFrame.Shape.VLine)
         sep.setFixedHeight(30)
-        sep.setStyleSheet("color: rgba(255,255,255,0.3); background: rgba(255,255,255,0.3);")
+        sep.setStyleSheet("color: rgba(255,255,255,0.3);")
         layout.addWidget(sep)
 
         # Title block
