@@ -1,0 +1,119 @@
+name: Build AFI SheetBuilder
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'tools/terra_sheet_builder/**'
+  workflow_dispatch:
+
+jobs:
+  # ── macOS (Apple Silicon) ────────────────────────────────────────────────
+  build-macos:
+    runs-on: macos-14        # Apple Silicon (M1) runner
+    defaults:
+      run:
+        working-directory: tools/terra_sheet_builder
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt pyinstaller
+
+      - name: Build .app
+        run: |
+          pyinstaller \
+            --onefile \
+            --windowed \
+            --name AFI_SheetBuilder \
+            --add-data "aphl_style.qss:." \
+            --add-data "assets:assets" \
+            terra_sheet_builder.py
+
+      - name: Zip artifact
+        run: |
+          cd dist
+          zip -r AFI_SheetBuilder_macOS_arm64.zip AFI_SheetBuilder.app
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: AFI_SheetBuilder_macOS_arm64
+          path: tools/terra_sheet_builder/dist/AFI_SheetBuilder_macOS_arm64.zip
+          retention-days: 30
+
+  # ── Linux (AMD64) ────────────────────────────────────────────────────────
+  build-linux:
+    runs-on: ubuntu-22.04
+    defaults:
+      run:
+        working-directory: tools/terra_sheet_builder
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install system Qt dependencies
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y \
+            libglib2.0-0 libgl1 libegl1 \
+            libxcb-cursor0 libxcb-xinerama0 libxcb-icccm4 \
+            libxcb-image0 libxcb-keysyms1 libxcb-randr0 \
+            libxcb-render-util0 libxcb-shape0 libxkbcommon-x11-0 \
+            libdbus-1-3
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt pyinstaller
+
+      - name: Build binary
+        run: |
+          pyinstaller \
+            --onefile \
+            --name AFI_SheetBuilder \
+            --add-data "aphl_style.qss:." \
+            --add-data "assets:assets" \
+            terra_sheet_builder.py
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: AFI_SheetBuilder_Linux_amd64
+          path: tools/terra_sheet_builder/dist/AFI_SheetBuilder
+          retention-days: 30
+
+  # ── Windows (x64) ────────────────────────────────────────────────────────
+  build-windows:
+    runs-on: windows-latest
+    defaults:
+      run:
+        working-directory: tools/terra_sheet_builder
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt pyinstaller
+
+      - name: Build .exe
+        run: |
+          pyinstaller `
+            --onefile `
+            --windowed `
+            --name AFI_SheetBuilder `
+            --add-data "aphl_style.qss;." `
+            --add-data "assets;assets" `
+            terra_sheet_builder.py
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: AFI_SheetBuilder_Windows_x64
+          path: tools/terra_sheet_builder/dist/AFI_SheetBuilder.exe
+          retention-days: 30

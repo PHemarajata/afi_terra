@@ -1,0 +1,282 @@
+/* ==========================================================================
+   APHL Brand Theme — PySide6 QSS
+   Association of Public Health Laboratories
+   For use with AFI Terra Sheet Builder
+   ========================================================================== */
+
+/* ── Base ─────────────────────────────────────────────────────────────────── */
+
+QMainWindow, QDialog {
+    background-color: #E2E9EC;
+}
+
+QWidget {
+    font-family: "Franklin Gothic Book", "Libre Franklin", Arial, sans-serif;
+    font-size: 13px;
+    color: #404040;
+}
+
+/* ── Group boxes ──────────────────────────────────────────────────────────── */
+
+QGroupBox {
+    background-color: #ffffff;
+    border: 1px solid #d0d9dc;
+    margin-top: 18px;
+    padding-top: 6px;
+}
+
+QGroupBox::title {
+    subcontrol-origin: margin;
+    subcontrol-position: top left;
+    left: 0px;
+    top: 0px;
+    background-color: #006E79;
+    color: #ffffff;
+    font-family: "Franklin Gothic Medium", "Libre Franklin", Arial, sans-serif;
+    font-weight: bold;
+    font-size: 12px;
+    padding: 5px 14px;
+    letter-spacing: 0px;
+}
+
+/* ── Labels ───────────────────────────────────────────────────────────────── */
+
+QLabel {
+    color: #404040;
+    background: transparent;
+}
+
+QLabel#hint {
+    color: #8A8A8A;
+    font-size: 11px;
+}
+
+/* ── Buttons ──────────────────────────────────────────────────────────────── */
+
+QPushButton {
+    background-color: #006E79;
+    color: #ffffff;
+    border: none;
+    padding: 6px 18px;
+    font-family: "Franklin Gothic Medium", "Libre Franklin", Arial, sans-serif;
+    font-weight: bold;
+    font-size: 13px;
+    min-height: 28px;
+    min-width: 80px;
+}
+
+QPushButton:hover   { background-color: #005057; }
+QPushButton:pressed { background-color: #003d42; }
+
+QPushButton:disabled {
+    background-color: #A3CCCC;
+    color: #ffffff;
+}
+
+/* Secondary style — set property: btn.setProperty("secondary", True) */
+QPushButton[secondary="true"] {
+    background-color: #ffffff;
+    color: #006E79;
+    border: 1.5px solid #006E79;
+}
+QPushButton[secondary="true"]:hover   { background-color: #f0f7f8; }
+QPushButton[secondary="true"]:pressed { background-color: #e0eff0; }
+QPushButton[secondary="true"]:disabled {
+    color: #A3CCCC;
+    border-color: #A3CCCC;
+    background-color: #ffffff;
+}
+
+/* Danger style — set property: btn.setProperty("danger", True) */
+QPushButton[danger="true"] {
+    background-color: #B42E34;
+    color: #ffffff;
+    border: none;
+}
+QPushButton[danger="true"]:hover   { background-color: #862226; }
+QPushButton[danger="true"]:pressed { background-color: #6a1b1e; }
+
+/* Small icon-only remove button */
+QPushButton[iconOnly="true"] {
+    background-color: transparent;
+    color: #B42E34;
+    border: none;
+    padding: 2px 6px;
+    min-width: 28px;
+    min-height: 20px;
+    font-size: 14px;
+    font-weight: bold;
+}
+QPushButton[iconOnly="true"]:hover { background-color: #f3d1d2; }
+
+/* ── Inputs ───────────────────────────────────────────────────────────────── */
+
+QLineEdit, QSpinBox, QDateEdit {
+    border: 1px solid #c4d0d4;
+    background-color: #ffffff;
+    color: #404040;
+    padding: 4px 8px;
+    min-height: 26px;
+    selection-background-color: #00A0AF;
+    selection-color: #ffffff;
+}
+
+QLineEdit:focus, QSpinBox:focus, QDateEdit:focus {
+    border-color: #00A0AF;
+}
+
+QLineEdit:disabled, QSpinBox:disabled, QDateEdit:disabled {
+    background-color: #f4f7f8;
+    color: #8A8A8A;
+}
+
+QLineEdit[invalid="true"] {
+    border-color: #B42E34;
+}
+
+/* ── ComboBox ─────────────────────────────────────────────────────────────── */
+
+QComboBox {
+    border: 1px solid #c4d0d4;
+    background-color: #ffffff;
+    color: #404040;
+    padding: 4px 8px;
+    min-height: 26px;
+}
+
+QComboBox:focus { border-color: #00A0AF; }
+
+QComboBox::drop-down {
+    border: none;
+    width: 20px;
+}
+
+QComboBox::down-arrow {
+    width: 10px;
+    height: 10px;
+}
+
+QComboBox QAbstractItemView {
+    background-color: #ffffff;
+    border: 1px solid #00A0AF;
+    selection-background-color: #006E79;
+    selection-color: #ffffff;
+    color: #404040;
+}
+
+/* ── Table ────────────────────────────────────────────────────────────────── */
+
+QTableWidget {
+    background-color: #ffffff;
+    alternate-background-color: #f4f7f8;
+    gridline-color: #E2E9EC;
+    border: 1px solid #d0d9dc;
+    selection-background-color: #e5f4f5;
+    selection-color: #004048;
+}
+
+QTableWidget::item {
+    padding: 4px 8px;
+    border: none;
+}
+
+QTableWidget::item:selected {
+    background-color: #e5f4f5;
+    color: #004048;
+}
+
+QHeaderView {
+    background-color: #006E79;
+}
+
+QHeaderView::section {
+    background-color: #006E79;
+    color: #ffffff;
+    font-family: "Franklin Gothic Medium", "Libre Franklin", Arial, sans-serif;
+    font-weight: bold;
+    font-size: 11px;
+    padding: 5px 10px;
+    border: none;
+    border-right: 1px solid #005057;
+    border-bottom: none;
+    text-transform: uppercase;
+}
+
+QHeaderView::section:last {
+    border-right: none;
+}
+
+/* Row color coding for NTC/NC and PC types is applied programmatically via
+   QTableWidgetItem.setBackground() in the Python code. */
+
+/* ── Scrollbars ───────────────────────────────────────────────────────────── */
+
+QScrollBar:vertical {
+    background-color: #E2E9EC;
+    width: 10px;
+    margin: 0;
+}
+QScrollBar::handle:vertical {
+    background-color: #A3CCCC;
+    min-height: 20px;
+}
+QScrollBar::handle:vertical:hover { background-color: #006E79; }
+QScrollBar::add-line:vertical, QScrollBar::sub-line:vertical { height: 0; }
+
+QScrollBar:horizontal {
+    background-color: #E2E9EC;
+    height: 10px;
+    margin: 0;
+}
+QScrollBar::handle:horizontal {
+    background-color: #A3CCCC;
+    min-width: 20px;
+}
+QScrollBar::handle:horizontal:hover { background-color: #006E79; }
+QScrollBar::add-line:horizontal, QScrollBar::sub-line:horizontal { width: 0; }
+
+QScrollArea {
+    border: none;
+    background-color: transparent;
+}
+
+/* ── Form layout labels ───────────────────────────────────────────────────── */
+
+QFormLayout QLabel {
+    font-weight: 600;
+    font-size: 12px;
+    color: #404040;
+    min-width: 130px;
+}
+
+/* ── Dialogs & message boxes ──────────────────────────────────────────────── */
+
+QMessageBox {
+    background-color: #ffffff;
+}
+
+QMessageBox QLabel {
+    color: #404040;
+    font-size: 13px;
+}
+
+QMessageBox QPushButton {
+    min-width: 80px;
+}
+
+/* ── Separator frame ──────────────────────────────────────────────────────── */
+
+QFrame[frameShape="4"],   /* HLine */
+QFrame[frameShape="5"] {  /* VLine */
+    color: #d0d9dc;
+}
+
+/* ── Tooltip ──────────────────────────────────────────────────────────────── */
+
+QToolTip {
+    background-color: #005057;
+    color: #ffffff;
+    border: 1px solid #006E79;
+    padding: 4px 8px;
+    font-size: 12px;
+}
