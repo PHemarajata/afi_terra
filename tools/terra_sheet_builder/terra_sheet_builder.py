@@ -1087,11 +1087,6 @@ class MainWindow(QMainWindow):
         self.resize(1100, 720)
         self.setMinimumSize(800, 560)
 
-        # ── Load APHL stylesheet ──
-        qss_path = _bundle_path("aphl_style.qss")
-        if qss_path.exists():
-            self.setStyleSheet(qss_path.read_text(encoding="utf-8"))
-
         # ── Window icon ──
         icon_path = _bundle_path("assets/aphl-icon.png")
         if icon_path.exists():
@@ -1124,10 +1119,63 @@ class MainWindow(QMainWindow):
 # Entry point
 # ---------------------------------------------------------------------------
 
+# ---------------------------------------------------------------------------
+# Embedded fallback QSS — applied if aphl_style.qss is not found in bundle.
+# Keeps branding intact even if the asset path resolution fails.
+# ---------------------------------------------------------------------------
+
+_FALLBACK_QSS = """
+QMainWindow, QDialog { background-color: #E2E9EC; }
+QWidget { font-family: Arial, sans-serif; font-size: 13px; color: #404040; }
+QGroupBox { background-color: #ffffff; border: 1px solid #d0d9dc; margin-top: 18px; padding-top: 6px; }
+QGroupBox::title { subcontrol-origin: margin; subcontrol-position: top left; left: 0px; top: 0px; background-color: #006E79; color: #ffffff; font-weight: bold; font-size: 12px; padding: 5px 14px; }
+QLabel { color: #404040; background: transparent; }
+QPushButton { background-color: #006E79; color: #ffffff; border: none; padding: 6px 18px; font-weight: bold; font-size: 13px; min-height: 28px; min-width: 80px; }
+QPushButton:hover { background-color: #005057; }
+QPushButton:pressed { background-color: #003d42; }
+QPushButton:disabled { background-color: #A3CCCC; color: #ffffff; }
+QPushButton[secondary="true"] { background-color: #ffffff; color: #006E79; border: 1.5px solid #006E79; }
+QPushButton[secondary="true"]:hover { background-color: #f0f7f8; }
+QPushButton[danger="true"] { background-color: #B42E34; color: #ffffff; border: none; }
+QPushButton[danger="true"]:hover { background-color: #862226; }
+QPushButton[iconOnly="true"] { background-color: transparent; color: #B42E34; border: none; padding: 2px 6px; min-width: 28px; min-height: 20px; font-size: 14px; font-weight: bold; }
+QPushButton[iconOnly="true"]:hover { background-color: #f3d1d2; }
+QLineEdit, QSpinBox, QDateEdit, QComboBox { border: 1px solid #c4d0d4; background-color: #ffffff; color: #404040; padding: 4px 8px; min-height: 26px; }
+QLineEdit:focus, QSpinBox:focus, QDateEdit:focus, QComboBox:focus { border-color: #00A0AF; }
+QLineEdit[invalid="true"] { border-color: #B42E34; }
+QTableWidget { background-color: #ffffff; alternate-background-color: #f4f7f8; gridline-color: #E2E9EC; border: 1px solid #d0d9dc; selection-background-color: #e5f4f5; selection-color: #004048; }
+QTableWidget::item { padding: 4px 8px; border: none; }
+QHeaderView { background-color: #006E79; }
+QHeaderView::section { background-color: #006E79; color: #ffffff; font-weight: bold; font-size: 11px; padding: 5px 10px; border: none; border-right: 1px solid #005057; text-transform: uppercase; }
+QScrollBar:vertical { background-color: #E2E9EC; width: 10px; margin: 0; }
+QScrollBar::handle:vertical { background-color: #A3CCCC; min-height: 20px; }
+QScrollBar::handle:vertical:hover { background-color: #006E79; }
+QScrollBar::add-line:vertical, QScrollBar::sub-line:vertical { height: 0; }
+QScrollBar:horizontal { background-color: #E2E9EC; height: 10px; margin: 0; }
+QScrollBar::handle:horizontal { background-color: #A3CCCC; min-width: 20px; }
+QScrollBar::handle:horizontal:hover { background-color: #006E79; }
+QScrollBar::add-line:horizontal, QScrollBar::sub-line:horizontal { width: 0; }
+QScrollArea { border: none; background-color: transparent; }
+QComboBox QAbstractItemView { background-color: #ffffff; border: 1px solid #00A0AF; selection-background-color: #006E79; selection-color: #ffffff; }
+QToolTip { background-color: #005057; color: #ffffff; border: 1px solid #006E79; padding: 4px 8px; }
+"""
+
+
 def main():
     app = QApplication(sys.argv)
     app.setApplicationName("AFI Terra Sheet Builder")
     app.setOrganizationName("APHL")
+
+    # ── Apply APHL stylesheet to the application (cascades to all widgets) ──
+    qss_path = _bundle_path("aphl_style.qss")
+    if qss_path.exists():
+        try:
+            app.setStyleSheet(qss_path.read_text(encoding="utf-8"))
+        except Exception:
+            app.setStyleSheet(_FALLBACK_QSS)
+    else:
+        app.setStyleSheet(_FALLBACK_QSS)
+
     window = MainWindow()
     window.show()
     sys.exit(app.exec())
