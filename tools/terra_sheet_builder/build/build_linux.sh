@@ -5,6 +5,7 @@ set -euo pipefail
 pip install -r ../requirements.txt pyinstaller
 pyinstaller \
   --onefile \
+  --clean \
   --name AFI_SheetBuilder \
   ../terra_sheet_builder.py
 echo "Built: dist/AFI_SheetBuilder"
