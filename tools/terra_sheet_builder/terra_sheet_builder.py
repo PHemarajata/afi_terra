@@ -308,18 +308,25 @@ class APHLHeader(QWidget):
         layout.setContentsMargins(20, 0, 20, 0)
         layout.setSpacing(14)
 
-        # Logo
-        logo_path = _bundle_path("assets/aphl-logo-white.png")
-        if logo_path.exists():
+        # Logo — try several candidate paths for dev + all bundle types
+        logo_pix = None
+        for candidate in [
+            _bundle_path("assets/aphl-logo-white.png"),
+            Path(__file__).parent / "assets" / "aphl-logo-white.png",
+            Path(sys.executable).parent / "assets" / "aphl-logo-white.png",
+        ]:
+            if candidate.exists():
+                logo_pix = QPixmap(str(candidate))
+                break
+
+        if logo_pix and not logo_pix.isNull():
             logo_lbl = QLabel()
-            pix = QPixmap(str(logo_path)).scaledToHeight(
-                28, Qt.TransformationMode.SmoothTransformation
+            logo_lbl.setPixmap(
+                logo_pix.scaledToHeight(28, Qt.TransformationMode.SmoothTransformation)
             )
-            logo_lbl.setPixmap(pix)
             logo_lbl.setStyleSheet("background: transparent;")
             layout.addWidget(logo_lbl)
         else:
-            # Fallback text mark if image missing
             fallback = QLabel("APHL")
             fallback.setStyleSheet(
                 "color: white; font-weight: 800; font-size: 18px; "
@@ -1165,6 +1172,11 @@ def main():
     app = QApplication(sys.argv)
     app.setApplicationName("AFI Terra Sheet Builder")
     app.setOrganizationName("APHL")
+
+    # ── Force Fusion style for consistent cross-platform QSS rendering ──
+    # Without this, macOS/Windows native styles partially override QSS rules
+    # (especially QGroupBox titles and input borders).
+    app.setStyle("Fusion")
 
     # ── Apply APHL stylesheet to the application (cascades to all widgets) ──
     qss_path = _bundle_path("aphl_style.qss")
