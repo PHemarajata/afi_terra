@@ -539,8 +539,8 @@ class Screen1(QWidget):
         row = table.rowCount()
         table.insertRow(row)
         table.setItem(row, 0, QTableWidgetItem(sample_id))
-        table.setItem(row, 1, QTableWidgetItem(r1))
-        table.setItem(row, 2, QTableWidgetItem(r2))
+        table.setItem(row, 1, QTableWidgetItem(os.path.basename(r1)))
+        table.setItem(row, 2, QTableWidgetItem(os.path.basename(r2)))
         # Remove button: look up own row index at click time so it survives
         # other rows being deleted above it.
         btn_rm = QPushButton("✕")
