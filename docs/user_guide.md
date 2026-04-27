@@ -1,9 +1,9 @@
 # AFI Terra Pipeline: User Guide
 
-**Version:** 0.4.0  
-**Workflows:** `AFI_Rickettsiales_Main` / `AFI_Rickettsiales_Batch`  
+**Version:** 0.4.1  
+**Workflows:** `AFI_16S_Main` / `AFI_16S_Batch`  
 **Platform:** Terra (Broad Institute)  
-**Last updated:** 2026-04-03
+**Last updated:** 2026-04-06
 
 ---
 
@@ -16,12 +16,13 @@
 5. [Running the Single-Sample Workflow](#5-running-the-single-sample-workflow)
 6. [Running the Batch Workflow](#6-running-the-batch-workflow)
 7. [The Two-Pass Pattern](#7-the-two-pass-pattern)
-8. [Helper Scripts](#8-helper-scripts)
-9. [Output Files Reference](#9-output-files-reference)
-10. [Interpreting Calls and Summaries](#10-interpreting-calls-and-summaries)
-11. [Detection Thresholds](#11-detection-thresholds)
-12. [Docker Images](#12-docker-images)
-13. [Troubleshooting](#13-troubleshooting)
+8. [Terra Sheet Builder (GUI)](#8-terra-sheet-builder-gui)
+9. [Helper Scripts](#9-helper-scripts)
+10. [Output Files Reference](#10-output-files-reference)
+11. [Interpreting Calls and Summaries](#11-interpreting-calls-and-summaries)
+12. [Detection Thresholds](#12-detection-thresholds)
+13. [Docker Images](#13-docker-images)
+14. [Troubleshooting](#14-troubleshooting)
 
 ---
 
@@ -37,10 +38,10 @@ The pipeline is designed to detect genera in the order Rickettsiales. For *Orien
 
 | Workflow | WDL file | Use case |
 |---|---|---|
-| `AFI_Rickettsiales_Main` | `wdl/AFI_Rickettsiales_Main.wdl` | Single sample |
-| `AFI_Rickettsiales_Batch` | `wdl/AFI_Rickettsiales_Batch.wdl` | Full sequencing run (scatter/gather) |
+| `AFI_16S_Main` | `wdl/AFI_16S_Main.wdl` | Single sample |
+| `AFI_16S_Batch` | `wdl/AFI_16S_Batch.wdl` | Full sequencing run (scatter/gather) |
 
-For clinical use, run the batch workflow. It processes all samples in a run together, automatically computing the NTC (no-template control) background from the NTC/NC samples in that run, and producing a consolidated `run_summary.tsv`.
+For clinical use, run the batch workflow. It processes all samples in a run together, automatically computing a per-run NTC (no-template control) background from the NTC/NC samples in that run, and producing a consolidated `run_summary.tsv`. The **Terra Sheet Builder** desktop app (Section 8) can generate the required sample sheet TSV without manual editing.
 
 ### Two sample modes
 
@@ -51,14 +52,9 @@ For clinical use, run the batch workflow. It processes all samples in a run toge
 
 A single batch run can contain both modes simultaneously.
 
-### Two classifier modes
+### Classifier
 
-| Classifier mode | Classifiers used | Default |
-|---|---|---|
-| `single` | Centrifuger only | Yes (recommended) |
-| `double` | Dual Kraken2 (16G general + Rickettsiales-specific) | No |
-
-The `single` (Centrifuger) mode is recommended for routine use. The `double` Kraken2 mode is retained for comparative evaluation but requires two separate database paths.
+The pipeline uses **Centrifuger** as its sole classifier, backed by a combined bacteria/archaea + Rickettsiales database. Centrifuge read counts provide evidence for all genera; *Orientia* and *Rickettsia* additionally receive a confirmatory 16S rRNA alignment step for higher specificity.
 
 ---
 
@@ -66,16 +62,17 @@ The `single` (Centrifuger) mode is recommended for routine use. The `double` Kra
 
 ### Processing steps
 
-Each sample passes through up to nine steps. Steps 1–5 run in Phase 1 of the batch scatter; steps 6–8 run in Phase 2 (after NTC background is computed); step 9 is the final batch-level gather.
+Each sample passes through up to nine steps. Steps 1–5 run in Phase 1 of the batch scatter; steps 6–8 run in Phase 2 (after per-run NTC backgrounds are computed and matched); step 9 is the final batch-level gather.
 
 ```
 Step 1  Human read dehosting        NCBI SRA Scrubber (optional, default on)
 Step 2  QC / adapter trimming       fastp v0.23.4
 Step 3  Taxonomic classification    Centrifuger -> kreport -> genus counts TSV
-Step 4  16S alignment               minimap2 v2.28 -> BAM
+Step 4  16S alignment               minimap2 -> BAM
 Step 5  Alignment metrics           extract_rick16s_metrics.py -> align_metrics.tsv
-        ---- batch gather: BuildNTCBackground (NTC/NC samples only) ----
-Step 6  NTC-aware interpretation    call_taxa.py -> calls.tsv
+        ---- batch gather: BuildNTCBackground (NTC/NC samples only; per run_id) ----
+        ---- batch gather: MatchNTCBackground (assigns each sample its run's NTC) ----
+Step 6  NTC-aware interpretation    call_taxa.py -> calls.tsv + taxa_evidence.tsv
 Step 7a Validation summary          compare_expected (validation mode only)
 Step 7b Routine summary             summarize_routine (routine mode only)
         ---- batch gather: BuildRunSummary ----
@@ -103,14 +100,21 @@ Step 8  Run summary                 run_summary.tsv (batch only)
       |                                    |
   genus_counts.tsv              align_metrics.tsv
       |                                    |
-      +----[ BuildNTCBackground ]----------+
+      +----[ BuildNTCBackground ]-----------+
       |      (NTC/NC samples only;
-      |       batch workflow only)
+      |       one TSV per run_id)
       v
- ntc_background.tsv
+ ntc_background_<run_id>.tsv (per run)
+      |
+      v
+ [ MatchNTCBackground ]          (maps each sample to its run's NTC file)
+      |
+      v
+ per_sample ntc_background.tsv
       |
       v
  [Step 6] call_taxa.py           calls.tsv
+                                  taxa_evidence.tsv  (NEW)
       |
       +---------------------+
       |                     |
@@ -128,15 +132,17 @@ Step 8  Run summary                 run_summary.tsv (batch only)
 
 ### Batch workflow phases
 
-The batch workflow (`AFI_Rickettsiales_Batch`) uses a two-scatter design:
+The batch workflow (`AFI_16S_Batch`) uses a two-scatter, four-gather design:
 
-**Phase 1 scatter** — runs steps 1–5 for all samples in parallel. As samples complete, each NTC/NC sample exposes its `align_metrics.tsv` and `genus_counts.tsv` via a conditional declaration inside the scatter.
+**Phase 1 scatter** — runs steps 1–5 for all samples in parallel. As samples complete, each NTC/NC sample conditionally exposes its `align_metrics.tsv` and `genus_counts.tsv`.
 
-**BuildNTCBackground gather** — collects all NTC/NC metrics files (via `select_all`) and runs `build_ntc_background.py` to produce a single `ntc_background.tsv` for the run.
+**BuildNTCBackground gather** — collects all NTC/NC metrics files and computes one `ntc_background_<run_id>.tsv` **per distinct `run_id`**, ensuring samples from different sequencing runs are never cross-contaminated by each other's NTC signal.
 
-**Phase 2 scatter** — runs steps 6–7 for all samples in parallel, using the computed `ntc_background.tsv` as input to `call_taxa.py`.
+**MatchNTCBackground gather** — maps each sample in the batch to the NTC background file for its `run_id`, producing one matched NTC file per sample. This task fails if any `run_id` has no NTC/NC sample — every run submitted in a batch must include at least one negative control.
 
-**BuildRunSummary gather** — merges all per-sample summaries and `calls.tsv` files into a single `run_summary.tsv` annotated with the run ID and run-level PC8 validity.
+**Phase 2 scatter** — runs steps 6–7 for all samples in parallel, each using its matched `ntc_background.tsv`.
+
+**BuildRunSummary gather** — merges all per-sample summaries and `calls.tsv` files into a single `run_summary.tsv` annotated with per-run IDs and run-level PC8 validity.
 
 ---
 
@@ -171,22 +177,27 @@ The task extracts all archives into a local directory, searches for a file match
 
 The database must include both the standard bacteria/archaea content and the Rickettsiales-specific sequences so that a single kreport covers all organisms needed for PC8 validity checking.
 
-**VM sizing:** The Centrifuger task requires substantial compute resources. Always set:
+**VM sizing:** The Centrifuger task requires substantial compute resources. The recommended defaults are:
 
 ```
-centrifuger_memory = "128G"
-centrifuger_disks  = "local-disk 500 HDD"
+centrifuger_memory = "96G"
+centrifuger_disks  = "local-disk 375 HDD"
+classify_threads   = 8
 ```
 
-The default Terra VM (typically 1 CPU / 2 GB RAM) is far too small and will cause the task to fail or segfault. These parameters are exposed at the workflow level so they can be set in the input JSON.
+The default Terra VM (typically 1 CPU / 2 GB RAM) is far too small and will cause the task to fail or segfault. The 96 GB RAM allocation comfortably covers the ~90–110 GB in-memory footprint of the combined database, and 375 GB disk provides ample space for the ~67 GiB compressed archive plus extracted index. These parameters are exposed at the workflow level so they can be set in the input JSON.
 
 ### NTC background file
 
 The NTC background (`ntc_background.tsv`) encodes the maximum read counts observed in no-template control samples for each genus, separately for the alignment and Centrifuger evidence sources. These thresholds prevent false positive calls caused by contamination or bleed-through.
 
+In the **batch workflow**, one NTC background file is computed automatically per distinct `run_id` from all NTC/NC samples in that run. You do not need to supply or manage this file manually — it is an intermediate output of `BuildNTCBackground` and consumed internally by `MatchNTCBackground`.
+
+In the **single-sample workflow**, you must supply an `ntc_background` file manually.
+
 #### Format
 
-**New dual-column format** (produced by `BuildNTCBackground` in the batch workflow):
+**Dual-column format** (produced by `BuildNTCBackground` in the batch workflow):
 
 ```
 genus	align_ntc_reads	cfr_ntc_reads
@@ -195,7 +206,7 @@ Rickettsia	12	45
 Leptospira	0	230
 ```
 
-**Legacy single-column format** (produced by `build_ntc_background_from_metrics.py`):
+**Legacy single-column format** (produced by `build_ntc_background_from_metrics.py` — single-sample use):
 
 ```
 genus	mapped_reads
@@ -207,13 +218,13 @@ Rickettsia	12
 
 #### Placeholder file
 
-For first-pass runs where no NTC data is available yet, use the placeholder file at `wdl/inputs/ntc_background.placeholder.tsv`. It contains only the header with no data rows, which means all NTC thresholds default to zero and no NTC correction is applied:
+For single-sample runs where no NTC data is available yet, use the placeholder file at `wdl/inputs/ntc_background.placeholder.tsv`. It contains only the header with no data rows, meaning all NTC thresholds default to zero and no NTC correction is applied:
 
 ```
 genus	mapped_reads
 ```
 
-Upload this file to GCS and use its path as `ntc_background` (single-sample workflow) or `AFI_Rickettsiales_Batch.ntc_background` (batch first pass).
+Upload this file to GCS and use its path as `ntc_background` in the single-sample workflow input JSON.
 
 ---
 
@@ -224,8 +235,8 @@ Upload this file to GCS and use its path as `ntc_background` (single-sample work
 Importing via Dockstore avoids import resolution errors because Terra pulls the full descriptor set (main WDL + all task imports) automatically.
 
 1. In Dockstore, link the GitHub repository `PHemarajata/afi_terra`. The `.dockstore.yml` at the repository root registers both workflows:
-   - `/wdl/AFI_Rickettsiales_Main.wdl`
-   - `/wdl/AFI_Rickettsiales_Batch.wdl`
+   - `/wdl/AFI_16S_Main.wdl`
+   - `/wdl/AFI_16S_Batch.wdl`
 2. Create or refresh a workflow version from the desired Git tag or branch.
 3. In your Terra workspace, navigate to **Workflows** and click **Find a Workflow**.
 4. Select **Dockstore** as the source, search for the workflow name, and import via TRS (Tool Registry Service).
@@ -236,8 +247,8 @@ Importing via Dockstore avoids import resolution errors because Terra pulls the 
 If Dockstore is not available, upload a ZIP archive to Terra that preserves relative directory paths. The ZIP must contain at minimum:
 
 ```
-wdl/AFI_Rickettsiales_Batch.wdl
-wdl/AFI_Rickettsiales_Main.wdl
+wdl/AFI_16S_Batch.wdl
+wdl/AFI_16S_Main.wdl
 wdl/tasks/align.wdl
 wdl/tasks/classify.wdl
 wdl/tasks/interpret.wdl
@@ -247,14 +258,14 @@ wdl/tasks/validate.wdl
 NCBI_scrub_PE/tasks/quality_control/read_filtering/task_ncbi_scrub.wdl
 ```
 
-> **Important:** Uploading only `AFI_Rickettsiales_Batch.wdl` alone will fail because it imports `AFI_Rickettsiales_Main.wdl` and the task WDLs using relative paths.
+> **Important:** Uploading only `AFI_16S_Batch.wdl` alone will fail because it imports `AFI_16S_Main.wdl` and the task WDLs using relative paths.
 
 To create the ZIP from the repository root:
 
 ```bash
 zip -r afi_terra_wdl.zip \
-  wdl/AFI_Rickettsiales_Batch.wdl \
-  wdl/AFI_Rickettsiales_Main.wdl \
+  wdl/AFI_16S_Batch.wdl \
+  wdl/AFI_16S_Main.wdl \
   wdl/tasks/ \
   NCBI_scrub_PE/tasks/quality_control/read_filtering/task_ncbi_scrub.wdl
 ```
@@ -265,7 +276,7 @@ Then in Terra, navigate to **Workflows**, click **+**, choose **Upload WDL**, an
 
 ## 5. Running the Single-Sample Workflow
 
-The single-sample workflow (`AFI_Rickettsiales_Main`) processes one pair of FASTQ files through the full pipeline and produces per-sample outputs. Use this workflow for ad-hoc testing or when running individual samples outside of a sequencing run context.
+The single-sample workflow (`AFI_16S_Main`) processes one pair of FASTQ files through the full pipeline and produces per-sample outputs. Use this workflow for ad-hoc testing or when running individual samples outside of a sequencing run context.
 
 > **Note:** For production clinical runs, use the batch workflow instead. The single-sample workflow requires a pre-computed `ntc_background.tsv` to be supplied manually, whereas the batch workflow computes this automatically.
 
@@ -280,7 +291,7 @@ The single-sample workflow (`AFI_Rickettsiales_Main`) processes one pair of FAST
 | `r2_fastq` | File | GCS path to R2 FASTQ (.fastq.gz) |
 | `rickettsiales_panel` | File | GCS path to 16S reference FASTA or .mmi index |
 | `ntc_background` | File | GCS path to NTC background TSV; use placeholder for first pass |
-| `centrifuger_db` | String | Centrifuger index prefix (required unless using double classifier mode) |
+| `centrifuger_db` | String | Centrifuger index prefix |
 | `centrifuger_db_archives` | Array[File] | GCS paths to TAR.GZ archives containing the Centrifuger index |
 
 #### Mode and type inputs
@@ -306,40 +317,56 @@ The single-sample workflow (`AFI_Rickettsiales_Main`) processes one pair of FAST
 
 | Input | Type | Default | Description |
 |---|---|---|---|
-| `centrifuger_memory` | String | `"128G"` | Memory allocation for Centrifuger task |
-| `centrifuger_disks` | String | `"local-disk 500 HDD"` | Disk allocation for Centrifuger task |
-| `classify_threads` | Int | `16` | CPU threads for Centrifuger |
+| `centrifuger_memory` | String | `"96G"` | Memory allocation for Centrifuger task |
+| `centrifuger_disks` | String | `"local-disk 375 HDD"` | Disk allocation for Centrifuger task |
+| `classify_threads` | Int | `8` | CPU threads for Centrifuger |
 
 #### Docker image inputs
 
 | Input | Default image | Description |
 |---|---|---|
-| `afi_core_docker` | `phemarajata614/afi-terra:0.4.0` | Core analysis image (Python, samtools, scripts) |
+| `afi_core_docker` | `phemarajata614/afi-terra:0.4.1` | Core analysis image (Python, samtools, minimap2, scripts) |
 | `fastp_docker` | `staphb/fastp:0.23.4` | QC trimming |
-| `minimap_docker` | `staphb/minimap2:2.28` | Alignment |
+| `minimap_docker` | `phemarajata614/afi-terra:0.4.1` | Alignment (minimap2 bundled in afi-terra image) |
 | `centrifuger_docker` | `phemarajata614/centrifuger:1.1.0` | Centrifuger classifier |
 
-### Example input JSON (routine, single classifier)
+### Outputs
+
+| Output | Type | Description |
+|---|---|---|
+| `clean_r1`, `clean_r2` | File | QC-trimmed reads |
+| `centrifuger_classification` | File | Raw Centrifuger classification TSV |
+| `centrifuger_kreport` | File | Centrifuger kreport |
+| `centrifuger_genus_counts` | File | Parsed genus-level counts |
+| `minimap_bam`, `minimap_bai` | File | Sorted, indexed alignment BAM |
+| `align_metrics` | File | Per-genus alignment metrics |
+| `calls` | File | Final taxa calls TSV |
+| `taxa_evidence` | File | Per-taxon evidence justification TSV |
+| `validation_summary` | File? | Concordance summary (validation mode only) |
+| `routine_summary` | File? | Detected taxa list (routine mode only) |
+| `scrubbed_r1`, `scrubbed_r2` | File? | Dehosted reads (if `use_human_scrub=true`) |
+
+### Example input JSON (routine)
 
 ```json
 {
-  "AFI_Rickettsiales_Main.sample_id": "SAMPLE001",
-  "AFI_Rickettsiales_Main.sample_type": "clinical",
-  "AFI_Rickettsiales_Main.mode": "routine",
-  "AFI_Rickettsiales_Main.use_human_scrub": true,
-  "AFI_Rickettsiales_Main.r1_fastq": "gs://YOUR_BUCKET/fastq/SAMPLE001_R1.fastq.gz",
-  "AFI_Rickettsiales_Main.r2_fastq": "gs://YOUR_BUCKET/fastq/SAMPLE001_R2.fastq.gz",
-  "AFI_Rickettsiales_Main.rickettsiales_panel": "gs://YOUR_BUCKET/ref/rickettsiales_panel_16S.clean.fa",
-  "AFI_Rickettsiales_Main.ntc_background": "gs://YOUR_BUCKET/ref/ntc_background.placeholder.tsv",
-  "AFI_Rickettsiales_Main.centrifuger_db": "centrifuger_bact_arch_plus_rickettsiales",
-  "AFI_Rickettsiales_Main.centrifuger_db_archives": [
+  "AFI_16S_Main.sample_id": "SAMPLE001",
+  "AFI_16S_Main.sample_type": "clinical",
+  "AFI_16S_Main.mode": "routine",
+  "AFI_16S_Main.use_human_scrub": true,
+  "AFI_16S_Main.r1_fastq": "gs://YOUR_BUCKET/fastq/SAMPLE001_R1.fastq.gz",
+  "AFI_16S_Main.r2_fastq": "gs://YOUR_BUCKET/fastq/SAMPLE001_R2.fastq.gz",
+  "AFI_16S_Main.rickettsiales_panel": "gs://YOUR_BUCKET/ref/rickettsiales_panel_16S.clean.fa",
+  "AFI_16S_Main.ntc_background": "gs://YOUR_BUCKET/ref/ntc_background.placeholder.tsv",
+  "AFI_16S_Main.centrifuger_db": "centrifuger_bact_arch_plus_rickettsiales",
+  "AFI_16S_Main.centrifuger_db_archives": [
     "gs://YOUR_BUCKET/db/centrifuger_index.tar.gz"
   ],
-  "AFI_Rickettsiales_Main.centrifuger_memory": "128G",
-  "AFI_Rickettsiales_Main.centrifuger_disks": "local-disk 500 HDD",
-  "AFI_Rickettsiales_Main.classify_threads": 16,
-  "AFI_Rickettsiales_Main.afi_core_docker": "phemarajata614/afi-terra:0.4.0",
-  "AFI_Rickettsiales_Main.centrifuger_docker": "phemarajata614/centrifuger:1.1.0"
+  "AFI_16S_Main.centrifuger_memory": "96G",
+  "AFI_16S_Main.centrifuger_disks": "local-disk 375 HDD",
+  "AFI_16S_Main.classify_threads": 8,
+  "AFI_16S_Main.afi_core_docker": "phemarajata614/afi-terra:0.4.1",
+  "AFI_16S_Main.centrifuger_docker": "phemarajata614/centrifuger:1.1.0"
 }
 ```
 
@@ -347,27 +374,27 @@ The single-sample workflow (`AFI_Rickettsiales_Main`) processes one pair of FAST
 
 ```json
 {
-  "AFI_Rickettsiales_Main.sample_id": "PC_MIX8_001",
-  "AFI_Rickettsiales_Main.sample_type": "PC_MIX8",
-  "AFI_Rickettsiales_Main.mode": "validation",
-  "AFI_Rickettsiales_Main.expected_taxon": "Orientia;Rickettsia;Leptospira;Burkholderia;Anaplasma;Ehrlichia;Coxiella;Bartonella",
-  "AFI_Rickettsiales_Main.use_human_scrub": true,
-  "AFI_Rickettsiales_Main.r1_fastq": "gs://YOUR_BUCKET/fastq/PC001_R1.fastq.gz",
-  "AFI_Rickettsiales_Main.r2_fastq": "gs://YOUR_BUCKET/fastq/PC001_R2.fastq.gz",
-  "AFI_Rickettsiales_Main.rickettsiales_panel": "gs://YOUR_BUCKET/ref/rickettsiales_panel_16S.clean.fa",
-  "AFI_Rickettsiales_Main.ntc_background": "gs://YOUR_BUCKET/ref/ntc_background.tsv",
-  "AFI_Rickettsiales_Main.centrifuger_db": "centrifuger_bact_arch_plus_rickettsiales",
-  "AFI_Rickettsiales_Main.centrifuger_db_archives": [
+  "AFI_16S_Main.sample_id": "PC_MIX8_001",
+  "AFI_16S_Main.sample_type": "PC_MIX8",
+  "AFI_16S_Main.mode": "validation",
+  "AFI_16S_Main.expected_taxon": "Orientia;Rickettsia;Leptospira;Burkholderia;Anaplasma;Ehrlichia;Coxiella;Bartonella",
+  "AFI_16S_Main.use_human_scrub": true,
+  "AFI_16S_Main.r1_fastq": "gs://YOUR_BUCKET/fastq/PC001_R1.fastq.gz",
+  "AFI_16S_Main.r2_fastq": "gs://YOUR_BUCKET/fastq/PC001_R2.fastq.gz",
+  "AFI_16S_Main.rickettsiales_panel": "gs://YOUR_BUCKET/ref/rickettsiales_panel_16S.clean.fa",
+  "AFI_16S_Main.ntc_background": "gs://YOUR_BUCKET/ref/ntc_background.tsv",
+  "AFI_16S_Main.centrifuger_db": "centrifuger_bact_arch_plus_rickettsiales",
+  "AFI_16S_Main.centrifuger_db_archives": [
     "gs://YOUR_BUCKET/db/centrifuger_index.tar.gz"
   ],
-  "AFI_Rickettsiales_Main.centrifuger_memory": "128G",
-  "AFI_Rickettsiales_Main.centrifuger_disks": "local-disk 500 HDD"
+  "AFI_16S_Main.centrifuger_memory": "96G",
+  "AFI_16S_Main.centrifuger_disks": "local-disk 375 HDD"
 }
 ```
 
 ### Launching in Terra
 
-1. In your Terra workspace, navigate to **Workflows** and select `AFI_Rickettsiales_Main`.
+1. In your Terra workspace, navigate to **Workflows** and select `AFI_16S_Main`.
 2. Choose **Run workflow with inputs defined by file paths**.
 3. Upload or paste your input JSON.
 4. Click **Run Analysis**.
@@ -376,27 +403,29 @@ The single-sample workflow (`AFI_Rickettsiales_Main`) processes one pair of FAST
 
 ## 6. Running the Batch Workflow
 
-The batch workflow (`AFI_Rickettsiales_Batch`) processes an entire sequencing run in a single Terra submission. It scatters each sample through the same processing steps as the single-sample workflow, automatically builds a run-specific NTC background from any NTC/NC samples in the run, and produces a consolidated run summary.
+The batch workflow (`AFI_16S_Batch`) processes one or more sequencing runs in a single Terra submission. It scatters each sample through the same processing steps as the single-sample workflow, automatically builds a per-run NTC background from the NTC/NC samples in each run, and produces a consolidated run summary.
+
+> **Multi-run support:** A single batch submission can include samples from multiple sequencing runs. Assign each sample a `run_id` matching its run; NTC backgrounds are computed independently per `run_id` so high contamination in one run cannot inflate thresholds for another.
 
 ### Inputs
 
-The batch workflow takes parallel arrays of per-sample values rather than a `SampleSpec` struct (WDL 1.0 compatibility). All arrays must be the same length and in the same sample order.
+The batch workflow takes parallel arrays of per-sample values (WDL 1.0 compatible). All arrays must be the same length and in the same sample order.
 
 #### Run-level inputs
 
-| Input | Type | Required | Description |
+| Input | Type | Default | Description |
 |---|---|---|---|
-| `run_id` | String | Yes | Unique identifier for this sequencing run |
-| `rickettsiales_panel` | File | Yes | GCS path to 16S reference FASTA or .mmi |
-| `centrifuger_db` | String | No | Centrifuger index prefix |
-| `centrifuger_db_archives` | Array[File] | No | GCS paths to Centrifuger TAR.GZ archives |
+| `rickettsiales_panel` | File | — | GCS path to 16S reference FASTA or .mmi |
+| `centrifuger_db` | String | `""` | Centrifuger index prefix |
+| `centrifuger_db_archives` | Array[File] | `[]` | GCS paths to Centrifuger TAR.GZ archives |
 | `use_human_scrub` | Boolean | `true` | Run-wide human read removal switch |
-| `classify_threads` | Int | `16` | CPU threads for Centrifuger tasks |
+| `classify_threads` | Int | `8` | CPU threads for Centrifuger tasks |
 
 #### Per-sample arrays (one value per sample, in matching order)
 
 | Input | Type | Description |
 |---|---|---|
+| `run_ids` | Array[String] | Sequencing run identifier per sample (used for per-run NTC grouping) |
 | `sample_ids` | Array[String] | Sample identifiers |
 | `r1_fastqs` | Array[File] | R1 FASTQ GCS paths |
 | `r2_fastqs` | Array[File] | R2 FASTQ GCS paths |
@@ -413,80 +442,80 @@ These are identical to the single-sample workflow. See Section 5 for the full ta
 - `align_fold` (default: 5.0)
 - `cfr_floor` (default: 500)
 - `cfr_fold` (default: 5.0)
-- `centrifuger_memory` (default: `"128G"`)
-- `centrifuger_disks` (default: `"local-disk 500 HDD"`)
+- `centrifuger_memory` (default: `"96G"`)
+- `centrifuger_disks` (default: `"local-disk 375 HDD"`)
 
 #### Docker image inputs
 
 Same as single-sample workflow (see Section 5). Override at the workflow level to change the image used by all tasks.
 
-### Example batch input JSON
+### Outputs
 
-The following example is based on the real first-pass JSON from `wdl/inputs/16s_afi_unknown_1.batch.first_pass.single.json`:
+| Output | Type | Description |
+|---|---|---|
+| `calls` | Array[File] | Final taxa calls per sample |
+| `taxa_evidence_files` | Array[File] | Per-taxon evidence justification per sample |
+| `align_metrics` | Array[File] | Alignment metrics per sample |
+| `centrifuger_genus_counts` | Array[File] | Centrifuger genus counts per sample |
+| `ntc_backgrounds_per_run` | Array[File] | Auto-computed NTC background, one per distinct `run_id` |
+| `ntc_background_run_ids` | Array[String] | Run IDs corresponding to `ntc_backgrounds_per_run` |
+| `validation_summaries` | Array[File?] | Per-sample concordance summaries (validation mode) |
+| `routine_summaries` | Array[File?] | Per-sample taxa lists (routine mode) |
+| `run_summary` | File | Batch-level summary with per-run PC8 validity |
+
+### Example batch input JSON
 
 ```json
 {
-  "AFI_Rickettsiales_Batch.run_id": "16s_afi_unknown_1",
-  "AFI_Rickettsiales_Batch.sample_ids": [
+  "AFI_16S_Batch.run_ids": [
+    "run1",
+    "run1",
+    "run1",
+    "run1"
+  ],
+  "AFI_16S_Batch.sample_ids": [
     "SAMPLE001_S1",
     "SAMPLE002_S2",
     "NTC_S11",
     "PC_S12"
   ],
-  "AFI_Rickettsiales_Batch.r1_fastqs": [
+  "AFI_16S_Batch.r1_fastqs": [
     "gs://YOUR_BUCKET/fastq/SAMPLE001_S1_R1.fastq.gz",
     "gs://YOUR_BUCKET/fastq/SAMPLE002_S2_R1.fastq.gz",
     "gs://YOUR_BUCKET/fastq/NTC_S11_R1.fastq.gz",
     "gs://YOUR_BUCKET/fastq/PC_S12_R1.fastq.gz"
   ],
-  "AFI_Rickettsiales_Batch.r2_fastqs": [
+  "AFI_16S_Batch.r2_fastqs": [
     "gs://YOUR_BUCKET/fastq/SAMPLE001_S1_R2.fastq.gz",
     "gs://YOUR_BUCKET/fastq/SAMPLE002_S2_R2.fastq.gz",
     "gs://YOUR_BUCKET/fastq/NTC_S11_R2.fastq.gz",
     "gs://YOUR_BUCKET/fastq/PC_S12_R2.fastq.gz"
   ],
-  "AFI_Rickettsiales_Batch.sample_types": [
-    "clinical",
-    "clinical",
-    "NTC",
-    "PC_MIX8"
-  ],
-  "AFI_Rickettsiales_Batch.modes": [
-    "routine",
-    "routine",
-    "routine",
-    "routine"
-  ],
-  "AFI_Rickettsiales_Batch.expected_taxa": [
-    "",
-    "",
-    "",
-    ""
-  ],
-  "AFI_Rickettsiales_Batch.rickettsiales_panel": "gs://YOUR_BUCKET/ref/rickettsiales_panel_16S.clean.fa",
-  "AFI_Rickettsiales_Batch.centrifuger_db": "centrifuger_bact_arch_plus_rickettsiales",
-  "AFI_Rickettsiales_Batch.centrifuger_db_archives": [
+  "AFI_16S_Batch.sample_types": ["clinical", "clinical", "NTC", "PC_MIX8"],
+  "AFI_16S_Batch.modes": ["routine", "routine", "routine", "routine"],
+  "AFI_16S_Batch.expected_taxa": ["", "", "", ""],
+  "AFI_16S_Batch.rickettsiales_panel": "gs://YOUR_BUCKET/ref/rickettsiales_panel_16S.clean.fa",
+  "AFI_16S_Batch.centrifuger_db": "centrifuger_bact_arch_plus_rickettsiales",
+  "AFI_16S_Batch.centrifuger_db_archives": [
     "gs://YOUR_BUCKET/db/centrifuger_index.tar.gz"
   ],
-  "AFI_Rickettsiales_Batch.centrifuger_memory": "128G",
-  "AFI_Rickettsiales_Batch.centrifuger_disks": "local-disk 500 HDD",
-  "AFI_Rickettsiales_Batch.use_human_scrub": true,
-  "AFI_Rickettsiales_Batch.classify_threads": 16,
-  "AFI_Rickettsiales_Batch.afi_core_docker": "phemarajata614/afi-terra:0.4.0",
-  "AFI_Rickettsiales_Batch.centrifuger_docker": "phemarajata614/centrifuger:1.1.0"
+  "AFI_16S_Batch.centrifuger_memory": "96G",
+  "AFI_16S_Batch.centrifuger_disks": "local-disk 375 HDD",
+  "AFI_16S_Batch.use_human_scrub": true,
+  "AFI_16S_Batch.classify_threads": 8,
+  "AFI_16S_Batch.afi_core_docker": "phemarajata614/afi-terra:0.4.1",
+  "AFI_16S_Batch.centrifuger_docker": "phemarajata614/centrifuger:1.1.0"
 }
 ```
 
-> **Note on NTC background in batch runs:** The batch workflow does not take an `ntc_background` input. It builds the NTC background automatically from any samples with `sample_type` of `NTC` or `NC` in the run. For the first pass (before a run-specific NTC background exists), include NTC/NC samples in the batch anyway — their metrics will be used to build the background for the second pass. See Section 7 for the full two-pass pattern.
+> **NTC background:** The batch workflow computes the NTC background automatically. Every distinct `run_id` in the batch **must** have at least one sample with `sample_type` of `NTC` or `NC`; otherwise `MatchNTCBackground` will fail.
 
 ### Sample types in a batch run
 
-Always include at least one NTC or NC sample in each batch run submission. This is required for automatic NTC background computation.
-
-| sample_type | Description | NTC background source |
+| sample_type | Description | Contributes to NTC background |
 |---|---|---|
-| `NTC` | No-template control | Yes — contributes to NTC background |
-| `NC` | Negative control (alias for NTC) | Yes — contributes to NTC background |
+| `NTC` | No-template control | Yes |
+| `NC` | Negative control (alias for NTC) | Yes |
 | `PC_MIX8` | 8-organism positive control | No |
 | `PC_SINGLE` | Single-organism positive control | No |
 | `MIXED4` | 4-organism mixed control | No |
@@ -495,69 +524,39 @@ Always include at least one NTC or NC sample in each batch run submission. This 
 
 ### Launching the batch workflow in Terra
 
-1. In your Terra workspace, navigate to **Workflows** and select `AFI_Rickettsiales_Batch`.
+1. In your Terra workspace, navigate to **Workflows** and select `AFI_16S_Batch`.
 2. Choose **Run workflow with inputs defined by file paths**.
 3. Upload or paste your input JSON.
 4. Click **Run Analysis**.
 
-Alternatively, if you are using a Terra data model with a `sample_set` entity, map the workflow inputs to `this.samples.*` attributes and `this.run_id` per the data model column mapping shown in the batch WDL header comments.
+Alternatively, use a Terra data model with a `sample_set` entity and map workflow inputs to `this.samples.*` attributes per the column mapping in the batch WDL header comments.
 
 ---
 
 ## 7. The Two-Pass Pattern
 
-Because the NTC background is run-specific — it reflects contamination levels unique to each sequencing run — you must run the pipeline twice when operating in single-sample mode or when using a manually supplied NTC background. The batch workflow handles this automatically via `BuildNTCBackground`, but the two-pass concept is still relevant when reprocessing or troubleshooting individual samples with a custom NTC background.
+The NTC background thresholds reflect contamination levels unique to each sequencing run. The **batch workflow** (`AFI_16S_Batch`) handles this entirely automatically — no manual intervention is needed. The two-pass manual procedure below applies only to the **single-sample workflow** or exceptional reprocessing scenarios.
 
-### Why two passes?
+### Batch workflow: fully automatic NTC handling
 
-The NTC background thresholds in `ntc_background.tsv` define the minimum reads a taxon must have to be considered above noise. These thresholds can only be computed after the NTC samples in the same run have been processed. Therefore:
-
-- **First pass:** Run all samples (including NTC/NC controls) with a placeholder NTC background. This produces NTC metrics outputs but calls will not be NTC-corrected.
-- **Second pass:** Build the run-specific NTC background from the NTC metrics, then re-run all samples with the real background.
-
-### Batch workflow: automatic two-phase processing
-
-The batch workflow implements this pattern automatically in a single Terra submission using a two-scatter design:
+`AFI_16S_Batch` implements multi-phase processing in a single Terra submission:
 
 1. **Phase 1** processes all samples through alignment and classification.
-2. **BuildNTCBackground** gathers NTC/NC sample outputs and computes `ntc_background.tsv`.
-3. **Phase 2** applies interpretation using the computed background.
+2. **BuildNTCBackground** computes one `ntc_background_<run_id>.tsv` per distinct `run_id`, using only the NTC/NC samples from that run.
+3. **MatchNTCBackground** assigns each sample its run's NTC background file.
+4. **Phase 2** applies NTC-aware interpretation to all samples in parallel.
 
-No manual intervention is needed. A single batch submission handles the full two-pass logic internally.
+No manual steps are required. Every `run_id` in the submission must have at least one NTC or NC sample.
 
 ### Single-sample workflow: manual two-pass
 
-When using the single-sample workflow (or reprocessing with a custom NTC background), follow these steps:
+When using `AFI_16S_Main` or reprocessing a sample with a custom NTC background:
 
-**Step 1: Build run-specific batch JSON (optional, using helper script)**
+**Step 1: First pass — run with placeholder NTC background**
 
-```bash
-python3 scripts/build_batch_inputs_json.py \
-  --mapping-tsv AFI_optimizeProtocol.tsv \
-  --run-id 3 \
-  --out-json wdl/inputs/run3.batch.json \
-  --fastq-uri-prefix gs://YOUR_BUCKET/fastq \
-  --mode-policy auto \
-  --per-sample-use-human-scrub true
-```
+Supply `wdl/inputs/ntc_background.placeholder.tsv` (all-zero thresholds) as `ntc_background`. Include all clinical, control, and NTC samples in the same submission. Collect the `align_metrics` output for each NTC/NC sample from Terra.
 
-**Step 2: First pass in Terra**
-
-Submit the batch or single-sample run using the placeholder NTC background:
-
-```json
-{
-  "AFI_Rickettsiales_Batch.ntc_background": "gs://YOUR_BUCKET/ref/ntc_background.placeholder.tsv"
-}
-```
-
-Include the NTC/NC samples, PC_MIX8 positive control, and all clinical/validation samples together in the same submission so controls are processed with the same run batch.
-
-**Step 3: Collect NTC metrics from Terra outputs**
-
-After the first pass completes, download the `align_metrics.tsv` output files for each NTC/NC sample from Terra's execution bucket. These files have the filename pattern `<sample_id>.align_metrics.tsv`.
-
-**Step 4: Build run-specific NTC background**
+**Step 2: Build run-specific NTC background**
 
 ```bash
 python3 scripts/build_ntc_background_from_metrics.py \
@@ -566,42 +565,112 @@ python3 scripts/build_ntc_background_from_metrics.py \
   --out wdl/inputs/run3.ntc_background.tsv
 ```
 
-This script takes the maximum mapped read count per genus across all provided NTC metrics files. The output uses the legacy `genus, mapped_reads` format which `call_taxa.py` accepts for backward compatibility.
+This takes the per-genus maximum across all NTC metrics files. The output uses the legacy `genus, mapped_reads` format accepted by `call_taxa.py`.
 
-**Step 5: Upload NTC background to GCS**
+**Step 3: Upload and re-run**
 
 ```bash
 gsutil cp wdl/inputs/run3.ntc_background.tsv gs://YOUR_BUCKET/ref/run3_ntc_background.tsv
 ```
 
-**Step 6: Second pass in Terra**
+Re-submit the same sample with `ntc_background` pointing to the real file. The second pass produces NTC-corrected calls.
 
-Re-submit the same run configuration but replace the NTC background path with the real file:
+### Notes
 
-```json
-{
-  "AFI_Rickettsiales_Batch.ntc_background": "gs://YOUR_BUCKET/ref/run3_ntc_background.tsv"
-}
-```
-
-The second pass re-runs interpretation and summary steps with NTC-corrected thresholds, producing the final calls.
-
-### Important notes on two-pass operation
-
-- Keep NTC/NC and PC_MIX8 in each run submission so controls are processed within the same run context.
-- In `auto` mode-policy, rows with `expected_results` in the mapping TSV become `validation` mode; rows without become `routine` mode.
-- MIXED4 and PC_SINGLE sample types are always treated as validation mode in auto mode.
-- PC_MIX8 can be used in both validation mode (when `expected_taxon` is set) and routine mode (when it is not).
+- Always include NTC/NC and PC_MIX8 in each run so controls are processed within the same run context.
+- In `auto` mode-policy (via `build_batch_inputs_json.py`), rows with `expected_results` become `validation` mode; rows without become `routine`.
+- MIXED4 and PC_SINGLE are always treated as validation mode in auto mode.
+- PC_MIX8 can be used in both validation mode (with `expected_taxon`) and routine mode (without).
 
 ---
 
-## 8. Helper Scripts
+## 8. Terra Sheet Builder (GUI)
+
+The **Terra Sheet Builder** is a desktop GUI application that generates a Terra-compatible sample-set TSV for `AFI_16S_Batch` without manually editing JSON or TSV files. It is the recommended way to prepare batch inputs for routine clinical use.
+
+### Getting the application
+
+**Pre-built binaries** are built automatically by GitHub Actions on every push to `tools/terra_sheet_builder/`. Download the artifact for your platform from **Actions → Build Terra Sheet Builder** on the repository page:
+
+| Platform | Artifact |
+|---|---|
+| Linux (amd64) | Single-file ELF executable |
+| Windows (x64) | `.exe`, no console window |
+| macOS Intel | `.app` bundle, zipped |
+| macOS Apple Silicon (arm64) | `.app` bundle, zipped |
+
+**Run from source** (requires Python 3.10+):
+
+```bash
+pip install PySide6
+python3 tools/terra_sheet_builder/terra_sheet_builder.py
+```
+
+### Screen 1 — FASTQ selection
+
+A three-step wizard guides you through entering run information before any sample-level editing.
+
+**Step 1 — Run count.** Enter the number of sequencing runs to include in this batch (spinner, 1–50).
+
+**Step 2 — Run names.** Enter a unique name for each run. Names are used as the `run_id` value for all samples in that run. No spaces are allowed; underscores and hyphens are fine (e.g., `run_2024_11`).
+
+**Step 3 — FASTQ files per run.** For each run, choose one of three methods to add samples:
+
+| Method | How to use |
+|---|---|
+| **Browse folder** | Select a directory. The app auto-discovers all R1/R2 FASTQ pairs using the `_R1_`/`_R2_` naming convention. |
+| **Add files…** | Multi-file dialog. Select any number of FASTQ files. The app auto-pairs R1+R2 by name pattern. If you select exactly two files that do not match the auto-pair pattern, the app falls back to prompting you to assign R1 and R2 manually. |
+| **Import from TSV…** | Global import (applies to all runs at once). Upload a mapping TSV with at minimum `run_id` and `sample_id` columns. Optional `r1_fastq`/`r2_fastq` columns can provide file paths directly. If path columns are absent, the app prompts you for a FASTQ folder and performs fuzzy matching to assign files: exact prefix first, then substring matching, then difflib sequence similarity. |
+
+### Screen 2 — Sample metadata
+
+An editable table with columns: `sample_id`, `run_id`, `sample_type`, `mode`, `expected_taxa`.
+
+**Auto-fill:** Changing `sample_type` via the dropdown automatically populates `mode` and `expected_taxa`:
+
+| sample_type | mode | expected_taxa (auto-filled) |
+|---|---|---|
+| `PC_MIX8` | `validation` | `Bacillus;Listeria;Staphylococcus;Enterococcus;Limosilactobacillus;Salmonella;Escherichia;Pseudomonas` |
+| `MIXED4` | `validation` | 4-organism string (configurable) |
+| `PC_SINGLE` | `validation` | First organism option |
+| `clinical` | `routine` | (empty) |
+| `NTC` / `NC` / `PC` | `routine` | (empty) |
+
+**Header fields** (above the table):
+- **Analysis Date** — date string added to the output TSV comment field
+- **Table Name** — lowercase alphanumeric name (≤32 chars, must start with a letter); used as the Terra entity type name
+- **Operator Initials** — recorded in `analysis_comments`
+
+**Validate button.** Checks the following before enabling export:
+- No duplicate `sample_id` values across all runs
+- Each run contains at least one `NTC` or `NC` sample
+- Each run contains at least one positive control (`PC_MIX8`, `PC_SINGLE`, `MIXED4`, or `PC`)
+- All validation-mode rows have a non-empty `expected_taxa` field
+- Table name matches the required format (`^[a-z][a-z0-9_]{0,31}$`)
+
+Any failed check is highlighted with a descriptive message. Fix the issues and click **Validate** again.
+
+**Export TSV** (enabled only after validation passes). Saves a Terra-compatible TSV to disk.
+
+### Output TSV format
+
+The exported file uses `entity:<table_name>_id` as the first column (required by Terra) followed by all sample fields. An `analysis_comments` column is appended as the last column, containing `<table_name> | <date> | <initials>` for traceability.
+
+**Importing into Terra:**
+
+1. In your Terra workspace, go to **Data** → **Import Data** → **Upload TSV**.
+2. Select the exported TSV file.
+3. Terra will create or update a sample set entity table with the name you provided.
+
+---
+
+## 9. Helper Scripts
 
 All helper scripts are in the `scripts/` directory. They run locally (not in Terra) and are used to prepare inputs, post-process outputs, and manage Docker images.
 
 ### `build_batch_inputs_json.py`
 
-Converts a sample sheet TSV or an AFI mapping TSV into a Terra-ready batch input JSON. This is the primary way to prepare inputs for `AFI_Rickettsiales_Batch`.
+Converts a sample sheet TSV or an AFI mapping TSV into a Terra-ready batch input JSON. This is the primary way to prepare inputs for `AFI_16S_Batch`.
 
 **Usage with a standard sample sheet:**
 
@@ -641,7 +710,7 @@ python3 scripts/build_batch_inputs_json.py \
 | `--run-id ID` | No (repeatable) | Filter rows by run_id column |
 | `--per-sample-use-human-scrub true|false` | No | Set per-sample use_human_scrub |
 | `--no-default-use-human-scrub` | No | Disable run-wide human scrub default |
-| `--classify-threads N` | No (default: 16) | Centrifuger thread count |
+| `--classify-threads N` | No (default: 8) | Centrifuger thread count |
 
 **Sample sheet format** (`--sample-sheet`):
 
@@ -659,7 +728,7 @@ sample_id    sample_type    mode    classifier_mode    r1_fastq    r2_fastq    e
 Example rows:
 
 ```
-PC001	PC_MIX8	validation	double	gs://bucket/PC001_R1.fastq.gz	gs://bucket/PC001_R2.fastq.gz		Orientia;Rickettsia;Leptospira;Burkholderia	true
+PC001	PC_MIX8	validation	single	gs://bucket/PC001_R1.fastq.gz	gs://bucket/PC001_R2.fastq.gz		Orientia;Rickettsia;Leptospira;Burkholderia	true
 SAMPLE001	clinical	routine	single	gs://bucket/SAMPLE001_R1.fastq.gz	gs://bucket/SAMPLE001_R2.fastq.gz			true
 NTC001	NTC	routine	single	gs://bucket/NTC001_R1.fastq.gz	gs://bucket/NTC001_R2.fastq.gz			true
 ```
@@ -685,7 +754,7 @@ python3 scripts/build_ntc_background_from_metrics.py \
 Builds and pushes the AFI core Docker image to Docker Hub.
 
 ```bash
-bash scripts/build_push_afi_core_image.sh phemarajata614 0.4.0 linux/amd64
+bash scripts/build_push_afi_core_image.sh phemarajata614 0.4.1 linux/amd64
 ```
 
 Arguments:
@@ -696,34 +765,59 @@ Arguments:
 Equivalent manual commands:
 
 ```bash
-docker build --platform linux/amd64 -t phemarajata614/afi-terra:0.4.0 .
-docker push phemarajata614/afi-terra:0.4.0
+docker build --platform linux/amd64 -t phemarajata614/afi-terra:0.4.1 .
+docker push phemarajata614/afi-terra:0.4.1
 # Optional latest tag:
-docker tag phemarajata614/afi-terra:0.4.0 phemarajata614/afi-terra:latest
+docker tag phemarajata614/afi-terra:0.4.1 phemarajata614/afi-terra:latest
 docker push phemarajata614/afi-terra:latest
 ```
 
 To verify the image after building:
 
 ```bash
-docker run --rm phemarajata614/afi-terra:0.4.0 bash -lc \
-  "fastp --version && minimap2 --version && samtools --version | head -n 1 && python3 -c 'import pandas; print(pandas.__version__)'"
+docker run --rm phemarajata614/afi-terra:0.4.1 bash -lc \
+  "minimap2 --version && samtools --version | head -n 1 && python3 -c 'import pandas; print(pandas.__version__)'"
 ```
+
+### `make_terra_import_sheet.py`
+
+Generates or validates a Terra-compatible sample import TSV, and optionally writes an annotated Excel workbook. This is the CLI companion to the Terra Sheet Builder GUI (Section 8).
+
+```bash
+# Generate a blank template with two example runs:
+python3 scripts/make_terra_import_sheet.py --template --output my_run.tsv
+
+# Validate and convert an existing CSV/TSV:
+python3 scripts/make_terra_import_sheet.py --input samples.csv --output terra_import.tsv
+
+# Also write an annotated Excel workbook:
+python3 scripts/make_terra_import_sheet.py --input samples.csv --output terra_import.tsv --excel
+```
+
+**Options:**
+
+| Option | Description |
+|---|---|
+| `--template` | Write a template file with two pre-filled example runs |
+| `--input PATH` | Input CSV or TSV (delimiter auto-detected) |
+| `--output PATH` | Output Terra TSV path |
+| `--excel` | Also write an annotated Excel workbook (requires openpyxl) |
+
+**Validation rules enforced:**
+1. Each `run_id` must contain at least one `NTC` or `NC` sample.
+2. Each `run_id` must contain at least one positive control (`PC_MIX8`, `PC_SINGLE`, `MIXED4`, or `PC`).
+3. Validation-mode samples must have a non-empty `expected_taxa` field.
+4. `sample_type` and `mode` values must be from the allowed sets.
+
+**Required input columns:** `sample_id`, `run_id`, `r1_fastq`, `r2_fastq`, `sample_type`, `mode`, `expected_taxa`.
+
+**Output:** Terra TSV with `entity:sample_id` as the first column. Import via **Data → Import Data → Upload TSV** in your Terra workspace.
 
 ### `compare_single_double_outputs.py`
 
-Compares outputs from a `single`-classifier run against a `double`-classifier run to evaluate agreement. Accepts either direct paths to summary TSV files or parent directories (searched recursively for files ending in `validation_summary.tsv` or `routine_summary.tsv`).
+> **Archive only.** This script was used to compare single-classifier (Centrifuger) vs. double-classifier (Kraken2 + Centrifuger) runs during pipeline validation. The double-classifier mode has been removed; this script is retained for reference only.
 
-```bash
-python3 scripts/compare_single_double_outputs.py \
-  --single-validation /path/to/single_run_outputs \
-  --double-validation /path/to/double_run_outputs \
-  --single-routine /path/to/single_run_outputs \
-  --double-routine /path/to/double_run_outputs \
-  --out-prefix comparison/single_vs_double
-```
-
-All four path arguments are optional; provide whichever comparisons you need. Outputs:
+Accepts either direct paths to summary TSV files or parent directories (searched recursively). Outputs:
 
 | File | Description |
 |---|---|
@@ -733,7 +827,7 @@ All four path arguments are optional; provide whichever comparisons you need. Ou
 
 ---
 
-## 9. Output Files Reference
+## 10. Output Files Reference
 
 ### Per-sample outputs (both workflows)
 
@@ -776,7 +870,26 @@ This file is the input to `call_taxa.py` for the alignment evidence source. For 
 
 #### `calls.tsv`
 
-NTC-aware taxa calls combining alignment and Centrifuger evidence. This is the core interpretive output. See Section 10 for column descriptions and call value meanings.
+NTC-aware taxa calls combining alignment and Centrifuger evidence. This is the core interpretive output. See Section 11 for column descriptions and call value meanings.
+
+#### `taxa_evidence.tsv`
+
+Detailed per-genus evidence table produced by `InterpretCalls`. Provides the full data behind each call with human-readable justification strings. One row per genus per evidence source.
+
+| Column | Description |
+|---|---|
+| `sample` | Sample identifier |
+| `genus` | Genus name |
+| `source` | Evidence source: `alignment` or `centrifuge` |
+| `call` | Detection call (same values as `calls.tsv`) |
+| `reads` | Reads supporting this call |
+| `breadth` | Alignment breadth fraction (alignment rows only; blank for centrifuge) |
+| `ntc_reads` | NTC background reads for this genus and source |
+| `ntc_fold` | `reads / ntc_reads` (fold above NTC background) |
+| `cfr_reads` | Centrifuger reads for this genus (populated on alignment rows for cross-reference) |
+| `align_confirmed` | `true` if reads ≥ confirmation threshold AND breadth ≥ confirmation threshold, ignoring NTC fold; used by rescue logic |
+| `rescued` | `true` if this alignment call is Confirmed or Probable via rescue when it would otherwise have been Non_Confirmed |
+| `evidence_summary` | Human-readable justification string, e.g. `ALIGNMENT CONFIRMED: 150 reads (threshold >=100), breadth 0.31 (threshold >=0.25), 7.5x NTC` |
 
 ### Mode-specific per-sample outputs
 
@@ -811,6 +924,8 @@ Produced by `CompareExpectedConcordance`. One row per sample. Columns:
 | `validation_result` | `Concordant`, `Discordant`, or `Not_applicable` |
 | `pc8_pass` | `true`, `false`, or `not_applicable` |
 | `validation_control_class` | Control type classification or `none` |
+| `order_rescue_taxa` | Expected taxa that were rescued via order-level alignment evidence (see Section 11) |
+| `rescue_mechanisms` | Semicolon-separated list of rescue mechanisms applied, e.g. `order_alignment_rescue;centrifuge_rescue` |
 
 ### Batch-only outputs
 
@@ -824,20 +939,32 @@ genus    align_ntc_reads    cfr_ntc_reads
 
 Both Orientia and Rickettsia are always present, even if not seen in NTC samples (with zero values). This file can be downloaded from Terra and reused in future single-sample runs for the same NTC batch context.
 
+#### `ntc_backgrounds_per_run` (batch workflow only)
+
+An array of NTC background TSV files — one file per distinct `run_id` in the batch. Produced by `BuildNTCBackground`. Each file covers only the NTC/NC samples from that run. The companion output `ntc_background_run_ids` (Array[String]) lists the run identifiers in the same order.
+
+These files can be downloaded and reused as the `ntc_background` input for future single-sample runs from the same sequencing run.
+
+#### `taxa_evidence_files` (batch workflow only)
+
+Array of `taxa_evidence.tsv` files, one per sample in the batch. See the per-sample `taxa_evidence.tsv` description above for column details.
+
 #### `run_summary.tsv` (batch workflow only)
 
 Run-level summary produced by `BuildRunSummary`. One row per sample. Columns:
 
 | Column | Description |
 |---|---|
-| `run_id` | Run identifier passed to the workflow |
+| `run_id` | Run identifier for this sample (from `run_ids` array input) |
 | `sample_id` | Sample identifier |
 | `sample_type` | Sample type |
+| `expected_taxa` | Expected taxa string for validation samples; empty for routine samples |
 | `detected_taxa` | Comma-separated list of all detected genera (positive calls) |
 | `n_detected` | Count of detected genera |
 | `validation_result` | From per-sample validation summary, or empty for routine samples |
 | `pc8_pass` | From per-sample validation summary, or empty for routine samples |
 | `run_pc8_valid` | Run-level PC8 validity: value of `pc8_pass` from the PC_MIX8 sample, or `no_pc8_in_run` if none |
+| `rescue_mechanisms` | Rescue mechanisms applied to this sample (see Section 11); empty if none |
 
 ### Optional outputs (conditionally present)
 
@@ -849,7 +976,7 @@ Run-level summary produced by `BuildRunSummary`. One row per sample. Columns:
 
 ---
 
-## 10. Interpreting Calls and Summaries
+## 11. Interpreting Calls and Summaries
 
 ### The `calls.tsv` file
 
@@ -865,6 +992,9 @@ The `calls.tsv` output is the central result for each sample. It has one row per
 | `reads` | Mapped reads (alignment) or classified reads (centrifuge) |
 | `breadth` | Fraction of reference covered (alignment only; empty for centrifuge) |
 | `ntc_reads` | NTC threshold for this genus and source |
+| `cfr_reads` | Centrifuger read count for this genus (on alignment rows; blank on centrifuge rows) |
+| `align_confirmed` | `true` if alignment reads and breadth meet confirmation thresholds regardless of NTC fold; blank on centrifuge rows |
+| `rescued` | `true` if this call was elevated to Confirmed/Probable via a rescue mechanism; `false` otherwise |
 | `call` | Detection call (see below) |
 
 **Call values by source:**
@@ -939,9 +1069,34 @@ The pipeline distinguishes several control types:
 | `NC` | `none` | `false` |
 | `clinical` | `none` | `false` |
 
+### Rickettsiales rescue mechanisms
+
+High NTC contamination or low-abundance signals can cause a Concordant result to appear Discordant when the NTC fold gate suppresses an otherwise valid alignment call. Two rescue sub-cases address this for expected *Orientia* or *Rickettsia* taxa.
+
+#### Order-level alignment rescue
+
+If an expected *Orientia* or *Rickettsia* genus is missing from the detected set (would cause a Discordant result), but **any** Rickettsiales alignment row in `calls.tsv` has `align_confirmed=true` (reads ≥ confirmation threshold AND breadth ≥ confirmation threshold, ignoring the NTC fold gate), that expected genus is moved from "missing" to `order_rescue_taxa` in `validation_summary.tsv`. The sample is then called `Concordant` if all other expected taxa are also detected or rescued.
+
+`align_confirmed` represents the raw signal strength independent of NTC noise. A high-NTC run may suppress the final call to `Not_Confirmed`, but if the read and breadth evidence is strong, rescue recovers the concordance.
+
+#### Centrifuge rescue
+
+If Centrifuger independently detects Rickettsiales-adjacent genera (e.g., *Anaplasma*, *Ehrlichia*, *Neorickettsia*, *Wolbachia*) with cfr_reads ≥ 500, or detects *Orientia*/*Rickettsia* reads at that level, this corroborating evidence can also rescue an expected genus from the missing list.
+
+#### Rescue columns in output files
+
+| Column | File | Description |
+|---|---|---|
+| `align_confirmed` | `calls.tsv`, `taxa_evidence.tsv` | `true` if raw alignment evidence meets confirmation thresholds (ignores NTC fold) |
+| `rescued` | `calls.tsv`, `taxa_evidence.tsv` | `true` if call was elevated via rescue |
+| `order_rescue_taxa` | `validation_summary.tsv` | Expected taxa rescued by order-level alignment evidence |
+| `rescue_mechanisms` | `validation_summary.tsv`, `run_summary.tsv` | Semicolon-separated list of mechanisms applied |
+
+Rescue is only applied in **validation mode**. Routine samples are not subject to rescue logic since there is no expected taxa list to compare against.
+
 ---
 
-## 11. Detection Thresholds
+## 12. Detection Thresholds
 
 ### Alignment thresholds (Orientia and Rickettsia)
 
@@ -1001,29 +1156,31 @@ The defaults are appropriate for most clinical 16S metagenomic applications. Con
 | High specificity required | Raise `align_confirm_reads` to 200 or `align_confirm_breadth` to 0.30 |
 | Evaluation / validation runs | Use default thresholds to compare against expected results |
 
-All threshold parameters are exposed at the workflow level in both `AFI_Rickettsiales_Main` and `AFI_Rickettsiales_Batch`.
+All threshold parameters are exposed at the workflow level in both `AFI_16S_Main` and `AFI_16S_Batch`.
 
 ---
 
-## 12. Docker Images
+## 13. Docker Images
 
-The pipeline uses five Docker images. All images are pulled from public registries at runtime by Terra.
+The pipeline uses four Docker images. All images are pulled from public registries at runtime by Terra.
 
 | Image | Registry | Used by |
 |---|---|---|
-| `phemarajata614/afi-terra:0.4.0` | Docker Hub | Core analysis: metrics extraction, interpretation, validation/routine summaries, NTC background build, kreport parsing |
+| `phemarajata614/afi-terra:0.4.1` | Docker Hub | Core analysis: metrics extraction, interpretation, validation/routine summaries, NTC background build, kreport parsing, minimap2 alignment |
 | `staphb/fastp:0.23.4` | Docker Hub | QC trimming (Step 2) |
-| `staphb/minimap2:2.28` | Docker Hub | 16S alignment + samtools sort/index (Step 4) |
 | `phemarajata614/centrifuger:1.1.0` | Docker Hub | Centrifuger classification (Step 3) |
 | `us-docker.pkg.dev/general-theiagen/ncbi/sra-human-scrubber:2.2.1` | Google Artifact Registry | Human read removal (Step 1) |
 
-### AFI core image (`phemarajata614/afi-terra:0.4.0`)
+> **Note:** minimap2 is now bundled inside `afi-terra:0.4.1`. The separate `staphb/minimap2:2.28` image is no longer used. Both `afi_core_docker` and `minimap_docker` workflow inputs now default to `phemarajata614/afi-terra:0.4.1`.
+
+### AFI core image (`phemarajata614/afi-terra:0.4.1`)
 
 The core image is built from the `Dockerfile` at the repository root. It contains:
 
 - Python 3.11
 - pandas
 - samtools
+- minimap2
 - All Python scripts from `scripts/` installed to `/opt/afi/scripts/`
 
 The following scripts are embedded in the image and invoked directly by WDL task `command` blocks:
@@ -1039,10 +1196,10 @@ All image inputs are exposed at the workflow level with default values. Override
 
 ```json
 {
-  "AFI_Rickettsiales_Batch.afi_core_docker": "phemarajata614/afi-terra:0.4.0",
-  "AFI_Rickettsiales_Batch.fastp_docker": "staphb/fastp:0.23.4",
-  "AFI_Rickettsiales_Batch.minimap_docker": "staphb/minimap2:2.28",
-  "AFI_Rickettsiales_Batch.centrifuger_docker": "phemarajata614/centrifuger:1.1.0"
+  "AFI_16S_Batch.afi_core_docker": "phemarajata614/afi-terra:0.4.1",
+  "AFI_16S_Batch.minimap_docker": "phemarajata614/afi-terra:0.4.1",
+  "AFI_16S_Batch.fastp_docker": "staphb/fastp:0.23.4",
+  "AFI_16S_Batch.centrifuger_docker": "phemarajata614/centrifuger:1.1.0"
 }
 ```
 
@@ -1065,18 +1222,18 @@ Then update your input JSON to reference the new image tag.
 
 ---
 
-## 13. Troubleshooting
+## 14. Troubleshooting
 
 ### Centrifuger task fails with "segfault" or exits abnormally
 
-**Cause:** Terra launched the Centrifuger task on a VM that is too small for the database. The Centrifuger database is approximately 67 GiB compressed and requires at least 128 GB RAM to load.
+**Cause:** Terra launched the Centrifuger task on a VM that is too small for the database. The Centrifuger database requires approximately 96 GB RAM to load.
 
 **Fix:** Ensure your input JSON sets the Centrifuger resource parameters explicitly:
 
 ```json
 {
-  "AFI_Rickettsiales_Batch.centrifuger_memory": "128G",
-  "AFI_Rickettsiales_Batch.centrifuger_disks": "local-disk 500 HDD"
+  "AFI_16S_Batch.centrifuger_memory": "96G",
+  "AFI_16S_Batch.centrifuger_disks": "local-disk 375 HDD"
 }
 ```
 
@@ -1090,33 +1247,33 @@ These are workflow-level inputs that override the task defaults. Without them, T
 
 ```json
 {
-  "AFI_Rickettsiales_Batch.centrifuger_db": "centrifuger_bact_arch_plus_rickettsiales"
+  "AFI_16S_Batch.centrifuger_db": "centrifuger_bact_arch_plus_rickettsiales"
 }
 ```
 
 ### `fastp: command not found` in FastpClean task
 
-**Cause:** The `afi_core_docker` image being used does not contain fastp. This can happen if the image tag in your JSON does not match the current built image.
+**Cause:** The `fastp_docker` image tag in your JSON does not resolve to a valid image.
 
 **Fix:** Override the fastp docker image explicitly to use the correct staphb image:
 
 ```json
 {
-  "AFI_Rickettsiales_Batch.fastp_docker": "staphb/fastp:0.23.4"
+  "AFI_16S_Batch.fastp_docker": "staphb/fastp:0.23.4"
 }
 ```
 
-Note that `fastp` is run by the `FastpClean` task which uses `fastp_docker`, not `afi_core_docker`. The AFI core image provides Python scripts and samtools; fastp has its own dedicated image.
+Note that `fastp` is run by the `FastpClean` task which uses `fastp_docker`, not `afi_core_docker`. The AFI core image provides Python scripts, samtools, and minimap2; fastp has its own dedicated image.
 
 ### Import errors when uploading WDL to Terra
 
-**Cause:** The batch WDL imports `AFI_Rickettsiales_Main.wdl`, which in turn imports task WDLs and the NCBI scrub WDL using relative paths. Uploading a single WDL file breaks these relative imports.
+**Cause:** The batch WDL imports `AFI_16S_Main.wdl`, which in turn imports task WDLs and the NCBI scrub WDL using relative paths. Uploading a single WDL file breaks these relative imports.
 
 **Fix:** Use the Dockstore import method (Section 4, Option 1). If uploading a ZIP, ensure all imported files are included with the correct relative directory structure. The ZIP must preserve:
 
 ```
-wdl/AFI_Rickettsiales_Batch.wdl
-wdl/AFI_Rickettsiales_Main.wdl
+wdl/AFI_16S_Batch.wdl
+wdl/AFI_16S_Main.wdl
 wdl/tasks/*.wdl
 NCBI_scrub_PE/tasks/quality_control/read_filtering/task_ncbi_scrub.wdl
 ```
@@ -1153,15 +1310,15 @@ If you believe the NTC background is inflated (e.g., from a single outlier NTC r
 
 **Cause:** The Centrifuger classification step is the bottleneck. It requires substantial CPU and RAM.
 
-**Fix:** Ensure `classify_threads` is set to 16 (default) and that the VM has enough RAM. The default resource allocation in the task is:
+**Fix:** Ensure `classify_threads` is set to at least 8 (default) and that the VM has enough RAM. The default resource allocation in the task is:
 
 ```
-memory: 128G
-disks:  local-disk 500 HDD
-cpu:    16
+memory: 96G
+disks:  local-disk 375 HDD
+cpu:    8
 ```
 
-These settings cannot be reduced without risking task failure.
+Increasing `classify_threads` to 16 can speed up classification if you have a larger VM available.
 
 ### `run_pc8_valid` is `no_pc8_in_run`
 
@@ -1175,5 +1332,23 @@ These settings cannot be reduced without risking task failure.
 
 **Note:** The NTC background is intentionally conservative — it takes the maximum observed reads per genus, so noisy NTC detections translate directly into higher thresholds. This reduces false positives in clinical samples at the cost of potentially masking very low-abundance true positives.
 
-If a specific genus has an unreasonably high NTC background, you can manually edit `ntc_background.tsv` before the second pass to set that genus's NTC reads to a more reasonable value.
+If a specific genus has an unreasonably high NTC background, you can manually edit the downloaded `ntc_background.tsv` file to use more representative values, then supply the edited file as the `ntc_background` input in a single-sample rerun.
+
+### `MatchNTCBackground` fails: "no NTC/NC found for run_id X"
+
+**Cause:** Every `run_id` that appears in the batch's `run_ids` array must have at least one `NTC` or `NC` sample with the same `run_id`. If a run_id appears only in clinical samples, `BuildNTCBackground` cannot compute a background for it and `MatchNTCBackground` will abort.
+
+**Fix:** Check your input sample list and ensure that every distinct `run_id` value has at least one sample with `sample_type = NTC` or `sample_type = NC`. The Terra Sheet Builder (Section 8) and `make_terra_import_sheet.py` (Section 9) both validate this condition before export.
+
+### What does `rescue_mechanisms` mean in `run_summary.tsv`?
+
+The `rescue_mechanisms` column records which (if any) rescue logic was applied during concordance evaluation for validation-mode samples. Values are semicolon-separated:
+
+| Value | Meaning |
+|---|---|
+| (empty) | No rescue was needed or applied |
+| `order_alignment_rescue` | An expected *Orientia* or *Rickettsia* genus was rescued because `align_confirmed=true` on a Rickettsiales alignment row, even though the NTC-gated call was `Not_Confirmed` |
+| `centrifuge_rescue` | Centrifuge read evidence (cfr_reads ≥ 500 for Rickettsiales-adjacent genera) corroborated the expected detection |
+
+Rescue mechanisms only apply in validation mode. Routine samples always have an empty `rescue_mechanisms` field. For more details on rescue logic, see Section 11.
 
