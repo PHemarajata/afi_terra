@@ -1,0 +1,911 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AFI Terra Pipeline: User Guide — APHL</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Libre+Franklin:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --teal:        #00A0AF;
+    --teal-med:    #006E79;
+    --teal-dark:   #005057;
+    --teal-light:  #A3CCCC;
+    --teal-bg:     #EBF5F6;
+    --rust:        #B42E34;
+    --rust-light:  #F3D1D2;
+    --gray-dark:   #404040;
+    --gray-mid:    #8A8A8A;
+    --gray-light:  #E2E9EC;
+    --gray-subtle: #F5F7F8;
+    --white:       #FFFFFF;
+    --font:        'Libre Franklin', Arial, sans-serif;
+    --sidebar-w:   260px;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: var(--font);
+    font-size: 15px;
+    line-height: 1.6;
+    color: var(--gray-dark);
+    background: var(--white);
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+  }
+
+  /* ── Header ── */
+  .site-header {
+    background: var(--teal-dark);
+    color: var(--white);
+    padding: 0 2rem;
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    height: 64px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    border-bottom: 3px solid var(--teal);
+  }
+  .site-header img { height: 36px; }
+  .header-divider { width: 1px; height: 32px; background: rgba(255,255,255,0.25); }
+  .header-title { font-size: 0.95rem; font-weight: 600; letter-spacing: -0.01em; line-height: 1.25; }
+  .header-title span { display: block; font-weight: 300; font-size: 0.8rem; opacity: 0.75; letter-spacing: 0; }
+  .header-badge {
+    margin-left: auto;
+    background: rgba(255,255,255,0.15);
+    border: 1px solid rgba(255,255,255,0.3);
+    color: var(--white);
+    font-size: 0.7rem;
+    font-weight: 600;
+    padding: 3px 10px;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+
+  /* ── Layout ── */
+  .layout { display: flex; flex: 1; }
+
+  /* ── Sidebar ── */
+  .sidebar {
+    width: var(--sidebar-w);
+    flex-shrink: 0;
+    position: sticky;
+    top: 64px;
+    height: calc(100vh - 64px);
+    overflow-y: auto;
+    background: var(--gray-subtle);
+    border-right: 1px solid var(--gray-light);
+    padding: 1.5rem 0;
+  }
+  .sidebar-label {
+    font-size: 0.65rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--gray-mid);
+    padding: 0 1.25rem 0.5rem;
+  }
+  .sidebar a {
+    display: block;
+    padding: 5px 1.25rem;
+    font-size: 0.8rem;
+    color: var(--gray-dark);
+    text-decoration: none;
+    line-height: 1.4;
+    border-left: 3px solid transparent;
+  }
+  .sidebar a:hover { color: var(--teal-med); background: var(--teal-bg); }
+  .sidebar a.active { color: var(--teal-med); font-weight: 600; border-left-color: var(--teal); background: var(--teal-bg); }
+  .sidebar a.sub { padding-left: 2rem; font-size: 0.75rem; color: var(--gray-mid); }
+  .sidebar a.sub:hover { color: var(--teal-med); }
+  .sidebar hr { border: none; border-top: 1px solid var(--gray-light); margin: 0.75rem 1.25rem; }
+
+  /* ── Main content ── */
+  main {
+    flex: 1;
+    max-width: 860px;
+    padding: 2.5rem 3rem 4rem;
+    min-width: 0;
+  }
+
+  /* ── Section anchors ── */
+  section { margin-bottom: 3.5rem; scroll-margin-top: 80px; }
+
+  /* ── Typography ── */
+  h1 {
+    font-size: 2rem; font-weight: 800;
+    letter-spacing: -0.03em; line-height: 1.15;
+    color: var(--teal-med);
+    margin-bottom: 0.5rem;
+    text-wrap: pretty;
+  }
+  .doc-meta { font-size: 0.8rem; color: var(--gray-mid); margin-bottom: 2rem; }
+  .doc-meta strong { color: var(--gray-dark); }
+
+  h2 {
+    font-size: 1.3rem; font-weight: 700;
+    letter-spacing: -0.02em; color: var(--teal-med);
+    margin: 2rem 0 0.75rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid var(--teal);
+  }
+  h3 {
+    font-size: 1rem; font-weight: 700;
+    color: var(--gray-dark);
+    margin: 1.5rem 0 0.5rem;
+  }
+  h4 {
+    font-size: 0.875rem; font-weight: 600;
+    color: var(--gray-mid); text-transform: uppercase; letter-spacing: 0.05em;
+    margin: 1.25rem 0 0.5rem;
+  }
+  p { margin-bottom: 0.85rem; }
+  ul, ol { padding-left: 1.5rem; margin-bottom: 0.85rem; }
+  li { margin-bottom: 0.3rem; }
+  em { font-style: italic; }
+  strong { font-weight: 700; }
+  a { color: var(--teal); }
+
+  /* ── Code ── */
+  code {
+    font-family: 'Courier New', monospace;
+    font-size: 0.82em;
+    background: var(--gray-light);
+    padding: 0.1em 0.35em;
+    color: var(--teal-dark);
+  }
+  pre {
+    background: #f0f4f5;
+    border-left: 3px solid var(--teal);
+    padding: 1rem 1.25rem;
+    font-size: 0.78rem;
+    line-height: 1.6;
+    overflow-x: auto;
+    margin: 0.85rem 0 1.25rem;
+    font-family: 'Courier New', monospace;
+    color: var(--gray-dark);
+  }
+  pre code { background: none; padding: 0; font-size: inherit; }
+
+  /* ── Tables ── */
+  .table-wrap { overflow-x: auto; margin: 0.85rem 0 1.25rem; }
+  table { width: 100%; border-collapse: collapse; font-size: 0.83rem; }
+  thead tr { background: var(--teal-med); color: var(--white); }
+  thead th { padding: 8px 12px; text-align: left; font-weight: 600; letter-spacing: -0.01em; }
+  tbody tr:nth-child(even) { background: var(--gray-subtle); }
+  tbody td { padding: 7px 12px; border-bottom: 1px solid var(--gray-light); vertical-align: top; }
+  tbody tr:hover { background: var(--teal-bg); }
+
+  /* ── Callout boxes ── */
+  .callout {
+    border-left: 4px solid var(--teal);
+    background: var(--teal-bg);
+    padding: 0.75rem 1rem;
+    margin: 1rem 0;
+    font-size: 0.875rem;
+  }
+  .callout.warning { border-color: var(--rust); background: var(--rust-light); }
+  .callout.tip { border-color: #68BD49; background: #f0f8ec; }
+  .callout strong { font-weight: 700; }
+
+  /* ── Step guide (screenshot walkthrough) ── */
+  .steps { counter-reset: step; margin: 1rem 0; }
+  .step {
+    display: grid;
+    grid-template-columns: 36px 1fr;
+    gap: 0 1rem;
+    margin-bottom: 2rem;
+    align-items: start;
+  }
+  .step-num {
+    counter-increment: step;
+    width: 36px; height: 36px;
+    background: var(--teal-med);
+    color: var(--white);
+    font-size: 0.85rem; font-weight: 700;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+  .step-body h4 { margin-top: 0; color: var(--teal-dark); text-transform: none; font-size: 0.93rem; letter-spacing: 0; }
+  .step-body p { font-size: 0.875rem; margin-bottom: 0.5rem; }
+  .step-img {
+    margin-top: 0.65rem;
+    border: 1px solid var(--gray-light);
+    width: 100%;
+    display: block;
+  }
+  .step-img-caption {
+    font-size: 0.72rem; color: var(--gray-mid);
+    margin-top: 0.3rem; font-style: italic;
+  }
+
+  /* ── Teal rule ── */
+  .rule { border: none; border-top: 1px solid var(--teal-light); margin: 2rem 0; }
+
+  /* ── Section intro ── */
+  .section-intro {
+    background: var(--teal-bg);
+    border-top: 3px solid var(--teal-med);
+    padding: 1rem 1.25rem;
+    margin-bottom: 1.5rem;
+    font-size: 0.875rem;
+  }
+
+  /* ── Badge / pill ── */
+  .pill {
+    display: inline-block;
+    background: var(--teal-med);
+    color: var(--white);
+    font-size: 0.68rem; font-weight: 700;
+    padding: 2px 8px;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    vertical-align: middle;
+  }
+  .pill.rust { background: var(--rust); }
+  .pill.gray { background: var(--gray-mid); }
+
+  /* ── Footer ── */
+  footer {
+    background: var(--teal-dark);
+    color: rgba(255,255,255,0.6);
+    font-size: 0.75rem;
+    padding: 1.25rem 2rem;
+    text-align: center;
+  }
+  footer a { color: var(--teal-light); }
+
+  @media (max-width: 768px) {
+    .sidebar { display: none; }
+    main { padding: 1.5rem; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ── Header ── -->
+<header class="site-header">
+  <img src="aphl/assets/logo-75th-small.png" alt="APHL logo">
+  <div class="header-divider"></div>
+  <div class="header-title">
+    AFI Terra Pipeline
+    <span>User Guide &amp; Sheet Builder Walkthrough</span>
+  </div>
+  <div class="header-badge">v0.4.1</div>
+</header>
+
+<div class="layout">
+
+<!-- ── Sidebar ── -->
+<nav class="sidebar" id="sidebar">
+  <div class="sidebar-label">Contents</div>
+  <a href="#overview">1. Overview</a>
+  <a href="#architecture">2. Architecture &amp; Data Flow</a>
+  <a href="#reference">3. Reference Files &amp; Databases</a>
+  <a href="#importing">4. Importing Workflows into Terra</a>
+  <a href="#single-sample">5. Single-Sample Workflow</a>
+  <a href="#batch">6. Batch Workflow</a>
+  <a href="#two-pass">7. The Two-Pass Pattern</a>
+  <a href="#sheet-builder">8. Terra Sheet Builder (GUI)</a>
+  <a class="sub" href="#sb-install">↳ Getting the App</a>
+  <a class="sub" href="#sb-walkthrough">↳ Step-by-Step Walkthrough</a>
+  <a class="sub" href="#sb-export">↳ Export &amp; Import to Terra</a>
+  <a href="#helper-scripts">9. Helper Scripts</a>
+  <a href="#outputs">10. Output Files Reference</a>
+  <a href="#interpreting">11. Interpreting Calls</a>
+  <a href="#thresholds">12. Detection Thresholds</a>
+  <a href="#docker">13. Docker Images</a>
+  <a href="#troubleshooting">14. Troubleshooting</a>
+</nav>
+
+<!-- ── Main ── -->
+<main>
+
+  <h1>AFI Terra Pipeline</h1>
+  <p class="doc-meta">
+    <strong>Version:</strong> 0.4.1 &nbsp;|&nbsp;
+    <strong>Workflows:</strong> <code>AFI_16S_Main</code> / <code>AFI_16S_Batch</code> &nbsp;|&nbsp;
+    <strong>Platform:</strong> Terra (Broad Institute) &nbsp;|&nbsp;
+    <strong>Last updated:</strong> April 6, 2026
+  </p>
+
+  <!-- ══ 1. Overview ══ -->
+  <section id="overview">
+    <h2>1. Overview</h2>
+    <p>The <code>afi_terra</code> pipeline detects and identifies Rickettsiales organisms — primarily <em>Orientia</em>, <em>Rickettsia</em>, and related genera — from 16S rRNA metagenomic sequencing data. It runs on Terra, the Broad Institute's cloud execution platform, using WDL 1.0 workflows backed by Docker images.</p>
+
+    <h3>Target organisms</h3>
+    <p>The pipeline is designed to detect genera in the order Rickettsiales. For <em>Orientia</em> and <em>Rickettsia</em> specifically, a confirmatory 16S rRNA alignment step provides higher specificity. All other genera detected by the classifier (e.g., <em>Leptospira</em>, <em>Burkholderia</em>, <em>Anaplasma</em>) are reported from Centrifuger read counts alone.</p>
+
+    <h3>Two workflows</h3>
+    <div class="table-wrap"><table>
+      <thead><tr><th>Workflow</th><th>WDL file</th><th>Use case</th></tr></thead>
+      <tbody>
+        <tr><td><code>AFI_16S_Main</code></td><td><code>wdl/AFI_16S_Main.wdl</code></td><td>Single sample</td></tr>
+        <tr><td><code>AFI_16S_Batch</code></td><td><code>wdl/AFI_16S_Batch.wdl</code></td><td>Full sequencing run (scatter/gather)</td></tr>
+      </tbody>
+    </table></div>
+    <p>For clinical use, run the batch workflow. It processes all samples in a run together, automatically computing a per-run NTC background, and producing a consolidated <code>run_summary.tsv</code>. The <strong>Terra Sheet Builder</strong> desktop app (<a href="#sheet-builder">Section 8</a>) generates the required sample sheet TSV without manual editing.</p>
+
+    <h3>Two sample modes</h3>
+    <div class="table-wrap"><table>
+      <thead><tr><th>Mode</th><th>Use case</th><th>Primary output</th></tr></thead>
+      <tbody>
+        <tr><td><code>routine</code></td><td>Clinical samples with unknown organisms</td><td><code>routine_summary.tsv</code></td></tr>
+        <tr><td><code>validation</code></td><td>Samples with known expected organisms</td><td><code>validation_summary.tsv</code></td></tr>
+      </tbody>
+    </table></div>
+    <p>A single batch run can contain both modes simultaneously.</p>
+  </section>
+
+  <!-- ══ 2. Architecture ══ -->
+  <section id="architecture">
+    <h2>2. Architecture and Data Flow</h2>
+    <h3>Processing steps</h3>
+    <p>Each sample passes through up to nine steps. Steps 1–5 run in Phase 1; steps 6–8 run in Phase 2 after per-run NTC backgrounds are computed; step 9 is the final batch-level gather.</p>
+    <pre>Step 1  Human read dehosting        NCBI SRA Scrubber (optional, default on)
+Step 2  QC / adapter trimming       fastp v0.23.4
+Step 3  Taxonomic classification    Centrifuger -> kreport -> genus counts TSV
+Step 4  16S alignment               minimap2 -> BAM
+Step 5  Alignment metrics           extract_rick16s_metrics.py -> align_metrics.tsv
+        ---- batch gather: BuildNTCBackground (NTC/NC samples only; per run_id) ----
+        ---- batch gather: MatchNTCBackground (assigns each sample its run's NTC) ----
+Step 6  NTC-aware interpretation    call_taxa.py -> calls.tsv + taxa_evidence.tsv
+Step 7a Validation summary          compare_expected (validation mode only)
+Step 7b Routine summary             summarize_routine (routine mode only)
+Step 8  Run summary                 run_summary.tsv (batch only)</pre>
+
+    <h3>Batch workflow phases</h3>
+    <p><strong>Phase 1 scatter</strong> — runs steps 1–5 for all samples in parallel.</p>
+    <p><strong>BuildNTCBackground</strong> — collects all NTC/NC metrics and computes one <code>ntc_background_&lt;run_id&gt;.tsv</code> per distinct <code>run_id</code>.</p>
+    <p><strong>MatchNTCBackground</strong> — maps each sample to the NTC background for its <code>run_id</code>. This task fails if any <code>run_id</code> has no NTC/NC sample.</p>
+    <p><strong>Phase 2 scatter</strong> — runs steps 6–7 for all samples using matched NTC backgrounds.</p>
+    <p><strong>BuildRunSummary</strong> — merges all per-sample summaries into a single <code>run_summary.tsv</code>.</p>
+  </section>
+
+  <!-- ══ 3. Reference Files ══ -->
+  <section id="reference">
+    <h2>3. Reference Files and Databases</h2>
+    <h3>16S Rickettsiales panel</h3>
+    <div class="table-wrap"><table>
+      <thead><tr><th>File</th><th>Description</th></tr></thead>
+      <tbody>
+        <tr><td><code>rickettsiales_panel_16S.fa</code></td><td>16S reference sequences, original</td></tr>
+        <tr><td><code>rickettsiales_panel_16S.clean.fa</code></td><td>Cleaned version (recommended)</td></tr>
+        <tr><td><code>rickettsiales_panel_16S.mmi</code></td><td>Pre-built minimap2 index</td></tr>
+      </tbody>
+    </table></div>
+    <div class="callout tip"><strong>Recommendation:</strong> Use <code>rickettsiales_panel_16S.clean.fa</code> or the pre-built <code>.mmi</code> index. The pre-built index avoids index-build overhead at runtime.</div>
+
+    <h3>Centrifuger database</h3>
+    <p>The database (~67 GiB compressed) is stored in GCS as a TAR.GZ archive. Provide two inputs:</p>
+    <div class="table-wrap"><table>
+      <thead><tr><th>Input</th><th>Example</th><th>Description</th></tr></thead>
+      <tbody>
+        <tr><td><code>centrifuger_db</code></td><td><code>centrifuger_bact_arch_plus_rickettsiales</code></td><td>Index prefix string</td></tr>
+        <tr><td><code>centrifuger_db_archives</code></td><td><code>["gs://bucket/...tar.gz"]</code></td><td>Array of GCS paths</td></tr>
+      </tbody>
+    </table></div>
+    <div class="callout warning"><strong>VM sizing:</strong> The Centrifuger task requires <code>centrifuger_memory = "96G"</code> and <code>centrifuger_disks = "local-disk 375 HDD"</code>. The default Terra VM (1 CPU / 2 GB RAM) is far too small and will cause the task to fail.</div>
+  </section>
+
+  <!-- ══ 4. Importing ══ -->
+  <section id="importing">
+    <h2>4. Importing Workflows into Terra</h2>
+    <h3>Option 1: Dockstore (recommended)</h3>
+    <ol>
+      <li>In Dockstore, link the GitHub repository <code>PHemarajata/afi_terra</code>.</li>
+      <li>Create or refresh a workflow version from the desired Git tag or branch.</li>
+      <li>In Terra, navigate to <strong>Workflows</strong> and click <strong>Find a Workflow</strong>.</li>
+      <li>Select <strong>Dockstore</strong> as the source and import via TRS. Terra resolves all imports automatically.</li>
+    </ol>
+    <h3>Option 2: Direct ZIP upload</h3>
+    <p>If Dockstore is not available, create a ZIP preserving relative directory paths:</p>
+    <pre>zip -r afi_terra_wdl.zip \
+  wdl/AFI_16S_Batch.wdl \
+  wdl/AFI_16S_Main.wdl \
+  wdl/tasks/ \
+  NCBI_scrub_PE/tasks/quality_control/read_filtering/task_ncbi_scrub.wdl</pre>
+    <div class="callout warning"><strong>Important:</strong> Uploading only <code>AFI_16S_Batch.wdl</code> alone will fail. It imports <code>AFI_16S_Main.wdl</code> and all task WDLs via relative paths.</div>
+  </section>
+
+  <!-- ══ 5. Single-sample ══ -->
+  <section id="single-sample">
+    <h2>5. Running the Single-Sample Workflow</h2>
+    <div class="callout"><strong>Note:</strong> For production clinical runs, use the batch workflow. The single-sample workflow requires a pre-computed <code>ntc_background.tsv</code> to be supplied manually.</div>
+
+    <h3>Required inputs</h3>
+    <div class="table-wrap"><table>
+      <thead><tr><th>Input</th><th>Type</th><th>Description</th></tr></thead>
+      <tbody>
+        <tr><td><code>sample_id</code></td><td>String</td><td>Unique sample identifier</td></tr>
+        <tr><td><code>r1_fastq</code></td><td>File</td><td>GCS path to R1 FASTQ (.fastq.gz)</td></tr>
+        <tr><td><code>r2_fastq</code></td><td>File</td><td>GCS path to R2 FASTQ (.fastq.gz)</td></tr>
+        <tr><td><code>rickettsiales_panel</code></td><td>File</td><td>GCS path to 16S reference FASTA or .mmi index</td></tr>
+        <tr><td><code>ntc_background</code></td><td>File</td><td>GCS path to NTC background TSV; use placeholder for first pass</td></tr>
+        <tr><td><code>centrifuger_db</code></td><td>String</td><td>Centrifuger index prefix</td></tr>
+        <tr><td><code>centrifuger_db_archives</code></td><td>Array[File]</td><td>GCS paths to TAR.GZ archives</td></tr>
+      </tbody>
+    </table></div>
+
+    <h3>Mode and type inputs</h3>
+    <div class="table-wrap"><table>
+      <thead><tr><th>Input</th><th>Default</th><th>Allowed values</th></tr></thead>
+      <tbody>
+        <tr><td><code>mode</code></td><td><code>routine</code></td><td><code>routine</code>, <code>validation</code></td></tr>
+        <tr><td><code>sample_type</code></td><td><code>clinical</code></td><td><code>NTC</code>, <code>NC</code>, <code>PC_MIX8</code>, <code>PC_SINGLE</code>, <code>MIXED4</code>, <code>clinical</code>, <code>PC</code></td></tr>
+        <tr><td><code>use_human_scrub</code></td><td><code>true</code></td><td><code>true</code>, <code>false</code></td></tr>
+      </tbody>
+    </table></div>
+
+    <h3>Launching in Terra</h3>
+    <ol>
+      <li>Navigate to <strong>Workflows</strong> and select <code>AFI_16S_Main</code>.</li>
+      <li>Choose <strong>Run workflow with inputs defined by file paths</strong>.</li>
+      <li>Upload or paste your input JSON, then click <strong>Run Analysis</strong>.</li>
+    </ol>
+  </section>
+
+  <!-- ══ 6. Batch ══ -->
+  <section id="batch">
+    <h2>6. Running the Batch Workflow</h2>
+    <p>The batch workflow (<code>AFI_16S_Batch</code>) processes one or more sequencing runs in a single Terra submission. It scatters each sample through processing, automatically builds a per-run NTC background, and produces a consolidated run summary.</p>
+    <div class="callout tip"><strong>Multi-run support:</strong> A single batch submission can include samples from multiple sequencing runs. Assign each sample a <code>run_id</code> matching its run; NTC backgrounds are computed independently per <code>run_id</code>.</div>
+
+    <h3>Per-sample arrays</h3>
+    <div class="table-wrap"><table>
+      <thead><tr><th>Input</th><th>Type</th><th>Description</th></tr></thead>
+      <tbody>
+        <tr><td><code>run_ids</code></td><td>Array[String]</td><td>Sequencing run identifier per sample</td></tr>
+        <tr><td><code>sample_ids</code></td><td>Array[String]</td><td>Sample identifiers</td></tr>
+        <tr><td><code>r1_fastqs</code></td><td>Array[File]</td><td>R1 FASTQ GCS paths</td></tr>
+        <tr><td><code>r2_fastqs</code></td><td>Array[File]</td><td>R2 FASTQ GCS paths</td></tr>
+        <tr><td><code>sample_types</code></td><td>Array[String]</td><td>Sample type for each sample</td></tr>
+        <tr><td><code>modes</code></td><td>Array[String]</td><td><code>routine</code> or <code>validation</code> per sample</td></tr>
+        <tr><td><code>expected_taxa</code></td><td>Array[String]</td><td>Expected taxa string; <code>""</code> for routine samples</td></tr>
+      </tbody>
+    </table></div>
+
+    <h3>Sample types in a batch run</h3>
+    <div class="table-wrap"><table>
+      <thead><tr><th>sample_type</th><th>Description</th><th>Contributes to NTC background</th></tr></thead>
+      <tbody>
+        <tr><td><code>NTC</code></td><td>No-template control</td><td>Yes</td></tr>
+        <tr><td><code>NC</code></td><td>Negative control (alias for NTC)</td><td>Yes</td></tr>
+        <tr><td><code>PC_MIX8</code></td><td>8-organism positive control</td><td>No</td></tr>
+        <tr><td><code>PC_SINGLE</code></td><td>Single-organism positive control</td><td>No</td></tr>
+        <tr><td><code>clinical</code></td><td>Clinical patient sample</td><td>No</td></tr>
+        <tr><td><code>PC</code></td><td>Generic positive control</td><td>No</td></tr>
+      </tbody>
+    </table></div>
+    <div class="callout warning"><strong>NTC requirement:</strong> Every distinct <code>run_id</code> in the batch must have at least one sample with <code>sample_type</code> of <code>NTC</code> or <code>NC</code>; otherwise <code>MatchNTCBackground</code> will fail.</div>
+  </section>
+
+  <!-- ══ 7. Two-pass ══ -->
+  <section id="two-pass">
+    <h2>7. The Two-Pass Pattern</h2>
+    <p>The batch workflow handles NTC backgrounds entirely automatically — no manual intervention is needed. The two-pass procedure below applies only to the <strong>single-sample workflow</strong> or exceptional reprocessing scenarios.</p>
+    <h3>Step 1: First pass — placeholder NTC background</h3>
+    <p>Supply <code>wdl/inputs/ntc_background.placeholder.tsv</code> (all-zero thresholds) as <code>ntc_background</code>. Collect the <code>align_metrics</code> output for each NTC/NC sample from Terra.</p>
+    <h3>Step 2: Build run-specific NTC background</h3>
+    <pre>python3 scripts/build_ntc_background_from_metrics.py \
+  --ntc-metrics path/to/NTC_S11.align_metrics.tsv \
+  --ntc-metrics path/to/NTC_S12.align_metrics.tsv \
+  --out wdl/inputs/run3.ntc_background.tsv</pre>
+    <h3>Step 3: Upload and re-run</h3>
+    <pre>gsutil cp wdl/inputs/run3.ntc_background.tsv gs://YOUR_BUCKET/ref/run3_ntc_background.tsv</pre>
+    <p>Re-submit the sample with <code>ntc_background</code> pointing to the real file. The second pass produces NTC-corrected calls.</p>
+  </section>
+
+  <!-- ══ 8. Sheet Builder ══ -->
+  <section id="sheet-builder">
+    <h2>8. Terra Sheet Builder (GUI)</h2>
+    <div class="section-intro">
+      The <strong>Terra Sheet Builder</strong> is a desktop GUI application that generates a Terra-compatible sample-set TSV for <code>AFI_16S_Batch</code> without manually editing JSON or TSV files. It is the recommended way to prepare batch inputs for routine clinical use.
+    </div>
+
+    <h3 id="sb-install">Getting the application</h3>
+    <p><strong>Pre-built binaries</strong> are built automatically by GitHub Actions. Download the artifact for your platform from <strong>Actions → Build Terra Sheet Builder</strong> on the repository page:</p>
+    <div class="table-wrap"><table>
+      <thead><tr><th>Platform</th><th>Artifact</th></tr></thead>
+      <tbody>
+        <tr><td>Linux (amd64)</td><td>Single-file ELF executable</td></tr>
+        <tr><td>Windows (x64)</td><td><code>.exe</code>, no console window</td></tr>
+        <tr><td>macOS Intel</td><td><code>.app</code> bundle, zipped</td></tr>
+        <tr><td>macOS Apple Silicon (arm64)</td><td><code>.app</code> bundle, zipped</td></tr>
+      </tbody>
+    </table></div>
+    <p><strong>Run from source</strong> (requires Python 3.10+):</p>
+    <pre>pip install PySide6
+python3 tools/terra_sheet_builder/terra_sheet_builder.py</pre>
+
+    <hr class="rule">
+
+    <h3 id="sb-walkthrough">Step-by-Step Walkthrough</h3>
+    <p>The following walkthrough covers generating a Terra metadata sheet for the <code>AFI_16S_Batch</code> workflow for a two-run batch.</p>
+
+    <div class="steps">
+
+      <div class="step">
+        <div class="step-num">1</div>
+        <div class="step-body">
+          <h4>Specify the number of runs in this batch</h4>
+          <p>On the first screen, enter how many sequencing runs you want to process together. In this example, there are <strong>two runs</strong> to process. Use the spinner to set the count.</p>
+          <img class="step-img" src="https://colony-recorder.s3.amazonaws.com/files/2026-04-28/41c7229c-ba2a-4060-96f9-44fe4554e7a2/user_cropped_screenshot_42a6e92c2e41466094aa49a0cb0df176_text_export.jpeg" alt="Step 1 – run count screen">
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-num">2</div>
+        <div class="step-body">
+          <h4>Click Continue</h4>
+          <p>After setting the run count, click <strong>Continue</strong> to advance to the run-naming step.</p>
+          <img class="step-img" src="https://colony-recorder.s3.amazonaws.com/files/2026-04-28/0d591951-d242-49c0-92a8-099cd54d2d2c/user_cropped_screenshot_2d8734affc9c44fd9199f7a0529dff30_text_export.jpeg" alt="Step 2 – continue button">
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-num">3</div>
+        <div class="step-body">
+          <h4>Name each run</h4>
+          <p>In Step 2, enter a unique name for each run. Names are used as the <code>run_id</code> value for all samples in that run. No spaces are allowed — use underscores or hyphens (e.g., <code>run_2024_11</code>). In this example, runs are named <strong>Run 1</strong> and <strong>Run 2</strong>. Click <strong>Next</strong> when done.</p>
+          <img class="step-img" src="https://colony-recorder.s3.amazonaws.com/files/2026-04-28/1594d5ad-1731-4262-9739-b00bdc0f403e/sps-redacted-8bd45d1954b646b9bbca75692f995f54_bbf701b63348412487fff23d76cb4646_text_export.jpeg" alt="Step 3 – run names">
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-num">4</div>
+        <div class="step-body">
+          <h4>Select FASTQ files for each run</h4>
+          <p>In this step, add FASTQ files to each run. You can import from pre-generated TSV files or browse to the folder where R1 and R2 FASTQ files are located. Click <strong>Browse Folder</strong> to select a directory — the app auto-discovers all R1/R2 pairs using the <code>_R1_</code>/<code>_R2_</code> naming convention.</p>
+          <img class="step-img" src="https://colony-recorder.s3.amazonaws.com/files/2026-04-28/3f71c00c-350a-418b-b7ad-eda86f214458/user_cropped_screenshot_c9fa2d8047d74451a1ff08d1a98d06ce_text_export.jpeg" alt="Step 4 – FASTQ selection options">
+          <div class="callout" style="margin-top:0.65rem;">
+            <strong>Three methods to add samples:</strong>
+            <ul style="margin-top:0.4rem;">
+              <li><strong>Browse folder</strong> — auto-discovers all R1/R2 FASTQ pairs in a directory</li>
+              <li><strong>Add files…</strong> — multi-file dialog; app auto-pairs R1+R2 by name pattern</li>
+              <li><strong>Import from TSV…</strong> — global import with <code>run_id</code> and <code>sample_id</code> columns</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-num">5</div>
+        <div class="step-body">
+          <h4>Browse to the FASTQ folder and click Open</h4>
+          <p>Navigate to the folder containing the paired read files. Select the folder and click <strong>Open</strong>. The app will scan for all valid R1/R2 FASTQ pairs automatically.</p>
+          <img class="step-img" src="https://colony-recorder.s3.amazonaws.com/files/2026-04-28/b5e9ac33-0b46-4bbc-bdfe-cf2c3cddef59/sps-redacted-d3f8599f7d794f72845e9d0971411ac9_6b70cdeb76704241b37fcaf42c2778c4_text_export.jpeg" alt="Step 5 – folder browser dialog">
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-num">6</div>
+        <div class="step-body">
+          <h4>Files are sorted into the metadata table automatically</h4>
+          <p>The app sorts discovered files into the metadata table based on the specified runs. Repeat the folder selection for the remaining runs to be processed.</p>
+          <img class="step-img" src="https://colony-recorder.s3.amazonaws.com/files/2026-04-28/0bed8fe7-1053-4f0c-8aa9-173aabc0afea/user_cropped_screenshot_1f074de1cb29463590acc8b13d325edf_text_export.jpeg" alt="Step 6 – files auto-sorted into table">
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-num">7</div>
+        <div class="step-body">
+          <h4>Verify sample names and file names, then click Next</h4>
+          <p>Tables with sample names and file names are populated automatically. Review the table to confirm all entries are correct. Once ready, click <strong>Next</strong> to proceed to sample metadata entry.</p>
+          <img class="step-img" src="https://colony-recorder.s3.amazonaws.com/files/2026-04-28/03552700-21ed-4b92-ab28-ffdde1fe35b4/user_cropped_screenshot_a11783c006e44e27ab804da3818b3860_text_export.jpeg" alt="Step 7 – populated sample table">
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-num">8</div>
+        <div class="step-body">
+          <h4>Review the sample metadata page</h4>
+          <p>This page requires additional information. Note that the <strong>Analysis Date</strong> field has already been pre-filled automatically with today's date.</p>
+          <img class="step-img" src="https://colony-recorder.s3.amazonaws.com/files/2026-04-28/b0f758ef-ddca-469f-890d-70b4be5b5e4a/user_cropped_screenshot_7b1adfd99d53448babe798c3b2a54cc4_text_export.jpeg" alt="Step 8 – sample metadata page">
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-num">9</div>
+        <div class="step-body">
+          <h4>Enter the Terra table name and operator initials</h4>
+          <p>Fill in the <strong>Terra metadata table name</strong> (lowercase alphanumeric, ≤32 chars, must start with a letter) and the <strong>operator's initials</strong>. These are recorded in the <code>analysis_comments</code> column of the output TSV for traceability.</p>
+          <img class="step-img" src="https://colony-recorder.s3.amazonaws.com/files/2026-04-28/35d03146-dac8-427c-a839-138147e68065/user_cropped_screenshot_a26337940aa841e3a71b883101fa6df0_text_export.jpeg" alt="Step 9 – table name and initials">
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-num">10</div>
+        <div class="step-body">
+          <h4>Designate the NTC (negative control) for each run</h4>
+          <p>Below the header fields, the sample table lists all samples for both runs. <strong>Each run must have at least one NTC and one positive control.</strong> In the <code>sample_type</code> column, find the NTC sample for Run 1 and select <strong>NTC</strong> from the dropdown. The <code>sample_type</code> for clinical samples remains <code>clinical</code>.</p>
+          <img class="step-img" src="https://colony-recorder.s3.amazonaws.com/files/2026-04-28/11ec4dc0-ebde-47fb-a3b7-648cdbf3b859/user_cropped_screenshot_086de3d965b442feb0e9367373039ac0_text_export.jpeg" alt="Step 10 – selecting NTC sample type">
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-num">11</div>
+        <div class="step-body">
+          <h4>Confirm the NTC designation</h4>
+          <p>The NTC sample for Run 1 is now designated. The <code>sample_type</code> dropdown shows <strong>NTC</strong> for that row. Continue to designate the positive control for Run 1.</p>
+          <img class="step-img" src="https://colony-recorder.s3.amazonaws.com/files/2026-04-28/522f1907-f5af-4bfc-aeb6-449d5378a09b/user_cropped_screenshot_2bce8b862c174d7e9f50e436676b1567_text_export.jpeg" alt="Step 11 – NTC confirmed">
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-num">12</div>
+        <div class="step-body">
+          <h4>Begin changing the positive control sample type</h4>
+          <p>For the positive control sample in Run 1, click the <code>sample_type</code> dropdown to change it from <code>clinical</code> to the appropriate control type.</p>
+          <img class="step-img" src="https://colony-recorder.s3.amazonaws.com/files/2026-04-28/a8bc52a6-6b42-4552-8d25-49ade7a9d18e/user_cropped_screenshot_7a4967f606f74d4fb282fba17d97c432_text_export.jpeg" alt="Step 12 – opening PC dropdown">
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-num">13</div>
+        <div class="step-body">
+          <h4>Open the sample type dropdown</h4>
+          <p>Click the dropdown control for the positive control row to open the list of available sample types.</p>
+          <img class="step-img" src="https://colony-recorder.s3.amazonaws.com/files/2026-04-28/f208f4d6-f265-4edd-846a-47f2430e0656/user_cropped_screenshot_c0f5628f40244432b5d20ac27995e761_text_export.jpeg" alt="Step 13 – dropdown open">
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-num">14</div>
+        <div class="step-body">
+          <h4>Select the positive control type</h4>
+          <p>Change the <code>sample_type</code> to the type of control used. In this example, <strong>PC_MIX8</strong> is selected — a positive control containing DNA from 8 bacterial species.</p>
+          <img class="step-img" src="https://colony-recorder.s3.amazonaws.com/files/2026-04-28/19446016-92dc-4f54-8385-3946f98dd97f/user_cropped_screenshot_aa0c9e6bd723470db54b8488946f20fd_text_export.jpeg" alt="Step 14 – PC_MIX8 selected">
+          <div class="table-wrap" style="margin-top:0.75rem;"><table>
+            <thead><tr><th>sample_type</th><th>mode (auto-filled)</th><th>expected_taxa (auto-filled)</th></tr></thead>
+            <tbody>
+              <tr><td><code>PC_MIX8</code></td><td><code>validation</code></td><td><em>Bacillus;Listeria;Staphylococcus;Enterococcus;Limosilactobacillus;Salmonella;Escherichia;Pseudomonas</em></td></tr>
+              <tr><td><code>clinical</code></td><td><code>routine</code></td><td>(empty)</td></tr>
+              <tr><td><code>NTC</code> / <code>NC</code></td><td><code>routine</code></td><td>(empty)</td></tr>
+            </tbody>
+          </table></div>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-num">15</div>
+        <div class="step-body">
+          <h4>Expected taxa auto-populate for PC_MIX8</h4>
+          <p>Once <code>PC_MIX8</code> is selected, the <code>expected_taxa</code> field auto-fills with the 8 bacterial species expected from that control. This tells the validation workflow which taxa should be identified.</p>
+          <img class="step-img" src="https://colony-recorder.s3.amazonaws.com/files/2026-04-28/e59df55b-1ded-4993-910b-83739d960914/user_cropped_screenshot_c32fc0170d5847dd9e1f46572bc78b80_text_export.jpeg" alt="Step 15 – expected taxa auto-filled">
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-num">16</div>
+        <div class="step-body">
+          <h4>Validation catches missing controls before export</h4>
+          <p>If an operator forgets to designate the NTC and positive control for Run 2 and clicks <strong>Validate</strong>, the <strong>Export TSV</strong> button remains greyed out. The app has detected missing required controls.</p>
+          <img class="step-img" src="https://colony-recorder.s3.amazonaws.com/files/2026-04-28/e07a08f6-074d-401f-aea0-f0fad168f77c/user_cropped_screenshot_1ddfab0fac1840038938b0658b4c1ae3_text_export.jpeg" alt="Step 16 – Export TSV greyed out">
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-num">17</div>
+        <div class="step-body">
+          <h4>Review and fix the validation error</h4>
+          <p>The app generates a descriptive error message stating that <strong>Run 2 has no NTC and no positive control specified</strong>. Click <strong>OK</strong> to acknowledge. Correct the missing designations for Run 2 before proceeding.</p>
+          <img class="step-img" src="https://colony-recorder.s3.amazonaws.com/files/2026-04-28/3037546e-659d-43cf-aef5-0c416ad77a5a/sps-redacted-679463600267431684574b6792c447af_5290fbe6b110422195a0d221ef5308a3_text_export.jpeg" alt="Step 17 – validation error dialog">
+          <div class="callout warning" style="margin-top:0.75rem;">
+            <strong>Validation checks performed:</strong>
+            <ul style="margin-top:0.4rem;">
+              <li>No duplicate <code>sample_id</code> values across all runs</li>
+              <li>Each run has at least one <code>NTC</code> or <code>NC</code> sample</li>
+              <li>Each run has at least one positive control (<code>PC_MIX8</code>, <code>PC_SINGLE</code>, <code>MIXED4</code>, or <code>PC</code>)</li>
+              <li>All validation-mode rows have a non-empty <code>expected_taxa</code> field</li>
+              <li>Table name matches <code>^[a-z][a-z0-9_]{0,31}$</code></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-num">18</div>
+        <div class="step-body">
+          <h4>Validate — all checks must pass before export</h4>
+          <p>After correcting all issues, click <strong>Validate</strong> again. If all checks pass, the <strong>Export TSV</strong> button becomes clickable. The TSV files are now ready to be uploaded to Terra.bio.</p>
+          <img class="step-img" src="https://colony-recorder.s3.amazonaws.com/files/2026-04-28/93b1bf8d-b8cd-4a7c-8e4c-a2901e8a9cec/sps-redacted-e9c5c00c0f394e8e8b1b31889b28aa87_1990f4caaf7d4c4f933f56d1f271ae1a_text_export.jpeg" alt="Step 18 – Export TSV button enabled">
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-num">19</div>
+        <div class="step-body">
+          <h4>Export TSV and save the file</h4>
+          <p>Click <strong>Export TSV</strong> and save the file to a location you can easily locate. The file will be named using the table name you entered in the header fields.</p>
+          <img class="step-img" src="https://colony-recorder.s3.amazonaws.com/files/2026-04-28/98fe23f1-c1ea-4bbd-a619-d7672f659dd3/sps-redacted-72fdb578085341f2a9567685f6b9fad1_580df71d303644fcac86e8dcf2dcb5f2_text_export.jpeg" alt="Step 19 – Export TSV dialog">
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-num">20</div>
+        <div class="step-body">
+          <h4>Verify the exported file in Microsoft Excel</h4>
+          <p>Open the exported TSV in Microsoft Excel to confirm the format is correct and compatible with Terra.bio. Check that the <code>entity:&lt;table_name&gt;_id</code> column is the first column, all sample fields are present, and the <code>analysis_comments</code> column appears as the last column.</p>
+          <img class="step-img" src="https://colony-recorder.s3.amazonaws.com/files/2026-04-28/78d6e161-34d7-4bfb-804d-be26decb763e/sps-redacted-9fd58a9b617942a2a339ceffa6b61415_5ec3d82f026a489d809cb631d6ebca76_text_export.jpeg" alt="Step 20 – TSV verified in Excel">
+        </div>
+      </div>
+
+    </div><!-- /steps -->
+
+    <hr class="rule">
+    <h3 id="sb-export">Importing the TSV into Terra</h3>
+    <ol>
+      <li>In your Terra workspace, go to <strong>Data → Import Data → Upload TSV</strong>.</li>
+      <li>Select the exported TSV file.</li>
+      <li>Terra will create or update a sample set entity table with the name you provided.</li>
+    </ol>
+    <p>The exported file uses <code>entity:&lt;table_name&gt;_id</code> as the first column (required by Terra) followed by all sample fields. An <code>analysis_comments</code> column appended as the last column contains <code>&lt;table_name&gt; | &lt;date&gt; | &lt;initials&gt;</code> for traceability.</p>
+  </section>
+
+  <!-- ══ 9. Helper Scripts ══ -->
+  <section id="helper-scripts">
+    <h2>9. Helper Scripts</h2>
+    <p>All helper scripts are in the <code>scripts/</code> directory. They run locally (not in Terra) and are used to prepare inputs, post-process outputs, and manage Docker images.</p>
+
+    <h3><code>build_batch_inputs_json.py</code></h3>
+    <p>Converts a sample sheet TSV or AFI mapping TSV into a Terra-ready batch input JSON.</p>
+    <pre>python3 scripts/build_batch_inputs_json.py \
+  --sample-sheet wdl/inputs/batch_samples.template.tsv \
+  --out-json wdl/inputs/batch_run1.json \
+  --rickettsiales-panel gs://YOUR_BUCKET/ref/rickettsiales_panel_16S.clean.fa \
+  --centrifuger-db centrifuger_bact_arch_plus_rickettsiales</pre>
+
+    <h3><code>build_ntc_background_from_metrics.py</code></h3>
+    <p>Builds a run-specific NTC background TSV from one or more NTC <code>align_metrics.tsv</code> output files.</p>
+    <pre>python3 scripts/build_ntc_background_from_metrics.py \
+  --ntc-metrics path/to/NTC1.align_metrics.tsv \
+  --ntc-metrics path/to/NTC2.align_metrics.tsv \
+  --out wdl/inputs/run_ntc_background.tsv</pre>
+
+    <h3><code>make_terra_import_sheet.py</code></h3>
+    <p>CLI companion to the Terra Sheet Builder GUI. Generates or validates a Terra-compatible sample import TSV and optionally writes an annotated Excel workbook.</p>
+    <pre>python3 scripts/make_terra_import_sheet.py --template --output my_run.tsv
+python3 scripts/make_terra_import_sheet.py --input samples.csv --output terra_import.tsv --excel</pre>
+  </section>
+
+  <!-- ══ 10. Outputs ══ -->
+  <section id="outputs">
+    <h2>10. Output Files Reference</h2>
+    <h3>Per-sample outputs</h3>
+    <div class="table-wrap"><table>
+      <thead><tr><th>File</th><th>Description</th></tr></thead>
+      <tbody>
+        <tr><td><code>&lt;id&gt;.genus_counts.tsv</code></td><td>Genus-level Centrifuger read counts</td></tr>
+        <tr><td><code>&lt;id&gt;.bam</code> / <code>.bai</code></td><td>minimap2 alignment, sorted and indexed</td></tr>
+        <tr><td><code>&lt;id&gt;.align_metrics.tsv</code></td><td>Per-genus alignment metrics (<code>mapped_reads</code>, <code>max_breadth</code>)</td></tr>
+        <tr><td><code>calls.tsv</code></td><td>NTC-aware taxa calls — the core interpretive output</td></tr>
+        <tr><td><code>taxa_evidence.tsv</code></td><td>Detailed per-genus evidence with justification strings</td></tr>
+        <tr><td><code>routine_summary.tsv</code></td><td>Detected taxa list (routine mode only)</td></tr>
+        <tr><td><code>validation_summary.tsv</code></td><td>Concordance summary (validation mode only)</td></tr>
+      </tbody>
+    </table></div>
+
+    <h3>Batch-only outputs</h3>
+    <div class="table-wrap"><table>
+      <thead><tr><th>File</th><th>Description</th></tr></thead>
+      <tbody>
+        <tr><td><code>ntc_background_&lt;run_id&gt;.tsv</code></td><td>Auto-computed NTC background per distinct <code>run_id</code></td></tr>
+        <tr><td><code>run_summary.tsv</code></td><td>Batch-level summary with per-run PC8 validity — one row per sample</td></tr>
+      </tbody>
+    </table></div>
+  </section>
+
+  <!-- ══ 11. Interpreting ══ -->
+  <section id="interpreting">
+    <h2>11. Interpreting Calls and Summaries</h2>
+    <h3>Call values — alignment source (<em>Orientia</em> and <em>Rickettsia</em>)</h3>
+    <div class="table-wrap"><table>
+      <thead><tr><th>Call</th><th>Meaning</th></tr></thead>
+      <tbody>
+        <tr><td><span class="pill">Confirmed</span></td><td>Strong positive: reads and breadth meet confirmation thresholds and are well above NTC</td></tr>
+        <tr><td><span class="pill" style="background:var(--aphl-orange,#E37C1D)">Probable</span></td><td>Moderate positive: lower thresholds met and reads exceed NTC</td></tr>
+        <tr><td><span class="pill gray">Not_Confirmed</span></td><td>Equivocal: sufficient reads but at or below NTC level; cannot distinguish from noise</td></tr>
+        <tr><td><span class="pill rust">Negative</span></td><td>Insufficient reads</td></tr>
+      </tbody>
+    </table></div>
+
+    <h3>Call values — Centrifuger source (all other genera)</h3>
+    <div class="table-wrap"><table>
+      <thead><tr><th>Call</th><th>Meaning</th></tr></thead>
+      <tbody>
+        <tr><td><span class="pill">Detected</span></td><td>Reads exceed floor threshold and are well above NTC</td></tr>
+        <tr><td><span class="pill rust">Not_Detected</span></td><td>Negative or below threshold</td></tr>
+      </tbody>
+    </table></div>
+
+    <h3>PC8 validity</h3>
+    <p>For <code>PC_MIX8</code> samples, a pass/fail flag is computed. <strong>At least 6 of the 8 expected taxa must be detected</strong> for a passing result. In <code>run_summary.tsv</code>, <code>run_pc8_valid</code> carries this value for every row, allowing immediate run-level QC assessment.</p>
+  </section>
+
+  <!-- ══ 12. Thresholds ══ -->
+  <section id="thresholds">
+    <h2>12. Detection Thresholds</h2>
+    <div class="table-wrap"><table>
+      <thead><tr><th>Input</th><th>Default</th><th>Description</th></tr></thead>
+      <tbody>
+        <tr><td><code>align_confirm_reads</code></td><td>100</td><td>Minimum mapped reads for Confirmed alignment call</td></tr>
+        <tr><td><code>align_confirm_breadth</code></td><td>0.25</td><td>Minimum breadth of coverage for Confirmed call</td></tr>
+        <tr><td><code>align_fold</code></td><td>5.0</td><td>Minimum fold over NTC reads for Confirmed call</td></tr>
+        <tr><td><code>cfr_floor</code></td><td>500</td><td>Minimum Centrifuger reads for Detected call</td></tr>
+        <tr><td><code>cfr_fold</code></td><td>5.0</td><td>Minimum fold over NTC reads for Detected call</td></tr>
+      </tbody>
+    </table></div>
+  </section>
+
+  <!-- ══ 13. Docker ══ -->
+  <section id="docker">
+    <h2>13. Docker Images</h2>
+    <div class="table-wrap"><table>
+      <thead><tr><th>Input</th><th>Default image</th><th>Description</th></tr></thead>
+      <tbody>
+        <tr><td><code>afi_core_docker</code></td><td><code>phemarajata614/afi-terra:0.4.1</code></td><td>Core analysis image (Python, samtools, minimap2)</td></tr>
+        <tr><td><code>fastp_docker</code></td><td><code>staphb/fastp:0.23.4</code></td><td>QC trimming</td></tr>
+        <tr><td><code>centrifuger_docker</code></td><td><code>phemarajata614/centrifuger:1.1.0</code></td><td>Centrifuger classifier</td></tr>
+      </tbody>
+    </table></div>
+    <h3>Building and pushing the AFI core image</h3>
+    <pre>bash scripts/build_push_afi_core_image.sh phemarajata614 0.4.1 linux/amd64</pre>
+  </section>
+
+  <!-- ══ 14. Troubleshooting ══ -->
+  <section id="troubleshooting">
+    <h2>14. Troubleshooting</h2>
+    <div class="callout warning">
+      <strong>Centrifuger task fails or segfaults</strong><br>
+      The default Terra VM is too small. Set <code>centrifuger_memory = "96G"</code> and <code>centrifuger_disks = "local-disk 375 HDD"</code> in your input JSON.
+    </div>
+    <div class="callout warning" style="margin-top:0.75rem;">
+      <strong>MatchNTCBackground fails</strong><br>
+      Every <code>run_id</code> in the batch must include at least one sample with <code>sample_type</code> of <code>NTC</code> or <code>NC</code>. Check the Sheet Builder validation output for missing controls.
+    </div>
+    <div class="callout warning" style="margin-top:0.75rem;">
+      <strong>Import resolution errors in Terra</strong><br>
+      Do not upload only the main WDL file. Either use Dockstore (recommended) or package all WDL files and task imports into a ZIP archive before uploading.
+    </div>
+    <div class="callout tip" style="margin-top:0.75rem;">
+      <strong>Export TSV button stays greyed out</strong><br>
+      Click <strong>Validate</strong> first. The button enables only after all validation checks pass. Review the error messages and correct missing controls, duplicate sample IDs, or invalid table name format.
+    </div>
+  </section>
+
+</main>
+</div>
+
+<footer>
+  &copy; 2026 Association of Public Health Laboratories (APHL) &nbsp;|&nbsp;
+  8515 Georgia Avenue, Suite 700, Silver Spring, MD 20910 &nbsp;|&nbsp;
+  <a href="https://aphl.org">aphl.org</a> &nbsp;|&nbsp;
+  AFI Terra Pipeline v0.4.1
+</footer>
+
+<script>
+  // Sidebar active-link tracking
+  const sections = document.querySelectorAll('section[id]');
+  const links = document.querySelectorAll('.sidebar a');
+  const obs = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        links.forEach(l => l.classList.remove('active'));
+        const active = document.querySelector('.sidebar a[href="#' + e.target.id + '"]');
+        if (active) active.classList.add('active');
+      }
+    });
+  }, { rootMargin: '-64px 0px -60% 0px' });
+  sections.forEach(s => obs.observe(s));
+</script>
+</body>
+</html>
