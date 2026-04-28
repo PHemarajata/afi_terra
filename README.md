@@ -1,6 +1,9 @@
 # AFI Terra Pipeline
 
-Metagenomic Rickettsiales detection workflow.
+Metagenomic detection workflow.
+
+### See full documentation at:
+### https://phemarajata.github.io/afi_terra/index.html
 
 Terra import options (to avoid missing-import errors):
 
