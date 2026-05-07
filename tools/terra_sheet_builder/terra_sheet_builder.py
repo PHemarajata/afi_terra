@@ -74,6 +74,7 @@ COL_HEADERS      = ["sample_id", "run_id", "sample_type", "mode", "expected_taxa
 R1_PATTERNS = re.compile(r"_R1[_.]|_R1_001\.")
 R2_PATTERNS = re.compile(r"_R2[_.]|_R2_001\.")
 FASTQ_SUFFIXES = {".fastq", ".fastq.gz", ".fq", ".fq.gz"}
+UNDETERMINED_RE = re.compile(r"^undetermined", re.IGNORECASE)
 
 
 # ---------------------------------------------------------------------------
@@ -265,6 +266,8 @@ def parse_terra_tsv(path: str) -> dict:
         st   = (raw.get("sample_type")         or "").strip()
         mode = (raw.get("mode")                or "").strip()
         exp  = (raw.get("expected_taxa")        or "").strip()
+        if exp == '""':
+            exp = ""   # normalize Terra's placeholder empty back to actual empty
         r1   = (raw.get("r1_fastq")            or "").strip()
         r2   = (raw.get("r2_fastq")            or "").strip()
         cmt  = (raw.get("analysis_comments")   or "").strip()
@@ -497,6 +500,7 @@ class Screen1(QWidget):
                 "Expected filenames containing _R1_ and _R2_."
             )
             return
+        pairs = self._filter_undetermined(section, pairs)
         for stem, r1, r2 in pairs:
             self._add_row(section, stem, r1, r2)
 
@@ -531,8 +535,28 @@ class Screen1(QWidget):
                     "Expected filenames containing _R1_ or _R2_."
                 )
             return
+        pairs = self._filter_undetermined(section, pairs)
         for stem, r1, r2 in pairs:
             self._add_row(section, stem, r1, r2)
+
+    def _filter_undetermined(
+        self, section: dict, pairs: list[tuple[str, str, str]]
+    ) -> list[tuple[str, str, str]]:
+        normal = [(s, r1, r2) for s, r1, r2 in pairs if not UNDETERMINED_RE.match(s)]
+        undet  = [(s, r1, r2) for s, r1, r2 in pairs if UNDETERMINED_RE.match(s)]
+        if not undet:
+            return pairs
+        run_name = section["run_name"]
+        reply = QMessageBox.question(
+            self,
+            "Undetermined reads found",
+            f"{len(undet)} 'Undetermined' read pair(s) found in run '{run_name}'.\n"
+            "These are reads that could not be assigned to a sample during "
+            "demultiplexing. Include them?",
+            QMessageBox.Yes | QMessageBox.No,
+            QMessageBox.No,
+        )
+        return pairs if reply == QMessageBox.Yes else normal
 
     def _add_row(self, section: dict, sample_id: str, r1: str, r2: str):
         table: QTableWidget = section["table"]
@@ -752,7 +776,7 @@ class Screen2(QWidget):
         form.addRow("Analysis date:", self._date_edit)
 
         self._table_name_edit = QLineEdit()
-        self._table_name_edit.setPlaceholderText("e.g. afi_run_1  (lowercase, no spaces)")
+        self._table_name_edit.setPlaceholderText("e.g. afi_run_1 or 16s_batch2  (lowercase, no spaces)")
         self._table_name_edit.textChanged.connect(self._validate_table_name_live)
         self._table_name_label = QLabel("Data table name:")
         form.addRow(self._table_name_label, self._table_name_edit)
@@ -855,7 +879,7 @@ class Screen2(QWidget):
     # ── Live table name validation ──
 
     def _validate_table_name_live(self, text: str):
-        valid = bool(re.match(r"^[a-z][a-z0-9_]{0,31}$", text))
+        valid = bool(re.match(r"^[a-z0-9][a-z0-9_]{0,31}$", text))
         self._table_name_edit.setStyleSheet(
             "" if valid or not text else "border: 2px solid red;"
         )
@@ -885,9 +909,9 @@ class Screen2(QWidget):
 
         # Header checks
         table_name = self._table_name_edit.text().strip()
-        if not re.match(r"^[a-z][a-z0-9_]{0,31}$", table_name):
+        if not re.match(r"^[a-z0-9][a-z0-9_]{0,31}$", table_name):
             errors.append(
-                "Data table name must start with a lowercase letter, contain only "
+                "Data table name must start with a lowercase letter or digit, contain only "
                 "a-z, 0-9, and _, and be at most 32 characters."
             )
         if not self._initials_edit.text().strip():
@@ -990,9 +1014,9 @@ class Screen2(QWidget):
                 st   = self._cell_text(r, COL_SAMPLE_TYPE)
                 mode = self._cell_text(r, COL_MODE)
                 exp  = self._cell_text(r, COL_EXPECTED)
-                # Routine samples must always have empty expected_taxa
+                # Routine samples write "" so Terra never sees a blank cell
                 if mode == "routine":
-                    exp = ""
+                    exp = '""'
                 # r1/r2 stored in UserRole on the sample_id cell
                 # (survives user renaming the sample_id)
                 file_data = {}
