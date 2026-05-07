@@ -1,0 +1,10 @@
+sample	genus	source	call	reads	breadth	ntc_reads	ntc_fold	cfr_reads	align_confirmed	rescued	evidence_summary
+PC14_S2_L001	Rickettsia	alignment	Probable	250766	0.2102	53908	4.7x	0	false	true	ALIGNMENT PROBABLE: 250766 reads (threshold >=50; below confirmed threshold of 100), breadth 0.2102 (threshold >=0.20). NTC background: 53908 reads; fold above NTC: 4.7x. Centrifuge: 0 reads -- not detected by centrifuge; call relies on alignment.
+PC14_S2_L001	Bacillus	centrifuge	Detected	104105		0	no NTC background				CENTRIFUGE DETECTED: 104105 reads (threshold >=500). NTC background: 0 reads; fold above NTC: no NTC background (threshold >=5.0x).
+PC14_S2_L001	Enterococcus	centrifuge	Detected	50700		0	no NTC background				CENTRIFUGE DETECTED: 50700 reads (threshold >=500). NTC background: 0 reads; fold above NTC: no NTC background (threshold >=5.0x).
+PC14_S2_L001	Escherichia	centrifuge	Detected	19990		0	no NTC background				CENTRIFUGE DETECTED: 19990 reads (threshold >=500). NTC background: 0 reads; fold above NTC: no NTC background (threshold >=5.0x).
+PC14_S2_L001	Limosilactobacillus	centrifuge	Detected	75347		0	no NTC background				CENTRIFUGE DETECTED: 75347 reads (threshold >=500). NTC background: 0 reads; fold above NTC: no NTC background (threshold >=5.0x).
+PC14_S2_L001	Listeria	centrifuge	Detected	94812		0	no NTC background				CENTRIFUGE DETECTED: 94812 reads (threshold >=500). NTC background: 0 reads; fold above NTC: no NTC background (threshold >=5.0x).
+PC14_S2_L001	Pseudomonas	centrifuge	Detected	17827		1	17827.0x				CENTRIFUGE DETECTED: 17827 reads (threshold >=500). NTC background: 1 reads; fold above NTC: 17827.0x (threshold >=5.0x).
+PC14_S2_L001	Salmonella	centrifuge	Detected	34017		3	11339.0x				CENTRIFUGE DETECTED: 34017 reads (threshold >=500). NTC background: 3 reads; fold above NTC: 11339.0x (threshold >=5.0x).
+PC14_S2_L001	Staphylococcus	centrifuge	Detected	99796		0	no NTC background				CENTRIFUGE DETECTED: 99796 reads (threshold >=500). NTC background: 0 reads; fold above NTC: no NTC background (threshold >=5.0x).

@@ -1,0 +1,3 @@
+sample	genus	source	call	reads	breadth	ntc_reads	ntc_fold	cfr_reads	align_confirmed	rescued	evidence_summary
+11900320_S7_L001	Pseudobdellovibrio	centrifuge	Detected	913		0	no NTC background				CENTRIFUGE DETECTED: 913 reads (threshold >=500). NTC background: 0 reads; fold above NTC: no NTC background (threshold >=5.0x).
+11900320_S7_L001	Sphingomonas	centrifuge	Detected	1378		78	17.7x				CENTRIFUGE DETECTED: 1378 reads (threshold >=500). NTC background: 78 reads; fold above NTC: 17.7x (threshold >=5.0x).

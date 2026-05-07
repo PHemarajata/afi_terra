@@ -1,0 +1,6 @@
+sample	genus	source	call	reads	breadth	ntc_reads	ntc_fold	cfr_reads	align_confirmed	rescued	evidence_summary
+22900187_S10_L001	Brevibacillus	centrifuge	Detected	685		0	no NTC background				CENTRIFUGE DETECTED: 685 reads (threshold >=500). NTC background: 0 reads; fold above NTC: no NTC background (threshold >=5.0x).
+22900187_S10_L001	Burkholderia	centrifuge	Detected	899		1	899.0x				CENTRIFUGE DETECTED: 899 reads (threshold >=500). NTC background: 1 reads; fold above NTC: 899.0x (threshold >=5.0x).
+22900187_S10_L001	Cutibacterium	centrifuge	Detected	2421		0	no NTC background				CENTRIFUGE DETECTED: 2421 reads (threshold >=500). NTC background: 0 reads; fold above NTC: no NTC background (threshold >=5.0x).
+22900187_S10_L001	Escherichia	centrifuge	Detected	1357		0	no NTC background				CENTRIFUGE DETECTED: 1357 reads (threshold >=500). NTC background: 0 reads; fold above NTC: no NTC background (threshold >=5.0x).
+22900187_S10_L001	Lactobacillus	centrifuge	Detected	692		0	no NTC background				CENTRIFUGE DETECTED: 692 reads (threshold >=500). NTC background: 0 reads; fold above NTC: no NTC background (threshold >=5.0x).

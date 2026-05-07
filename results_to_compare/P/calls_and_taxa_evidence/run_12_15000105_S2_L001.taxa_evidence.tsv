@@ -1,0 +1,5 @@
+sample	genus	source	call	reads	breadth	ntc_reads	ntc_fold	cfr_reads	align_confirmed	rescued	evidence_summary
+15000105_S2_L001	Agrobacterium	centrifuge	Detected	780		0	no NTC background				CENTRIFUGE DETECTED: 780 reads (threshold >=500). NTC background: 0 reads; fold above NTC: no NTC background (threshold >=5.0x).
+15000105_S2_L001	Haemophilus	centrifuge	Detected	545		0	no NTC background				CENTRIFUGE DETECTED: 545 reads (threshold >=500). NTC background: 0 reads; fold above NTC: no NTC background (threshold >=5.0x).
+15000105_S2_L001	Rothia	centrifuge	Detected	517		1	517.0x				CENTRIFUGE DETECTED: 517 reads (threshold >=500). NTC background: 1 reads; fold above NTC: 517.0x (threshold >=5.0x).
+15000105_S2_L001	Streptococcus	centrifuge	Detected	577		0	no NTC background				CENTRIFUGE DETECTED: 577 reads (threshold >=500). NTC background: 0 reads; fold above NTC: no NTC background (threshold >=5.0x).

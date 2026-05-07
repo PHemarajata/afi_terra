@@ -1,0 +1,13 @@
+sample	genus	source	call	reads	breadth	ntc_reads	ntc_fold	cfr_reads	align_confirmed	rescued	evidence_summary
+16300212_S3_L001	Acinetobacter	centrifuge	Detected	3358		10	335.8x				CENTRIFUGE DETECTED: 3358 reads (threshold >=500). NTC background: 10 reads; fold above NTC: 335.8x (threshold >=5.0x).
+16300212_S3_L001	Aquihabitans	centrifuge	Detected	1474		0	no NTC background				CENTRIFUGE DETECTED: 1474 reads (threshold >=500). NTC background: 0 reads; fold above NTC: no NTC background (threshold >=5.0x).
+16300212_S3_L001	Fimbriimonas	centrifuge	Detected	662		0	no NTC background				CENTRIFUGE DETECTED: 662 reads (threshold >=500). NTC background: 0 reads; fold above NTC: no NTC background (threshold >=5.0x).
+16300212_S3_L001	Gemmatirosa	centrifuge	Detected	551		0	no NTC background				CENTRIFUGE DETECTED: 551 reads (threshold >=500). NTC background: 0 reads; fold above NTC: no NTC background (threshold >=5.0x).
+16300212_S3_L001	Klebsiella	centrifuge	Detected	1031		69	14.9x				CENTRIFUGE DETECTED: 1031 reads (threshold >=500). NTC background: 69 reads; fold above NTC: 14.9x (threshold >=5.0x).
+16300212_S3_L001	Micrococcus	centrifuge	Detected	2103		70	30.0x				CENTRIFUGE DETECTED: 2103 reads (threshold >=500). NTC background: 70 reads; fold above NTC: 30.0x (threshold >=5.0x).
+16300212_S3_L001	Nakamurella	centrifuge	Detected	512		0	no NTC background				CENTRIFUGE DETECTED: 512 reads (threshold >=500). NTC background: 0 reads; fold above NTC: no NTC background (threshold >=5.0x).
+16300212_S3_L001	Nocardioides	centrifuge	Detected	1798		1	1798.0x				CENTRIFUGE DETECTED: 1798 reads (threshold >=500). NTC background: 1 reads; fold above NTC: 1798.0x (threshold >=5.0x).
+16300212_S3_L001	Pseudocnuella	centrifuge	Detected	1283		0	no NTC background				CENTRIFUGE DETECTED: 1283 reads (threshold >=500). NTC background: 0 reads; fold above NTC: no NTC background (threshold >=5.0x).
+16300212_S3_L001	Serinicoccus	centrifuge	Detected	2254		0	no NTC background				CENTRIFUGE DETECTED: 2254 reads (threshold >=500). NTC background: 0 reads; fold above NTC: no NTC background (threshold >=5.0x).
+16300212_S3_L001	Staphylococcus	centrifuge	Detected	2412		4	603.0x				CENTRIFUGE DETECTED: 2412 reads (threshold >=500). NTC background: 4 reads; fold above NTC: 603.0x (threshold >=5.0x).
+16300212_S3_L001	Variovorax	centrifuge	Detected	703		0	no NTC background				CENTRIFUGE DETECTED: 703 reads (threshold >=500). NTC background: 0 reads; fold above NTC: no NTC background (threshold >=5.0x).

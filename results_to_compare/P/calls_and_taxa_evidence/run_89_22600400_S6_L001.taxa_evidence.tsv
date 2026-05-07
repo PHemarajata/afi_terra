@@ -1,0 +1,9 @@
+sample	genus	source	call	reads	breadth	ntc_reads	ntc_fold	cfr_reads	align_confirmed	rescued	evidence_summary
+22600400_S6_L001	Orientia	alignment	Probable	9747	0.2181	1288	7.6x	0	false	true	ALIGNMENT PROBABLE: 9747 reads (threshold >=50; below confirmed threshold of 100), breadth 0.2181 (threshold >=0.20). NTC background: 1288 reads; fold above NTC: 7.6x. Centrifuge: 0 reads -- not detected by centrifuge; call relies on alignment.
+22600400_S6_L001	Acinetobacter	centrifuge	Detected	3293		1	3293.0x				CENTRIFUGE DETECTED: 3293 reads (threshold >=500). NTC background: 1 reads; fold above NTC: 3293.0x (threshold >=5.0x).
+22600400_S6_L001	Arthrobacter	centrifuge	Detected	752		0	no NTC background				CENTRIFUGE DETECTED: 752 reads (threshold >=500). NTC background: 0 reads; fold above NTC: no NTC background (threshold >=5.0x).
+22600400_S6_L001	Cutibacterium	centrifuge	Detected	7313		0	no NTC background				CENTRIFUGE DETECTED: 7313 reads (threshold >=500). NTC background: 0 reads; fold above NTC: no NTC background (threshold >=5.0x).
+22600400_S6_L001	Faucicola	centrifuge	Detected	1577		0	no NTC background				CENTRIFUGE DETECTED: 1577 reads (threshold >=500). NTC background: 0 reads; fold above NTC: no NTC background (threshold >=5.0x).
+22600400_S6_L001	Floricoccus	centrifuge	Detected	502		0	no NTC background				CENTRIFUGE DETECTED: 502 reads (threshold >=500). NTC background: 0 reads; fold above NTC: no NTC background (threshold >=5.0x).
+22600400_S6_L001	Ornithinimicrobium	centrifuge	Detected	8153		0	no NTC background				CENTRIFUGE DETECTED: 8153 reads (threshold >=500). NTC background: 0 reads; fold above NTC: no NTC background (threshold >=5.0x).
+22600400_S6_L001	Thermomicrobium	centrifuge	Detected	883		0	no NTC background				CENTRIFUGE DETECTED: 883 reads (threshold >=500). NTC background: 0 reads; fold above NTC: no NTC background (threshold >=5.0x).

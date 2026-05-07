@@ -1,0 +1,4 @@
+sample	genus	source	call	reads	breadth	ntc_reads	ntc_fold	cfr_reads	align_confirmed	rescued	evidence_summary
+09802034_S5_L001	Bradyrhizobium	centrifuge	Detected	695		6	115.8x				CENTRIFUGE DETECTED: 695 reads (threshold >=500). NTC background: 6 reads; fold above NTC: 115.8x (threshold >=5.0x).
+09802034_S5_L001	Kocuria	centrifuge	Detected	644		0	no NTC background				CENTRIFUGE DETECTED: 644 reads (threshold >=500). NTC background: 0 reads; fold above NTC: no NTC background (threshold >=5.0x).
+09802034_S5_L001	Rothia	centrifuge	Detected	754		0	no NTC background				CENTRIFUGE DETECTED: 754 reads (threshold >=500). NTC background: 0 reads; fold above NTC: no NTC background (threshold >=5.0x).

@@ -1,0 +1,6 @@
+sample	genus	source	call	reads	breadth	ntc_reads	ntc_fold	cfr_reads	align_confirmed	rescued	evidence_summary
+25200330_S4_L001	Cutibacterium	centrifuge	Detected	745		0	no NTC background				CENTRIFUGE DETECTED: 745 reads (threshold >=500). NTC background: 0 reads; fold above NTC: no NTC background (threshold >=5.0x).
+25200330_S4_L001	Escherichia	centrifuge	Detected	4490		1	4490.0x				CENTRIFUGE DETECTED: 4490 reads (threshold >=500). NTC background: 1 reads; fold above NTC: 4490.0x (threshold >=5.0x).
+25200330_S4_L001	Gemmata	centrifuge	Detected	857		0	no NTC background				CENTRIFUGE DETECTED: 857 reads (threshold >=500). NTC background: 0 reads; fold above NTC: no NTC background (threshold >=5.0x).
+25200330_S4_L001	Ruegeria	centrifuge	Detected	1039		0	no NTC background				CENTRIFUGE DETECTED: 1039 reads (threshold >=500). NTC background: 0 reads; fold above NTC: no NTC background (threshold >=5.0x).
+25200330_S4_L001	Staphylococcus	centrifuge	Detected	759		0	no NTC background				CENTRIFUGE DETECTED: 759 reads (threshold >=500). NTC background: 0 reads; fold above NTC: no NTC background (threshold >=5.0x).

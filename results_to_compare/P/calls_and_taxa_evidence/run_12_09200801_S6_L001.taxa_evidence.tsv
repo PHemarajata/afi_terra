@@ -1,0 +1,4 @@
+sample	genus	source	call	reads	breadth	ntc_reads	ntc_fold	cfr_reads	align_confirmed	rescued	evidence_summary
+09200801_S6_L001	Escherichia	centrifuge	Detected	665		2	332.5x				CENTRIFUGE DETECTED: 665 reads (threshold >=500). NTC background: 2 reads; fold above NTC: 332.5x (threshold >=5.0x).
+09200801_S6_L001	Rheinheimera	centrifuge	Detected	630		0	no NTC background				CENTRIFUGE DETECTED: 630 reads (threshold >=500). NTC background: 0 reads; fold above NTC: no NTC background (threshold >=5.0x).
+09200801_S6_L001	Streptococcus	centrifuge	Detected	948		0	no NTC background				CENTRIFUGE DETECTED: 948 reads (threshold >=500). NTC background: 0 reads; fold above NTC: no NTC background (threshold >=5.0x).

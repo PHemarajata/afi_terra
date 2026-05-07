@@ -1,0 +1,5 @@
+sample	genus	source	call	reads	breadth	ntc_reads	ntc_fold	cfr_reads	align_confirmed	rescued	evidence_summary
+15000695_S9_L001	Acinetobacter	centrifuge	Detected	565		6	94.2x				CENTRIFUGE DETECTED: 565 reads (threshold >=500). NTC background: 6 reads; fold above NTC: 94.2x (threshold >=5.0x).
+15000695_S9_L001	Comamonas	centrifuge	Detected	537		2	268.5x				CENTRIFUGE DETECTED: 537 reads (threshold >=500). NTC background: 2 reads; fold above NTC: 268.5x (threshold >=5.0x).
+15000695_S9_L001	Phocaeicola	centrifuge	Detected	573		0	no NTC background				CENTRIFUGE DETECTED: 573 reads (threshold >=500). NTC background: 0 reads; fold above NTC: no NTC background (threshold >=5.0x).
+15000695_S9_L001	Streptomyces	centrifuge	Detected	1433		243	5.9x				CENTRIFUGE DETECTED: 1433 reads (threshold >=500). NTC background: 243 reads; fold above NTC: 5.9x (threshold >=5.0x).

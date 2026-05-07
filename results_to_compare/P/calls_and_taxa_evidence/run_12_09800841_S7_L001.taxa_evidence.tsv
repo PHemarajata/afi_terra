@@ -1,0 +1,3 @@
+sample	genus	source	call	reads	breadth	ntc_reads	ntc_fold	cfr_reads	align_confirmed	rescued	evidence_summary
+09800841_S7_L001	Diaphorobacter	centrifuge	Detected	2020		0	no NTC background				CENTRIFUGE DETECTED: 2020 reads (threshold >=500). NTC background: 0 reads; fold above NTC: no NTC background (threshold >=5.0x).
+09800841_S7_L001	Hahella	centrifuge	Detected	630		1	630.0x				CENTRIFUGE DETECTED: 630 reads (threshold >=500). NTC background: 1 reads; fold above NTC: 630.0x (threshold >=5.0x).

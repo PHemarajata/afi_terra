@@ -1,0 +1,22 @@
+sample	genus	source	reads	breadth	ntc_reads	call	cfr_reads	rescued	align_confirmed
+09101561_S9_L001	Orientia	alignment	11	0.1474	846483	Negative	0	false	false
+09101561_S9_L001	Rickettsia	alignment	318	0.2035	53908	Not_Confirmed	0	false	false
+09101561_S9_L001	Acinetobacter	centrifuge	1		2	Not_Detected			
+09101561_S9_L001	Anaerolinea	centrifuge	1		0	Not_Detected			
+09101561_S9_L001	Arcanobacterium	centrifuge	1		0	Not_Detected			
+09101561_S9_L001	Brevundimonas	centrifuge	149		0	Not_Detected			
+09101561_S9_L001	Burkholderia	centrifuge	7		1	Not_Detected			
+09101561_S9_L001	Caulobacter	centrifuge	5		0	Not_Detected			
+09101561_S9_L001	Curtobacterium	centrifuge	1		10	Not_Detected			
+09101561_S9_L001	Deinococcus	centrifuge	1		0	Not_Detected			
+09101561_S9_L001	Fontivita	centrifuge	2		0	Not_Detected			
+09101561_S9_L001	Mesorhizobium	centrifuge	1		0	Not_Detected			
+09101561_S9_L001	Methylobacterium	centrifuge	122		0	Not_Detected			
+09101561_S9_L001	Methylorubrum	centrifuge	2		0	Not_Detected			
+09101561_S9_L001	Planktothrix	centrifuge	1		0	Not_Detected			
+09101561_S9_L001	Sphingomonas	centrifuge	1		1	Not_Detected			
+09101561_S9_L001	Staphylococcus	centrifuge	3		0	Not_Detected			
+09101561_S9_L001	Streptomyces	centrifuge	3		514	Not_Detected			
+09101561_S9_L001	Tardiphaga	centrifuge	1		0	Not_Detected			
+09101561_S9_L001	Thermomicrobium	centrifuge	24		0	Not_Detected			
+09101561_S9_L001	Xanthomonas	centrifuge	7		0	Not_Detected			

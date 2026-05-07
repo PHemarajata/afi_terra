@@ -1,0 +1,8 @@
+sample	genus	source	call	reads	breadth	ntc_reads	ntc_fold	cfr_reads	align_confirmed	rescued	evidence_summary
+09201457_S11_L001	Cutibacterium	centrifuge	Detected	24365		7	3480.7x				CENTRIFUGE DETECTED: 24365 reads (threshold >=500). NTC background: 7 reads; fold above NTC: 3480.7x (threshold >=5.0x).
+09201457_S11_L001	Enterobacter	centrifuge	Detected	6255		14	446.8x				CENTRIFUGE DETECTED: 6255 reads (threshold >=500). NTC background: 14 reads; fold above NTC: 446.8x (threshold >=5.0x).
+09201457_S11_L001	Granulicatella	centrifuge	Detected	5387		0	no NTC background				CENTRIFUGE DETECTED: 5387 reads (threshold >=500). NTC background: 0 reads; fold above NTC: no NTC background (threshold >=5.0x).
+09201457_S11_L001	Klebsiella	centrifuge	Detected	500		16	31.2x				CENTRIFUGE DETECTED: 500 reads (threshold >=500). NTC background: 16 reads; fold above NTC: 31.2x (threshold >=5.0x).
+09201457_S11_L001	Paracoccus	centrifuge	Detected	3835		0	no NTC background				CENTRIFUGE DETECTED: 3835 reads (threshold >=500). NTC background: 0 reads; fold above NTC: no NTC background (threshold >=5.0x).
+09201457_S11_L001	Staphylococcus	centrifuge	Detected	14199		0	no NTC background				CENTRIFUGE DETECTED: 14199 reads (threshold >=500). NTC background: 0 reads; fold above NTC: no NTC background (threshold >=5.0x).
+09201457_S11_L001	Thermomicrobium	centrifuge	Detected	563		0	no NTC background				CENTRIFUGE DETECTED: 563 reads (threshold >=500). NTC background: 0 reads; fold above NTC: no NTC background (threshold >=5.0x).

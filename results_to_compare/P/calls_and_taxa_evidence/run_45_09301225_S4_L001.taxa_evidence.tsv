@@ -1,0 +1,3 @@
+sample	genus	source	call	reads	breadth	ntc_reads	ntc_fold	cfr_reads	align_confirmed	rescued	evidence_summary
+09301225_S4_L001	Mycoplasmopsis	centrifuge	Detected	740		16	46.2x				CENTRIFUGE DETECTED: 740 reads (threshold >=500). NTC background: 16 reads; fold above NTC: 46.2x (threshold >=5.0x).
+09301225_S4_L001	Thermomicrobium	centrifuge	Detected	877		0	no NTC background				CENTRIFUGE DETECTED: 877 reads (threshold >=500). NTC background: 0 reads; fold above NTC: no NTC background (threshold >=5.0x).

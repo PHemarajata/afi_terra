@@ -1,0 +1,4 @@
+sample	genus	source	call	reads	breadth	ntc_reads	ntc_fold	cfr_reads	align_confirmed	rescued	evidence_summary
+09300607_S1_L001	Bacillus	centrifuge	Detected	646		27	23.9x				CENTRIFUGE DETECTED: 646 reads (threshold >=500). NTC background: 27 reads; fold above NTC: 23.9x (threshold >=5.0x).
+09300607_S1_L001	Enterobacter	centrifuge	Detected	1327		4	331.8x				CENTRIFUGE DETECTED: 1327 reads (threshold >=500). NTC background: 4 reads; fold above NTC: 331.8x (threshold >=5.0x).
+09300607_S1_L001	Fontivita	centrifuge	Detected	735		0	no NTC background				CENTRIFUGE DETECTED: 735 reads (threshold >=500). NTC background: 0 reads; fold above NTC: no NTC background (threshold >=5.0x).

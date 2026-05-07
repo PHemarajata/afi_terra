@@ -1,0 +1,9 @@
+sample	genus	source	call	reads	breadth	ntc_reads	ntc_fold	cfr_reads	align_confirmed	rescued	evidence_summary
+NTC2_ExDw_S13_L001	Orientia	alignment	Probable	115053	0.2295	2202	52.2x	0	false	true	ALIGNMENT PROBABLE: 115053 reads (threshold >=50; below confirmed threshold of 100), breadth 0.2295 (threshold >=0.20). NTC background: 2202 reads; fold above NTC: 52.2x. Centrifuge: 0 reads -- not detected by centrifuge; call relies on alignment.
+NTC2_ExDw_S13_L001	Arcanobacterium	centrifuge	Detected	8797		0	no NTC background				CENTRIFUGE DETECTED: 8797 reads (threshold >=500). NTC background: 0 reads; fold above NTC: no NTC background (threshold >=5.0x).
+NTC2_ExDw_S13_L001	Bdellovibrio	centrifuge	Detected	13240		0	no NTC background				CENTRIFUGE DETECTED: 13240 reads (threshold >=500). NTC background: 0 reads; fold above NTC: no NTC background (threshold >=5.0x).
+NTC2_ExDw_S13_L001	Burkholderia	centrifuge	Detected	106204		1	106204.0x				CENTRIFUGE DETECTED: 106204 reads (threshold >=500). NTC background: 1 reads; fold above NTC: 106204.0x (threshold >=5.0x).
+NTC2_ExDw_S13_L001	Cereibacter	centrifuge	Detected	51130		0	no NTC background				CENTRIFUGE DETECTED: 51130 reads (threshold >=500). NTC background: 0 reads; fold above NTC: no NTC background (threshold >=5.0x).
+NTC2_ExDw_S13_L001	Leptospira	centrifuge	Detected	78691		0	no NTC background				CENTRIFUGE DETECTED: 78691 reads (threshold >=500). NTC background: 0 reads; fold above NTC: no NTC background (threshold >=5.0x).
+NTC2_ExDw_S13_L001	Pseudogemmobacter	centrifuge	Detected	780		0	no NTC background				CENTRIFUGE DETECTED: 780 reads (threshold >=500). NTC background: 0 reads; fold above NTC: no NTC background (threshold >=5.0x).
+NTC2_ExDw_S13_L001	Thioclava	centrifuge	Detected	3719		0	no NTC background				CENTRIFUGE DETECTED: 3719 reads (threshold >=500). NTC background: 0 reads; fold above NTC: no NTC background (threshold >=5.0x).

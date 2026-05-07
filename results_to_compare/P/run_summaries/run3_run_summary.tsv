@@ -1,0 +1,13 @@
+run_id	sample_id	sample_type	expected_taxa	detected_taxa	n_detected	validation_result	rescue_mechanisms	pc8_pass	run_pc8_valid
+Round3	09000883_S1_L001	clinical			0				true
+Round3	09000920_S2_L001	clinical			0				true
+Round3	09001095_S8_L001	clinical		Streptococcus (100.0%)	1				true
+Round3	09101028_S6_L001	clinical		Bacillus (87.5%),Cutibacterium (12.5%)	2				true
+Round3	09201103_S9_L001	clinical			0				true
+Round3	11900320_S7_L001	clinical		Sphingomonas (60.1%),Pseudobdellovibrio (39.9%)	2				true
+Round3	16400396_S10_L001	clinical		Enterobacter (82.4%),Clostridium (3.6%),Thermomicrobium (3.2%),Micrococcus (3.1%),Deinococcus (2.9%),Cutibacterium (2.6%),Acinetobacter (2.3%)	7				true
+Round3	22300109_S3_L001	clinical		Nocardioides (15.6%),Dietzia (13.7%),Pseudomonas (9.2%),Micrococcus (9.1%),Helicobacter (9.0%),Cutibacterium (7.1%),Bacteroides (6.8%),Streptosporangium (5.4%),Usitatibacter (4.2%),Acinetobacter (4.2%),Fibrella (4.0%),Escherichia (3.3%),Candidatus_Mycosynbacter (3.2%),Thermomicrobium (2.7%),Xanthomonas (2.6%)	15				true
+Round3	24200123_S5_L001	clinical		Bacillus (60.9%),Escherichia (24.6%),Cutibacterium (14.5%)	3				true
+Round3	25200330_S4_L001	clinical		Escherichia (56.9%),Ruegeria (13.2%),Gemmata (10.9%),Staphylococcus (9.6%),Cutibacterium (9.4%)	5				true
+Round3	NTC11_S11_L001	NTC			0				true
+Round3	PC13_S12_L001	PC_MIX8	Bacillus;Listeria;Staphylococcus;Enterococcus;Limosilactobacillus;Salmonella;Escherichia;Pseudomonas	Staphylococcus (24.3%),Bacillus (19.7%),Listeria (17.4%),Limosilactobacillus (15.7%),Enterococcus (10.0%),Salmonella (6.0%),Pseudomonas (3.7%),Escherichia (3.4%)	8	Concordant		true	true

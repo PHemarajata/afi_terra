@@ -1,0 +1,2 @@
+sample	genus	source	call	reads	breadth	ntc_reads	ntc_fold	cfr_reads	align_confirmed	rescued	evidence_summary
+14300190_S10_L001	Dyadobacter	centrifuge	Detected	711		0	no NTC background				CENTRIFUGE DETECTED: 711 reads (threshold >=500). NTC background: 0 reads; fold above NTC: no NTC background (threshold >=5.0x).

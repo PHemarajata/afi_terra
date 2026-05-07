@@ -1,0 +1,3 @@
+sample	genus	source	call	reads	breadth	ntc_reads	ntc_fold	cfr_reads	align_confirmed	rescued	evidence_summary
+14600037_S1_L001	Micrococcus	centrifuge	Detected	733		51	14.4x				CENTRIFUGE DETECTED: 733 reads (threshold >=500). NTC background: 51 reads; fold above NTC: 14.4x (threshold >=5.0x).
+14600037_S1_L001	Pseudomonas	centrifuge	Detected	921		7	131.6x				CENTRIFUGE DETECTED: 921 reads (threshold >=500). NTC background: 7 reads; fold above NTC: 131.6x (threshold >=5.0x).

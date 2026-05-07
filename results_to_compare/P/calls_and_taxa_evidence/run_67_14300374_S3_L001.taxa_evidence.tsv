@@ -1,0 +1,2 @@
+sample	genus	source	call	reads	breadth	ntc_reads	ntc_fold	cfr_reads	align_confirmed	rescued	evidence_summary
+14300374_S3_L001	Brevundimonas	centrifuge	Detected	899		22	40.9x				CENTRIFUGE DETECTED: 899 reads (threshold >=500). NTC background: 22 reads; fold above NTC: 40.9x (threshold >=5.0x).

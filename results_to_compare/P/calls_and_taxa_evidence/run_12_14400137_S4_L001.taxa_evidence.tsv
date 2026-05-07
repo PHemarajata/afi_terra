@@ -1,0 +1,8 @@
+sample	genus	source	call	reads	breadth	ntc_reads	ntc_fold	cfr_reads	align_confirmed	rescued	evidence_summary
+14400137_S4_L001	Granulicatella	centrifuge	Detected	592		0	no NTC background				CENTRIFUGE DETECTED: 592 reads (threshold >=500). NTC background: 0 reads; fold above NTC: no NTC background (threshold >=5.0x).
+14400137_S4_L001	Haemophilus	centrifuge	Detected	1318		0	no NTC background				CENTRIFUGE DETECTED: 1318 reads (threshold >=500). NTC background: 0 reads; fold above NTC: no NTC background (threshold >=5.0x).
+14400137_S4_L001	Leptotrichia	centrifuge	Detected	595		0	no NTC background				CENTRIFUGE DETECTED: 595 reads (threshold >=500). NTC background: 0 reads; fold above NTC: no NTC background (threshold >=5.0x).
+14400137_S4_L001	Prevotella	centrifuge	Detected	624		1	624.0x				CENTRIFUGE DETECTED: 624 reads (threshold >=500). NTC background: 1 reads; fold above NTC: 624.0x (threshold >=5.0x).
+14400137_S4_L001	Rothia	centrifuge	Detected	8368		1	8368.0x				CENTRIFUGE DETECTED: 8368 reads (threshold >=500). NTC background: 1 reads; fold above NTC: 8368.0x (threshold >=5.0x).
+14400137_S4_L001	Schaalia	centrifuge	Detected	825		0	no NTC background				CENTRIFUGE DETECTED: 825 reads (threshold >=500). NTC background: 0 reads; fold above NTC: no NTC background (threshold >=5.0x).
+14400137_S4_L001	Streptococcus	centrifuge	Detected	15796		0	no NTC background				CENTRIFUGE DETECTED: 15796 reads (threshold >=500). NTC background: 0 reads; fold above NTC: no NTC background (threshold >=5.0x).

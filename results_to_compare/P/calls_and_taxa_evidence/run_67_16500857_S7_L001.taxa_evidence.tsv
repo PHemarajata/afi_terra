@@ -1,0 +1,4 @@
+sample	genus	source	call	reads	breadth	ntc_reads	ntc_fold	cfr_reads	align_confirmed	rescued	evidence_summary
+16500857_S7_L001	Acinetobacter	centrifuge	Detected	1446		0	no NTC background				CENTRIFUGE DETECTED: 1446 reads (threshold >=500). NTC background: 0 reads; fold above NTC: no NTC background (threshold >=5.0x).
+16500857_S7_L001	Fluviibacter	centrifuge	Detected	662		0	no NTC background				CENTRIFUGE DETECTED: 662 reads (threshold >=500). NTC background: 0 reads; fold above NTC: no NTC background (threshold >=5.0x).
+16500857_S7_L001	Hydrocarboniphaga	centrifuge	Detected	2947		0	no NTC background				CENTRIFUGE DETECTED: 2947 reads (threshold >=500). NTC background: 0 reads; fold above NTC: no NTC background (threshold >=5.0x).

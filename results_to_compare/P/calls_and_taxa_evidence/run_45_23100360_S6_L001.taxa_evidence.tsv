@@ -1,0 +1,12 @@
+sample	genus	source	call	reads	breadth	ntc_reads	ntc_fold	cfr_reads	align_confirmed	rescued	evidence_summary
+23100360_S6_L001	Antarcticirhabdus	centrifuge	Detected	15251		2	7625.5x				CENTRIFUGE DETECTED: 15251 reads (threshold >=500). NTC background: 2 reads; fold above NTC: 7625.5x (threshold >=5.0x).
+23100360_S6_L001	Aureimonas	centrifuge	Detected	1499		0	no NTC background				CENTRIFUGE DETECTED: 1499 reads (threshold >=500). NTC background: 0 reads; fold above NTC: no NTC background (threshold >=5.0x).
+23100360_S6_L001	Brevundimonas	centrifuge	Detected	8189		337	24.3x				CENTRIFUGE DETECTED: 8189 reads (threshold >=500). NTC background: 337 reads; fold above NTC: 24.3x (threshold >=5.0x).
+23100360_S6_L001	Chloroflexus	centrifuge	Detected	2121		0	no NTC background				CENTRIFUGE DETECTED: 2121 reads (threshold >=500). NTC background: 0 reads; fold above NTC: no NTC background (threshold >=5.0x).
+23100360_S6_L001	Knoellia	centrifuge	Detected	7160		1	7160.0x				CENTRIFUGE DETECTED: 7160 reads (threshold >=500). NTC background: 1 reads; fold above NTC: 7160.0x (threshold >=5.0x).
+23100360_S6_L001	Mariniblastus	centrifuge	Detected	1524		0	no NTC background				CENTRIFUGE DETECTED: 1524 reads (threshold >=500). NTC background: 0 reads; fold above NTC: no NTC background (threshold >=5.0x).
+23100360_S6_L001	Oceanithermus	centrifuge	Detected	2068		0	no NTC background				CENTRIFUGE DETECTED: 2068 reads (threshold >=500). NTC background: 0 reads; fold above NTC: no NTC background (threshold >=5.0x).
+23100360_S6_L001	Paracoccus	centrifuge	Detected	7120		0	no NTC background				CENTRIFUGE DETECTED: 7120 reads (threshold >=500). NTC background: 0 reads; fold above NTC: no NTC background (threshold >=5.0x).
+23100360_S6_L001	Porphyromonas	centrifuge	Detected	13055		0	no NTC background				CENTRIFUGE DETECTED: 13055 reads (threshold >=500). NTC background: 0 reads; fold above NTC: no NTC background (threshold >=5.0x).
+23100360_S6_L001	Streptomyces	centrifuge	Detected	2039		52	39.2x				CENTRIFUGE DETECTED: 2039 reads (threshold >=500). NTC background: 52 reads; fold above NTC: 39.2x (threshold >=5.0x).
+23100360_S6_L001	Thermomicrobium	centrifuge	Detected	1626		0	no NTC background				CENTRIFUGE DETECTED: 1626 reads (threshold >=500). NTC background: 0 reads; fold above NTC: no NTC background (threshold >=5.0x).

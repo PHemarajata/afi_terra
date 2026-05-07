@@ -1,0 +1,4 @@
+sample	genus	source	call	reads	breadth	ntc_reads	ntc_fold	cfr_reads	align_confirmed	rescued	evidence_summary
+23300774_S11_L001	Chthonomonas	centrifuge	Detected	681		0	no NTC background				CENTRIFUGE DETECTED: 681 reads (threshold >=500). NTC background: 0 reads; fold above NTC: no NTC background (threshold >=5.0x).
+23300774_S11_L001	Rhodococcus	centrifuge	Detected	660		0	no NTC background				CENTRIFUGE DETECTED: 660 reads (threshold >=500). NTC background: 0 reads; fold above NTC: no NTC background (threshold >=5.0x).
+23300774_S11_L001	Xanthomonas	centrifuge	Detected	4307		0	no NTC background				CENTRIFUGE DETECTED: 4307 reads (threshold >=500). NTC background: 0 reads; fold above NTC: no NTC background (threshold >=5.0x).

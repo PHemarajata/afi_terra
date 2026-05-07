@@ -1,0 +1,5 @@
+sample	genus	source	call	reads	breadth	ntc_reads	ntc_fold	cfr_reads	align_confirmed	rescued	evidence_summary
+NTC1_ExDwEB_S14_L001	Orientia	alignment	Probable	4888	0.2241	2202	2.2x	0	false	true	ALIGNMENT PROBABLE: 4888 reads (threshold >=50; below confirmed threshold of 100), breadth 0.2241 (threshold >=0.20). NTC background: 2202 reads; fold above NTC: 2.2x. Centrifuge: 0 reads -- not detected by centrifuge; call relies on alignment.
+NTC1_ExDwEB_S14_L001	Cutibacterium	centrifuge	Detected	183758		3	61252.7x				CENTRIFUGE DETECTED: 183758 reads (threshold >=500). NTC background: 3 reads; fold above NTC: 61252.7x (threshold >=5.0x).
+NTC1_ExDwEB_S14_L001	Haemophilus	centrifuge	Detected	39768		0	no NTC background				CENTRIFUGE DETECTED: 39768 reads (threshold >=500). NTC background: 0 reads; fold above NTC: no NTC background (threshold >=5.0x).
+NTC1_ExDwEB_S14_L001	Saltatorellus	centrifuge	Detected	1285		0	no NTC background				CENTRIFUGE DETECTED: 1285 reads (threshold >=500). NTC background: 0 reads; fold above NTC: no NTC background (threshold >=5.0x).

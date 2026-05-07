@@ -1,0 +1,5 @@
+sample	genus	source	call	reads	breadth	ntc_reads	ntc_fold	cfr_reads	align_confirmed	rescued	evidence_summary
+15600386_S9_L001	Brucella	centrifuge	Detected	3212		2	1606.0x				CENTRIFUGE DETECTED: 3212 reads (threshold >=500). NTC background: 2 reads; fold above NTC: 1606.0x (threshold >=5.0x).
+15600386_S9_L001	Campylobacter	centrifuge	Detected	1120		0	no NTC background				CENTRIFUGE DETECTED: 1120 reads (threshold >=500). NTC background: 0 reads; fold above NTC: no NTC background (threshold >=5.0x).
+15600386_S9_L001	Micrococcus	centrifuge	Detected	4784		70	68.3x				CENTRIFUGE DETECTED: 4784 reads (threshold >=500). NTC background: 70 reads; fold above NTC: 68.3x (threshold >=5.0x).
+15600386_S9_L001	Svornostia	centrifuge	Detected	716		0	no NTC background				CENTRIFUGE DETECTED: 716 reads (threshold >=500). NTC background: 0 reads; fold above NTC: no NTC background (threshold >=5.0x).

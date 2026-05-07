@@ -1,0 +1,10 @@
+sample	genus	source	call	reads	breadth	ntc_reads	ntc_fold	cfr_reads	align_confirmed	rescued	evidence_summary
+23200430_S6_L001	Rickettsia	alignment	Probable	94142	0.2189	53908	1.7x	0	false	true	ALIGNMENT PROBABLE: 94142 reads (threshold >=50; below confirmed threshold of 100), breadth 0.2189 (threshold >=0.20). NTC background: 53908 reads; fold above NTC: 1.7x. Centrifuge: 0 reads -- not detected by centrifuge; call relies on alignment.
+23200430_S6_L001	Actinomyces	centrifuge	Detected	10193		1	10193.0x				CENTRIFUGE DETECTED: 10193 reads (threshold >=500). NTC background: 1 reads; fold above NTC: 10193.0x (threshold >=5.0x).
+23200430_S6_L001	Brevundimonas	centrifuge	Detected	3816		0	no NTC background				CENTRIFUGE DETECTED: 3816 reads (threshold >=500). NTC background: 0 reads; fold above NTC: no NTC background (threshold >=5.0x).
+23200430_S6_L001	Burkholderia	centrifuge	Detected	54126		1	54126.0x				CENTRIFUGE DETECTED: 54126 reads (threshold >=500). NTC background: 1 reads; fold above NTC: 54126.0x (threshold >=5.0x).
+23200430_S6_L001	Cutibacterium	centrifuge	Detected	32498		0	no NTC background				CENTRIFUGE DETECTED: 32498 reads (threshold >=500). NTC background: 0 reads; fold above NTC: no NTC background (threshold >=5.0x).
+23200430_S6_L001	Escherichia	centrifuge	Detected	8541		0	no NTC background				CENTRIFUGE DETECTED: 8541 reads (threshold >=500). NTC background: 0 reads; fold above NTC: no NTC background (threshold >=5.0x).
+23200430_S6_L001	Kocuria	centrifuge	Detected	58764		7	8394.9x				CENTRIFUGE DETECTED: 58764 reads (threshold >=500). NTC background: 7 reads; fold above NTC: 8394.9x (threshold >=5.0x).
+23200430_S6_L001	Staphylococcus	centrifuge	Detected	29872		0	no NTC background				CENTRIFUGE DETECTED: 29872 reads (threshold >=500). NTC background: 0 reads; fold above NTC: no NTC background (threshold >=5.0x).
+23200430_S6_L001	Thermomicrobium	centrifuge	Detected	1424		0	no NTC background				CENTRIFUGE DETECTED: 1424 reads (threshold >=500). NTC background: 0 reads; fold above NTC: no NTC background (threshold >=5.0x).

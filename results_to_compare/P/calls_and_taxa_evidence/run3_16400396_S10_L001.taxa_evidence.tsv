@@ -1,0 +1,8 @@
+sample	genus	source	call	reads	breadth	ntc_reads	ntc_fold	cfr_reads	align_confirmed	rescued	evidence_summary
+16400396_S10_L001	Acinetobacter	centrifuge	Detected	501		4	125.2x				CENTRIFUGE DETECTED: 501 reads (threshold >=500). NTC background: 4 reads; fold above NTC: 125.2x (threshold >=5.0x).
+16400396_S10_L001	Clostridium	centrifuge	Detected	790		1	790.0x				CENTRIFUGE DETECTED: 790 reads (threshold >=500). NTC background: 1 reads; fold above NTC: 790.0x (threshold >=5.0x).
+16400396_S10_L001	Cutibacterium	centrifuge	Detected	574		0	no NTC background				CENTRIFUGE DETECTED: 574 reads (threshold >=500). NTC background: 0 reads; fold above NTC: no NTC background (threshold >=5.0x).
+16400396_S10_L001	Deinococcus	centrifuge	Detected	627		1	627.0x				CENTRIFUGE DETECTED: 627 reads (threshold >=500). NTC background: 1 reads; fold above NTC: 627.0x (threshold >=5.0x).
+16400396_S10_L001	Enterobacter	centrifuge	Detected	18010		0	no NTC background				CENTRIFUGE DETECTED: 18010 reads (threshold >=500). NTC background: 0 reads; fold above NTC: no NTC background (threshold >=5.0x).
+16400396_S10_L001	Micrococcus	centrifuge	Detected	673		0	no NTC background				CENTRIFUGE DETECTED: 673 reads (threshold >=500). NTC background: 0 reads; fold above NTC: no NTC background (threshold >=5.0x).
+16400396_S10_L001	Thermomicrobium	centrifuge	Detected	693		0	no NTC background				CENTRIFUGE DETECTED: 693 reads (threshold >=500). NTC background: 0 reads; fold above NTC: no NTC background (threshold >=5.0x).
