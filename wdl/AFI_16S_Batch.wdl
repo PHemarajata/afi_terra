@@ -59,6 +59,10 @@ workflow AFI_16S_Batch {
     Array[File]   r1_fastqs
     Array[File]   r2_fastqs
     Array[String] sample_types  # NTC, NC, PC_MIX8, PC_SINGLE, MIXED4, clinical, PC
+    #   NTC = true no-template control; contributes to NTC background computation.
+    #   NC  = negative control (e.g. buffer blanks, extraction condition comparisons);
+    #         processed through the full pipeline and reported in run_summary, but
+    #         does NOT contribute to NTC background — use NTC for that purpose.
     Array[String] modes         # routine | validation
     Array[String] expected_taxa # "" for non-validation samples; "Genus1;Genus2" for validation
 
@@ -154,10 +158,11 @@ workflow AFI_16S_Batch {
         docker_image = afi_core_docker
     }
 
-    # Expose metrics only for NTC/NC samples so select_all() can filter them
+    # Expose metrics only for NTC samples so select_all() can filter them
     # outside the scatter without referencing the scatter variable (WDL 1.0 safe).
-    # Also expose the run_id so BuildNTCBackground can compute per-run backgrounds.
-    Boolean p1_is_ntc = (sample_types[i] == "NTC") || (sample_types[i] == "NC")
+    # NC (buffer/extraction negative controls) are excluded — they are processed
+    # through the pipeline but do not contribute to background computation.
+    Boolean p1_is_ntc = (sample_types[i] == "NTC")
     if (p1_is_ntc) {
       String ntc_run_id_conditional  = run_ids[i]
       File   ntc_align_conditional   = P1_Metrics.metrics

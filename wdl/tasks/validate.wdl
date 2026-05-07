@@ -228,8 +228,11 @@ PY
 # ---------------------------------------------------------------------------
 # BuildNTCBackground
 #   Gather task — called once after the Phase 1 scatter.
-#   Receives ONLY the NTC/NC sample files (pre-filtered in the scatter via
+#   Receives ONLY the NTC sample files (pre-filtered in the scatter via
 #   a conditional declaration + select_all), so no sample_type array needed.
+#   NC (buffer/extraction negative controls) are excluded from background
+#   computation — they are processed through the pipeline but only NTC samples
+#   define the per-run background thresholds.
 #   Computes per-run, per-genus max NTC reads from alignment + centrifuge.
 #
 #   ntc_run_ids is parallel to ntc_align_metrics / ntc_cfr_genus_counts.
@@ -238,9 +241,9 @@ PY
 # ---------------------------------------------------------------------------
 task BuildNTCBackground {
   input {
-    Array[String] ntc_run_ids         # run_id for each NTC/NC sample (parallel to below)
-    Array[File]   ntc_align_metrics   # align_metrics.tsv for each NTC/NC sample
-    Array[File]   ntc_cfr_genus_counts # genus_counts.tsv for each NTC/NC sample
+    Array[String] ntc_run_ids          # run_id for each NTC sample (parallel to below)
+    Array[File]   ntc_align_metrics    # align_metrics.tsv for each NTC sample
+    Array[File]   ntc_cfr_genus_counts # genus_counts.tsv for each NTC sample
     String docker_image = "phemarajata614/afi-terra:0.4.1"
   }
 
@@ -295,7 +298,9 @@ missing = sorted({rid for rid in sample_rids if rid not in bg_map})
 if missing:
     print(
         f"ERROR: no NTC background computed for run_id(s): {missing}. "
-        "Ensure every run_id in the sample table has at least one NTC or NC sample.",
+        "Ensure every run_id in the sample table has at least one NTC sample "
+        "(sample_type='NTC'). NC samples are buffer/extraction controls and do "
+        "not contribute to background computation.",
         file=sys.stderr,
     )
     sys.exit(1)

@@ -926,13 +926,17 @@ class Screen2(QWidget):
         run_ntc: dict[str, bool] = defaultdict(bool)
         run_pc:  dict[str, bool] = defaultdict(bool)
         for rid, st in zip(run_ids, sample_types):
-            if st in NTC_TYPES:
+            if st == "NTC":          # only true NTC contributes to background
                 run_ntc[rid] = True
             if st in PC_TYPES:
                 run_pc[rid] = True
         for rname in self._run_names:
             if not run_ntc.get(rname):
-                errors.append(f"Run '{rname}' has no NTC or NC sample.")
+                errors.append(
+                    f"Run '{rname}' has no NTC sample (sample_type='NTC'). "
+                    "NC samples are buffer/extraction controls and do not "
+                    "substitute for the true NTC background."
+                )
             if not run_pc.get(rname):
                 errors.append(f"Run '{rname}' has no positive control (PC_MIX8/PC_SINGLE/MIXED4/PC).")
 
