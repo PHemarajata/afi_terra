@@ -1,0 +1,34 @@
+sample	genus	source	reads	breadth	ntc_reads	call	cfr_reads	rescued	align_confirmed
+NTC4_NExDw_S16_L001	Orientia	alignment	1565	0.2255	2202	Not_Confirmed	0	false	false
+NTC4_NExDw_S16_L001	Rickettsia	alignment	277555	0.3226	582829	Not_Confirmed	1	false	true
+NTC4_NExDw_S16_L001	Acinetobacter	centrifuge	1		0	Not_Detected			
+NTC4_NExDw_S16_L001	Aequoribacter	centrifuge	5		14	Not_Detected			
+NTC4_NExDw_S16_L001	Alteromonas	centrifuge	2		0	Not_Detected			
+NTC4_NExDw_S16_L001	Asticcacaulis	centrifuge	33		41	Not_Detected			
+NTC4_NExDw_S16_L001	Athalassotoga	centrifuge	2		0	Not_Detected			
+NTC4_NExDw_S16_L001	Azorhizobium	centrifuge	1		0	Not_Detected			
+NTC4_NExDw_S16_L001	Brevundimonas	centrifuge	241384		285740	Not_Detected			
+NTC4_NExDw_S16_L001	Brucella	centrifuge	1		4	Not_Detected			
+NTC4_NExDw_S16_L001	Candidatus_Levibacter	centrifuge	16		30	Not_Detected			
+NTC4_NExDw_S16_L001	Caulobacter	centrifuge	11397		14634	Not_Detected			
+NTC4_NExDw_S16_L001	Chelatococcus	centrifuge	1		10	Not_Detected			
+NTC4_NExDw_S16_L001	Chenggangzhangella	centrifuge	1		1	Not_Detected			
+NTC4_NExDw_S16_L001	Egicoccus	centrifuge	1		0	Not_Detected			
+NTC4_NExDw_S16_L001	Enterobacter	centrifuge	1		0	Not_Detected			
+NTC4_NExDw_S16_L001	Escherichia	centrifuge	170		0	Not_Detected			
+NTC4_NExDw_S16_L001	Gloeobacter	centrifuge	2		14	Not_Detected			
+NTC4_NExDw_S16_L001	Moraxella	centrifuge	1		0	Not_Detected			
+NTC4_NExDw_S16_L001	Oecophyllibacter	centrifuge	1		4	Not_Detected			
+NTC4_NExDw_S16_L001	Parascardovia	centrifuge	4		0	Not_Detected			
+NTC4_NExDw_S16_L001	Phenylobacterium	centrifuge	207		210	Not_Detected			
+NTC4_NExDw_S16_L001	Phycisphaera	centrifuge	1		0	Not_Detected			
+NTC4_NExDw_S16_L001	Pleomorphomonas	centrifuge	1		4	Not_Detected			
+NTC4_NExDw_S16_L001	Providencia	centrifuge	1		3	Not_Detected			
+NTC4_NExDw_S16_L001	Pseudomonas	centrifuge	7		0	Not_Detected			
+NTC4_NExDw_S16_L001	Salinilacustrithrix	centrifuge	2		2	Not_Detected			
+NTC4_NExDw_S16_L001	Sphingomonas	centrifuge	4		10	Not_Detected			
+NTC4_NExDw_S16_L001	Streptomonospora	centrifuge	1		0	Not_Detected			
+NTC4_NExDw_S16_L001	Stutzerimonas	centrifuge	1		0	Not_Detected			
+NTC4_NExDw_S16_L001	Tabrizicola	centrifuge	2		5	Not_Detected			
+NTC4_NExDw_S16_L001	Vibrio	centrifuge	1		0	Not_Detected			
+NTC4_NExDw_S16_L001	Vreelandella	centrifuge	30		34	Not_Detected			

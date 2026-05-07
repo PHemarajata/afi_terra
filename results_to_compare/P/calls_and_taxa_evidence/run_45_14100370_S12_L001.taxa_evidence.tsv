@@ -1,0 +1,7 @@
+sample	genus	source	call	reads	breadth	ntc_reads	ntc_fold	cfr_reads	align_confirmed	rescued	evidence_summary
+14100370_S12_L001	Cutibacterium	centrifuge	Detected	5986		0	no NTC background				CENTRIFUGE DETECTED: 5986 reads (threshold >=500). NTC background: 0 reads; fold above NTC: no NTC background (threshold >=5.0x).
+14100370_S12_L001	Faucicola	centrifuge	Detected	2262		365	6.2x				CENTRIFUGE DETECTED: 2262 reads (threshold >=500). NTC background: 365 reads; fold above NTC: 6.2x (threshold >=5.0x).
+14100370_S12_L001	Pedococcus	centrifuge	Detected	1805		0	no NTC background				CENTRIFUGE DETECTED: 1805 reads (threshold >=500). NTC background: 0 reads; fold above NTC: no NTC background (threshold >=5.0x).
+14100370_S12_L001	Sphingomonas	centrifuge	Detected	1451		1	1451.0x				CENTRIFUGE DETECTED: 1451 reads (threshold >=500). NTC background: 1 reads; fold above NTC: 1451.0x (threshold >=5.0x).
+14100370_S12_L001	Staphylococcus	centrifuge	Detected	2873		0	no NTC background				CENTRIFUGE DETECTED: 2873 reads (threshold >=500). NTC background: 0 reads; fold above NTC: no NTC background (threshold >=5.0x).
+14100370_S12_L001	Undibacterium	centrifuge	Detected	1113		0	no NTC background				CENTRIFUGE DETECTED: 1113 reads (threshold >=500). NTC background: 0 reads; fold above NTC: no NTC background (threshold >=5.0x).

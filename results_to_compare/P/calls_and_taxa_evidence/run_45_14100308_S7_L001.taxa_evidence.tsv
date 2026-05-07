@@ -1,0 +1,4 @@
+sample	genus	source	call	reads	breadth	ntc_reads	ntc_fold	cfr_reads	align_confirmed	rescued	evidence_summary
+14100308_S7_L001	Brevundimonas	centrifuge	Detected	3587		337	10.6x				CENTRIFUGE DETECTED: 3587 reads (threshold >=500). NTC background: 337 reads; fold above NTC: 10.6x (threshold >=5.0x).
+14100308_S7_L001	Escherichia	centrifuge	Detected	876		2	438.0x				CENTRIFUGE DETECTED: 876 reads (threshold >=500). NTC background: 2 reads; fold above NTC: 438.0x (threshold >=5.0x).
+14100308_S7_L001	Rhodoluna	centrifuge	Detected	526		14	37.6x				CENTRIFUGE DETECTED: 526 reads (threshold >=500). NTC background: 14 reads; fold above NTC: 37.6x (threshold >=5.0x).

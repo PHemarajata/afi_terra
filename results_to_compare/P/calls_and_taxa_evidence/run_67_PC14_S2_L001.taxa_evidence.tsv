@@ -1,0 +1,16 @@
+sample	genus	source	call	reads	breadth	ntc_reads	ntc_fold	cfr_reads	align_confirmed	rescued	evidence_summary
+PC14_S2_L001	Orientia	alignment	Probable	164592	0.2181	1143	144.0x	0	false	true	ALIGNMENT PROBABLE: 164592 reads (threshold >=50; below confirmed threshold of 100), breadth 0.2181 (threshold >=0.20). NTC background: 1143 reads; fold above NTC: 144.0x. Centrifuge: 0 reads -- not detected by centrifuge; call relies on alignment.
+PC14_S2_L001	Acetobacterium	centrifuge	Detected	1689		0	no NTC background				CENTRIFUGE DETECTED: 1689 reads (threshold >=500). NTC background: 0 reads; fold above NTC: no NTC background (threshold >=5.0x).
+PC14_S2_L001	Bacillus	centrifuge	Detected	132921		473	281.0x				CENTRIFUGE DETECTED: 132921 reads (threshold >=500). NTC background: 473 reads; fold above NTC: 281.0x (threshold >=5.0x).
+PC14_S2_L001	Citrobacter	centrifuge	Detected	826		0	no NTC background				CENTRIFUGE DETECTED: 826 reads (threshold >=500). NTC background: 0 reads; fold above NTC: no NTC background (threshold >=5.0x).
+PC14_S2_L001	Enterococcus	centrifuge	Detected	66851		8	8356.4x				CENTRIFUGE DETECTED: 66851 reads (threshold >=500). NTC background: 8 reads; fold above NTC: 8356.4x (threshold >=5.0x).
+PC14_S2_L001	Escherichia	centrifuge	Detected	23492		53	443.2x				CENTRIFUGE DETECTED: 23492 reads (threshold >=500). NTC background: 53 reads; fold above NTC: 443.2x (threshold >=5.0x).
+PC14_S2_L001	Limosilactobacillus	centrifuge	Detected	101103		0	no NTC background				CENTRIFUGE DETECTED: 101103 reads (threshold >=500). NTC background: 0 reads; fold above NTC: no NTC background (threshold >=5.0x).
+PC14_S2_L001	Listeria	centrifuge	Detected	119603		3124	38.3x				CENTRIFUGE DETECTED: 119603 reads (threshold >=500). NTC background: 3124 reads; fold above NTC: 38.3x (threshold >=5.0x).
+PC14_S2_L001	Paenibacillus	centrifuge	Detected	668		19	35.2x				CENTRIFUGE DETECTED: 668 reads (threshold >=500). NTC background: 19 reads; fold above NTC: 35.2x (threshold >=5.0x).
+PC14_S2_L001	Pseudomonas	centrifuge	Detected	22010		110	200.1x				CENTRIFUGE DETECTED: 22010 reads (threshold >=500). NTC background: 110 reads; fold above NTC: 200.1x (threshold >=5.0x).
+PC14_S2_L001	Salicibibacter	centrifuge	Detected	958		0	no NTC background				CENTRIFUGE DETECTED: 958 reads (threshold >=500). NTC background: 0 reads; fold above NTC: no NTC background (threshold >=5.0x).
+PC14_S2_L001	Salmonella	centrifuge	Detected	41650		482	86.4x				CENTRIFUGE DETECTED: 41650 reads (threshold >=500). NTC background: 482 reads; fold above NTC: 86.4x (threshold >=5.0x).
+PC14_S2_L001	Shouchella	centrifuge	Detected	647		0	no NTC background				CENTRIFUGE DETECTED: 647 reads (threshold >=500). NTC background: 0 reads; fold above NTC: no NTC background (threshold >=5.0x).
+PC14_S2_L001	Staphylococcus	centrifuge	Detected	125693		4537	27.7x				CENTRIFUGE DETECTED: 125693 reads (threshold >=500). NTC background: 4537 reads; fold above NTC: 27.7x (threshold >=5.0x).
+PC14_S2_L001	Virgibacillus	centrifuge	Detected	663		0	no NTC background				CENTRIFUGE DETECTED: 663 reads (threshold >=500). NTC background: 0 reads; fold above NTC: no NTC background (threshold >=5.0x).

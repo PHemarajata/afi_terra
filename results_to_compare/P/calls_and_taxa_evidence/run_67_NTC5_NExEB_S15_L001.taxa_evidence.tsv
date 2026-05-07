@@ -1,0 +1,3 @@
+sample	genus	source	call	reads	breadth	ntc_reads	ntc_fold	cfr_reads	align_confirmed	rescued	evidence_summary
+NTC5_NExEB_S15_L001	Algoriphagus	centrifuge	Detected	513		0	no NTC background				CENTRIFUGE DETECTED: 513 reads (threshold >=500). NTC background: 0 reads; fold above NTC: no NTC background (threshold >=5.0x).
+NTC5_NExEB_S15_L001	Minisyncoccus	centrifuge	Detected	1964		0	no NTC background				CENTRIFUGE DETECTED: 1964 reads (threshold >=500). NTC background: 0 reads; fold above NTC: no NTC background (threshold >=5.0x).

@@ -1,0 +1,5 @@
+sample	genus	source	call	reads	breadth	ntc_reads	ntc_fold	cfr_reads	align_confirmed	rescued	evidence_summary
+09401461_S12_L001	Candidatus_Portiera	centrifuge	Detected	660		2	330.0x				CENTRIFUGE DETECTED: 660 reads (threshold >=500). NTC background: 2 reads; fold above NTC: 330.0x (threshold >=5.0x).
+09401461_S12_L001	Enterobacter	centrifuge	Detected	923		14	65.9x				CENTRIFUGE DETECTED: 923 reads (threshold >=500). NTC background: 14 reads; fold above NTC: 65.9x (threshold >=5.0x).
+09401461_S12_L001	Faucicola	centrifuge	Detected	1072		33	32.5x				CENTRIFUGE DETECTED: 1072 reads (threshold >=500). NTC background: 33 reads; fold above NTC: 32.5x (threshold >=5.0x).
+09401461_S12_L001	Staphylococcus	centrifuge	Detected	9673		0	no NTC background				CENTRIFUGE DETECTED: 9673 reads (threshold >=500). NTC background: 0 reads; fold above NTC: no NTC background (threshold >=5.0x).

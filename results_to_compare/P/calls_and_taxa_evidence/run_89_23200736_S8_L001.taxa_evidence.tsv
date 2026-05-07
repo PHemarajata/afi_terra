@@ -1,0 +1,9 @@
+sample	genus	source	call	reads	breadth	ntc_reads	ntc_fold	cfr_reads	align_confirmed	rescued	evidence_summary
+23200736_S8_L001	Orientia	alignment	Probable	1981	0.2141	1288	1.5x	2	false	true	ALIGNMENT PROBABLE: 1981 reads (threshold >=50; below confirmed threshold of 100), breadth 0.2141 (threshold >=0.20). NTC background: 1288 reads; fold above NTC: 1.5x. Centrifuge: 2 reads (below 500 threshold) -- below centrifuge threshold; call relies on alignment.
+23200736_S8_L001	Brevibacterium	centrifuge	Detected	1547		0	no NTC background				CENTRIFUGE DETECTED: 1547 reads (threshold >=500). NTC background: 0 reads; fold above NTC: no NTC background (threshold >=5.0x).
+23200736_S8_L001	Corynebacterium	centrifuge	Detected	994		0	no NTC background				CENTRIFUGE DETECTED: 994 reads (threshold >=500). NTC background: 0 reads; fold above NTC: no NTC background (threshold >=5.0x).
+23200736_S8_L001	Cutibacterium	centrifuge	Detected	598		0	no NTC background				CENTRIFUGE DETECTED: 598 reads (threshold >=500). NTC background: 0 reads; fold above NTC: no NTC background (threshold >=5.0x).
+23200736_S8_L001	Flavobacterium	centrifuge	Detected	898		0	no NTC background				CENTRIFUGE DETECTED: 898 reads (threshold >=500). NTC background: 0 reads; fold above NTC: no NTC background (threshold >=5.0x).
+23200736_S8_L001	Sphingomonas	centrifuge	Detected	579		5	115.8x				CENTRIFUGE DETECTED: 579 reads (threshold >=500). NTC background: 5 reads; fold above NTC: 115.8x (threshold >=5.0x).
+23200736_S8_L001	Streptococcus	centrifuge	Detected	2239		3	746.3x				CENTRIFUGE DETECTED: 2239 reads (threshold >=500). NTC background: 3 reads; fold above NTC: 746.3x (threshold >=5.0x).
+23200736_S8_L001	Xanthomonas	centrifuge	Detected	1117		0	no NTC background				CENTRIFUGE DETECTED: 1117 reads (threshold >=500). NTC background: 0 reads; fold above NTC: no NTC background (threshold >=5.0x).

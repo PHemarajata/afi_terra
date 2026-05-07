@@ -1,0 +1,4 @@
+sample	genus	source	call	reads	breadth	ntc_reads	ntc_fold	cfr_reads	align_confirmed	rescued	evidence_summary
+15600602_S4_L001	Methylorubrum	centrifuge	Detected	736		0	no NTC background				CENTRIFUGE DETECTED: 736 reads (threshold >=500). NTC background: 0 reads; fold above NTC: no NTC background (threshold >=5.0x).
+15600602_S4_L001	Pseudomonas	centrifuge	Detected	691		1	691.0x				CENTRIFUGE DETECTED: 691 reads (threshold >=500). NTC background: 1 reads; fold above NTC: 691.0x (threshold >=5.0x).
+15600602_S4_L001	Roseomonas	centrifuge	Detected	1639		0	no NTC background				CENTRIFUGE DETECTED: 1639 reads (threshold >=500). NTC background: 0 reads; fold above NTC: no NTC background (threshold >=5.0x).

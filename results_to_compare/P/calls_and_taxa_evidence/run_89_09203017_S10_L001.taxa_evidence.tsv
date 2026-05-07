@@ -1,0 +1,3 @@
+sample	genus	source	call	reads	breadth	ntc_reads	ntc_fold	cfr_reads	align_confirmed	rescued	evidence_summary
+09203017_S10_L001	Staphylococcus	centrifuge	Detected	989		2	494.5x				CENTRIFUGE DETECTED: 989 reads (threshold >=500). NTC background: 2 reads; fold above NTC: 494.5x (threshold >=5.0x).
+09203017_S10_L001	Thermomicrobium	centrifuge	Detected	2116		0	no NTC background				CENTRIFUGE DETECTED: 2116 reads (threshold >=500). NTC background: 0 reads; fold above NTC: no NTC background (threshold >=5.0x).

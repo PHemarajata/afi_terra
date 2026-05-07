@@ -1,0 +1,16 @@
+sample	genus	source	call	reads	breadth	ntc_reads	ntc_fold	cfr_reads	align_confirmed	rescued	evidence_summary
+22300109_S3_L001	Acinetobacter	centrifuge	Detected	803		4	200.8x				CENTRIFUGE DETECTED: 803 reads (threshold >=500). NTC background: 4 reads; fold above NTC: 200.8x (threshold >=5.0x).
+22300109_S3_L001	Bacteroides	centrifuge	Detected	1310		0	no NTC background				CENTRIFUGE DETECTED: 1310 reads (threshold >=500). NTC background: 0 reads; fold above NTC: no NTC background (threshold >=5.0x).
+22300109_S3_L001	Candidatus_Mycosynbacter	centrifuge	Detected	615		0	no NTC background				CENTRIFUGE DETECTED: 615 reads (threshold >=500). NTC background: 0 reads; fold above NTC: no NTC background (threshold >=5.0x).
+22300109_S3_L001	Cutibacterium	centrifuge	Detected	1364		0	no NTC background				CENTRIFUGE DETECTED: 1364 reads (threshold >=500). NTC background: 0 reads; fold above NTC: no NTC background (threshold >=5.0x).
+22300109_S3_L001	Dietzia	centrifuge	Detected	2646		0	no NTC background				CENTRIFUGE DETECTED: 2646 reads (threshold >=500). NTC background: 0 reads; fold above NTC: no NTC background (threshold >=5.0x).
+22300109_S3_L001	Escherichia	centrifuge	Detected	634		1	634.0x				CENTRIFUGE DETECTED: 634 reads (threshold >=500). NTC background: 1 reads; fold above NTC: 634.0x (threshold >=5.0x).
+22300109_S3_L001	Fibrella	centrifuge	Detected	783		0	no NTC background				CENTRIFUGE DETECTED: 783 reads (threshold >=500). NTC background: 0 reads; fold above NTC: no NTC background (threshold >=5.0x).
+22300109_S3_L001	Helicobacter	centrifuge	Detected	1743		0	no NTC background				CENTRIFUGE DETECTED: 1743 reads (threshold >=500). NTC background: 0 reads; fold above NTC: no NTC background (threshold >=5.0x).
+22300109_S3_L001	Micrococcus	centrifuge	Detected	1764		0	no NTC background				CENTRIFUGE DETECTED: 1764 reads (threshold >=500). NTC background: 0 reads; fold above NTC: no NTC background (threshold >=5.0x).
+22300109_S3_L001	Nocardioides	centrifuge	Detected	3025		0	no NTC background				CENTRIFUGE DETECTED: 3025 reads (threshold >=500). NTC background: 0 reads; fold above NTC: no NTC background (threshold >=5.0x).
+22300109_S3_L001	Pseudomonas	centrifuge	Detected	1776		2	888.0x				CENTRIFUGE DETECTED: 1776 reads (threshold >=500). NTC background: 2 reads; fold above NTC: 888.0x (threshold >=5.0x).
+22300109_S3_L001	Streptosporangium	centrifuge	Detected	1042		0	no NTC background				CENTRIFUGE DETECTED: 1042 reads (threshold >=500). NTC background: 0 reads; fold above NTC: no NTC background (threshold >=5.0x).
+22300109_S3_L001	Thermomicrobium	centrifuge	Detected	523		0	no NTC background				CENTRIFUGE DETECTED: 523 reads (threshold >=500). NTC background: 0 reads; fold above NTC: no NTC background (threshold >=5.0x).
+22300109_S3_L001	Usitatibacter	centrifuge	Detected	806		0	no NTC background				CENTRIFUGE DETECTED: 806 reads (threshold >=500). NTC background: 0 reads; fold above NTC: no NTC background (threshold >=5.0x).
+22300109_S3_L001	Xanthomonas	centrifuge	Detected	511		3	170.3x				CENTRIFUGE DETECTED: 511 reads (threshold >=500). NTC background: 3 reads; fold above NTC: 170.3x (threshold >=5.0x).

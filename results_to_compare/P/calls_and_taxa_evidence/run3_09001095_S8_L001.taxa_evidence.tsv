@@ -1,0 +1,2 @@
+sample	genus	source	call	reads	breadth	ntc_reads	ntc_fold	cfr_reads	align_confirmed	rescued	evidence_summary
+09001095_S8_L001	Streptococcus	centrifuge	Detected	864		0	no NTC background				CENTRIFUGE DETECTED: 864 reads (threshold >=500). NTC background: 0 reads; fold above NTC: no NTC background (threshold >=5.0x).

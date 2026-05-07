@@ -1,0 +1,2 @@
+sample	genus	source	call	reads	breadth	ntc_reads	ntc_fold	cfr_reads	align_confirmed	rescued	evidence_summary
+09400616_S2_L001	Microbacterium	centrifuge	Detected	1247		65	19.2x				CENTRIFUGE DETECTED: 1247 reads (threshold >=500). NTC background: 65 reads; fold above NTC: 19.2x (threshold >=5.0x).

@@ -1,0 +1,9 @@
+sample	genus	source	call	reads	breadth	ntc_reads	ntc_fold	cfr_reads	align_confirmed	rescued	evidence_summary
+PC_run_2_S12_L001	Bacillus	centrifuge	Detected	83100		27	3077.8x				CENTRIFUGE DETECTED: 83100 reads (threshold >=500). NTC background: 27 reads; fold above NTC: 3077.8x (threshold >=5.0x).
+PC_run_2_S12_L001	Enterococcus	centrifuge	Detected	41415		1	41415.0x				CENTRIFUGE DETECTED: 41415 reads (threshold >=500). NTC background: 1 reads; fold above NTC: 41415.0x (threshold >=5.0x).
+PC_run_2_S12_L001	Escherichia	centrifuge	Detected	11831		2	5915.5x				CENTRIFUGE DETECTED: 11831 reads (threshold >=500). NTC background: 2 reads; fold above NTC: 5915.5x (threshold >=5.0x).
+PC_run_2_S12_L001	Limosilactobacillus	centrifuge	Detected	61126		0	no NTC background				CENTRIFUGE DETECTED: 61126 reads (threshold >=500). NTC background: 0 reads; fold above NTC: no NTC background (threshold >=5.0x).
+PC_run_2_S12_L001	Listeria	centrifuge	Detected	72051		0	no NTC background				CENTRIFUGE DETECTED: 72051 reads (threshold >=500). NTC background: 0 reads; fold above NTC: no NTC background (threshold >=5.0x).
+PC_run_2_S12_L001	Pseudomonas	centrifuge	Detected	10244		11	931.3x				CENTRIFUGE DETECTED: 10244 reads (threshold >=500). NTC background: 11 reads; fold above NTC: 931.3x (threshold >=5.0x).
+PC_run_2_S12_L001	Salmonella	centrifuge	Detected	20604		1	20604.0x				CENTRIFUGE DETECTED: 20604 reads (threshold >=500). NTC background: 1 reads; fold above NTC: 20604.0x (threshold >=5.0x).
+PC_run_2_S12_L001	Staphylococcus	centrifuge	Detected	79100		4	19775.0x				CENTRIFUGE DETECTED: 79100 reads (threshold >=500). NTC background: 4 reads; fold above NTC: 19775.0x (threshold >=5.0x).

@@ -1,0 +1,3 @@
+sample	genus	source	call	reads	breadth	ntc_reads	ntc_fold	cfr_reads	align_confirmed	rescued	evidence_summary
+09702850_S4_L001	Cutibacterium	centrifuge	Detected	893		0	no NTC background				CENTRIFUGE DETECTED: 893 reads (threshold >=500). NTC background: 0 reads; fold above NTC: no NTC background (threshold >=5.0x).
+09702850_S4_L001	Klebsiella	centrifuge	Detected	34563		0	no NTC background				CENTRIFUGE DETECTED: 34563 reads (threshold >=500). NTC background: 0 reads; fold above NTC: no NTC background (threshold >=5.0x).

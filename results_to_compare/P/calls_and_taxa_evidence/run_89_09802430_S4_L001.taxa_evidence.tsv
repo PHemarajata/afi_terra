@@ -1,0 +1,3 @@
+sample	genus	source	call	reads	breadth	ntc_reads	ntc_fold	cfr_reads	align_confirmed	rescued	evidence_summary
+09802430_S4_L001	Caldimonas	centrifuge	Detected	1405		0	no NTC background				CENTRIFUGE DETECTED: 1405 reads (threshold >=500). NTC background: 0 reads; fold above NTC: no NTC background (threshold >=5.0x).
+09802430_S4_L001	Faucicola	centrifuge	Detected	2619		0	no NTC background				CENTRIFUGE DETECTED: 2619 reads (threshold >=500). NTC background: 0 reads; fold above NTC: no NTC background (threshold >=5.0x).

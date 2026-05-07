@@ -1,0 +1,7 @@
+sample	genus	source	call	reads	breadth	ntc_reads	ntc_fold	cfr_reads	align_confirmed	rescued	evidence_summary
+23200519_S12_L001	Orientia	alignment	Probable	2492	0.2175	1143	2.2x	0	false	true	ALIGNMENT PROBABLE: 2492 reads (threshold >=50; below confirmed threshold of 100), breadth 0.2175 (threshold >=0.20). NTC background: 1143 reads; fold above NTC: 2.2x. Centrifuge: 0 reads -- not detected by centrifuge; call relies on alignment.
+23200519_S12_L001	Brevundimonas	centrifuge	Detected	944		22	42.9x				CENTRIFUGE DETECTED: 944 reads (threshold >=500). NTC background: 22 reads; fold above NTC: 42.9x (threshold >=5.0x).
+23200519_S12_L001	Burkholderia	centrifuge	Detected	876		5	175.2x				CENTRIFUGE DETECTED: 876 reads (threshold >=500). NTC background: 5 reads; fold above NTC: 175.2x (threshold >=5.0x).
+23200519_S12_L001	Cutibacterium	centrifuge	Detected	753		0	no NTC background				CENTRIFUGE DETECTED: 753 reads (threshold >=500). NTC background: 0 reads; fold above NTC: no NTC background (threshold >=5.0x).
+23200519_S12_L001	Microvirgula	centrifuge	Detected	562		1	562.0x				CENTRIFUGE DETECTED: 562 reads (threshold >=500). NTC background: 1 reads; fold above NTC: 562.0x (threshold >=5.0x).
+23200519_S12_L001	Streptococcus	centrifuge	Detected	2017		2	1008.5x				CENTRIFUGE DETECTED: 2017 reads (threshold >=500). NTC background: 2 reads; fold above NTC: 1008.5x (threshold >=5.0x).

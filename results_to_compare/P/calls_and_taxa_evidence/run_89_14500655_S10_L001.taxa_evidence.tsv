@@ -1,0 +1,3 @@
+sample	genus	source	call	reads	breadth	ntc_reads	ntc_fold	cfr_reads	align_confirmed	rescued	evidence_summary
+14500655_S10_L001	Methylorubrum	centrifuge	Detected	2645		0	no NTC background				CENTRIFUGE DETECTED: 2645 reads (threshold >=500). NTC background: 0 reads; fold above NTC: no NTC background (threshold >=5.0x).
+14500655_S10_L001	Sphingomonas	centrifuge	Detected	554		5	110.8x				CENTRIFUGE DETECTED: 554 reads (threshold >=500). NTC background: 5 reads; fold above NTC: 110.8x (threshold >=5.0x).

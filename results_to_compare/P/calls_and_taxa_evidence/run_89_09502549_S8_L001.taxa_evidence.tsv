@@ -1,0 +1,5 @@
+sample	genus	source	call	reads	breadth	ntc_reads	ntc_fold	cfr_reads	align_confirmed	rescued	evidence_summary
+09502549_S8_L001	Blastochloris	centrifuge	Detected	511		0	no NTC background				CENTRIFUGE DETECTED: 511 reads (threshold >=500). NTC background: 0 reads; fold above NTC: no NTC background (threshold >=5.0x).
+09502549_S8_L001	Caldimonas	centrifuge	Detected	543		0	no NTC background				CENTRIFUGE DETECTED: 543 reads (threshold >=500). NTC background: 0 reads; fold above NTC: no NTC background (threshold >=5.0x).
+09502549_S8_L001	Corynebacterium	centrifuge	Detected	706		0	no NTC background				CENTRIFUGE DETECTED: 706 reads (threshold >=500). NTC background: 0 reads; fold above NTC: no NTC background (threshold >=5.0x).
+09502549_S8_L001	Paracoccus	centrifuge	Detected	952		1	952.0x				CENTRIFUGE DETECTED: 952 reads (threshold >=500). NTC background: 1 reads; fold above NTC: 952.0x (threshold >=5.0x).

@@ -1,0 +1,2 @@
+sample	genus	source	call	reads	breadth	ntc_reads	ntc_fold	cfr_reads	align_confirmed	rescued	evidence_summary
+22700089_S5_L001	Escherichia	centrifuge	Detected	1983		2	991.5x				CENTRIFUGE DETECTED: 1983 reads (threshold >=500). NTC background: 2 reads; fold above NTC: 991.5x (threshold >=5.0x).

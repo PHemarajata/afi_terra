@@ -1,0 +1,4 @@
+sample	genus	source	call	reads	breadth	ntc_reads	ntc_fold	cfr_reads	align_confirmed	rescued	evidence_summary
+25700177_S9_L001	Anaerococcus	centrifuge	Detected	2100		0	no NTC background				CENTRIFUGE DETECTED: 2100 reads (threshold >=500). NTC background: 0 reads; fold above NTC: no NTC background (threshold >=5.0x).
+25700177_S9_L001	Devosia	centrifuge	Detected	835		0	no NTC background				CENTRIFUGE DETECTED: 835 reads (threshold >=500). NTC background: 0 reads; fold above NTC: no NTC background (threshold >=5.0x).
+25700177_S9_L001	Staphylococcus	centrifuge	Detected	898		0	no NTC background				CENTRIFUGE DETECTED: 898 reads (threshold >=500). NTC background: 0 reads; fold above NTC: no NTC background (threshold >=5.0x).

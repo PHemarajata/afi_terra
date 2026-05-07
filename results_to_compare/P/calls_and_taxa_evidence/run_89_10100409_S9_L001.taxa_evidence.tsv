@@ -1,0 +1,10 @@
+sample	genus	source	call	reads	breadth	ntc_reads	ntc_fold	cfr_reads	align_confirmed	rescued	evidence_summary
+10100409_S9_L001	Orientia	alignment	Probable	2385	0.2221	1288	1.9x	0	false	true	ALIGNMENT PROBABLE: 2385 reads (threshold >=50; below confirmed threshold of 100), breadth 0.2221 (threshold >=0.20). NTC background: 1288 reads; fold above NTC: 1.9x. Centrifuge: 0 reads -- not detected by centrifuge; call relies on alignment.
+10100409_S9_L001	Acidovorax	centrifuge	Detected	607		0	no NTC background				CENTRIFUGE DETECTED: 607 reads (threshold >=500). NTC background: 0 reads; fold above NTC: no NTC background (threshold >=5.0x).
+10100409_S9_L001	Acinetobacter	centrifuge	Detected	8557		1	8557.0x				CENTRIFUGE DETECTED: 8557 reads (threshold >=500). NTC background: 1 reads; fold above NTC: 8557.0x (threshold >=5.0x).
+10100409_S9_L001	Agrobacterium	centrifuge	Detected	2491		0	no NTC background				CENTRIFUGE DETECTED: 2491 reads (threshold >=500). NTC background: 0 reads; fold above NTC: no NTC background (threshold >=5.0x).
+10100409_S9_L001	Bosea	centrifuge	Detected	600		0	no NTC background				CENTRIFUGE DETECTED: 600 reads (threshold >=500). NTC background: 0 reads; fold above NTC: no NTC background (threshold >=5.0x).
+10100409_S9_L001	Brucella	centrifuge	Detected	557		1	557.0x				CENTRIFUGE DETECTED: 557 reads (threshold >=500). NTC background: 1 reads; fold above NTC: 557.0x (threshold >=5.0x).
+10100409_S9_L001	Methylobacterium	centrifuge	Detected	6685		1	6685.0x				CENTRIFUGE DETECTED: 6685 reads (threshold >=500). NTC background: 1 reads; fold above NTC: 6685.0x (threshold >=5.0x).
+10100409_S9_L001	Methylorubrum	centrifuge	Detected	9034		0	no NTC background				CENTRIFUGE DETECTED: 9034 reads (threshold >=500). NTC background: 0 reads; fold above NTC: no NTC background (threshold >=5.0x).
+10100409_S9_L001	Sphingomonas	centrifuge	Detected	1494		5	298.8x				CENTRIFUGE DETECTED: 1494 reads (threshold >=500). NTC background: 5 reads; fold above NTC: 298.8x (threshold >=5.0x).

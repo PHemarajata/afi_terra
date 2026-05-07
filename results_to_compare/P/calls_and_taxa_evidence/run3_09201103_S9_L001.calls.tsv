@@ -1,0 +1,40 @@
+sample	genus	source	reads	breadth	ntc_reads	call	cfr_reads	rescued	align_confirmed
+09201103_S9_L001	Orientia	alignment	3	0.0821	1644	Negative	0	false	false
+09201103_S9_L001	Rickettsia	alignment	139	0.0629	163744	Not_Confirmed	0	false	false
+09201103_S9_L001	Alicycliphilus	centrifuge	1		0	Not_Detected			
+09201103_S9_L001	Arthrobacter	centrifuge	1		0	Not_Detected			
+09201103_S9_L001	Athalassotoga	centrifuge	3		0	Not_Detected			
+09201103_S9_L001	Bifidobacterium	centrifuge	2		0	Not_Detected			
+09201103_S9_L001	Bordetella	centrifuge	2		0	Not_Detected			
+09201103_S9_L001	Chromobacterium	centrifuge	1		0	Not_Detected			
+09201103_S9_L001	Cryobacterium	centrifuge	1		0	Not_Detected			
+09201103_S9_L001	Cutibacterium	centrifuge	172		0	Not_Detected			
+09201103_S9_L001	Dactylosporangium	centrifuge	1		0	Not_Detected			
+09201103_S9_L001	Deinococcus	centrifuge	17		1	Not_Detected			
+09201103_S9_L001	Dissulfuribacter	centrifuge	2		0	Not_Detected			
+09201103_S9_L001	Embleya	centrifuge	1		0	Not_Detected			
+09201103_S9_L001	Enterobacter	centrifuge	1		0	Not_Detected			
+09201103_S9_L001	Enterococcus	centrifuge	1		0	Not_Detected			
+09201103_S9_L001	Erythrobacter	centrifuge	1		0	Not_Detected			
+09201103_S9_L001	Escherichia	centrifuge	1		1	Not_Detected			
+09201103_S9_L001	Fimbriimonas	centrifuge	2		0	Not_Detected			
+09201103_S9_L001	Fontivita	centrifuge	59		0	Not_Detected			
+09201103_S9_L001	Gardnerella	centrifuge	427		0	Not_Detected			
+09201103_S9_L001	Kitasatospora	centrifuge	1		0	Not_Detected			
+09201103_S9_L001	Klebsiella	centrifuge	2		0	Not_Detected			
+09201103_S9_L001	Kytococcus	centrifuge	1		0	Not_Detected			
+09201103_S9_L001	Lactococcus	centrifuge	3		0	Not_Detected			
+09201103_S9_L001	Magnetovirga	centrifuge	1		0	Not_Detected			
+09201103_S9_L001	Micromonospora	centrifuge	1		0	Not_Detected			
+09201103_S9_L001	Mycobacterium	centrifuge	1		0	Not_Detected			
+09201103_S9_L001	Mycolicibacterium	centrifuge	1		0	Not_Detected			
+09201103_S9_L001	Mycoplasmoides	centrifuge	1		0	Not_Detected			
+09201103_S9_L001	Parascardovia	centrifuge	8		0	Not_Detected			
+09201103_S9_L001	Polymorphospora	centrifuge	1		0	Not_Detected			
+09201103_S9_L001	Pseudomonas	centrifuge	1		2	Not_Detected			
+09201103_S9_L001	Sphingomonas	centrifuge	1		78	Not_Detected			
+09201103_S9_L001	Staphylococcus	centrifuge	2		0	Not_Detected			
+09201103_S9_L001	Streptomyces	centrifuge	8		17	Not_Detected			
+09201103_S9_L001	Streptosporangium	centrifuge	1		0	Not_Detected			
+09201103_S9_L001	Thermomicrobium	centrifuge	158		0	Not_Detected			
+09201103_S9_L001	Xanthomonas	centrifuge	24		3	Not_Detected			

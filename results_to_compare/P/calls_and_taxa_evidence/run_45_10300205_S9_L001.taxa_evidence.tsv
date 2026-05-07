@@ -1,0 +1,8 @@
+sample	genus	source	call	reads	breadth	ntc_reads	ntc_fold	cfr_reads	align_confirmed	rescued	evidence_summary
+10300205_S9_L001	Cutibacterium	centrifuge	Detected	51238		7	7319.7x				CENTRIFUGE DETECTED: 51238 reads (threshold >=500). NTC background: 7 reads; fold above NTC: 7319.7x (threshold >=5.0x).
+10300205_S9_L001	Desulfovibrio	centrifuge	Detected	1104		0	no NTC background				CENTRIFUGE DETECTED: 1104 reads (threshold >=500). NTC background: 0 reads; fold above NTC: no NTC background (threshold >=5.0x).
+10300205_S9_L001	Halobacteriovorax	centrifuge	Detected	548		0	no NTC background				CENTRIFUGE DETECTED: 548 reads (threshold >=500). NTC background: 0 reads; fold above NTC: no NTC background (threshold >=5.0x).
+10300205_S9_L001	Methylobacterium	centrifuge	Detected	5815		2	2907.5x				CENTRIFUGE DETECTED: 5815 reads (threshold >=500). NTC background: 2 reads; fold above NTC: 2907.5x (threshold >=5.0x).
+10300205_S9_L001	Mycoplasmopsis	centrifuge	Detected	1622		16	101.4x				CENTRIFUGE DETECTED: 1622 reads (threshold >=500). NTC background: 16 reads; fold above NTC: 101.4x (threshold >=5.0x).
+10300205_S9_L001	Streptococcus	centrifuge	Detected	13025		1	13025.0x				CENTRIFUGE DETECTED: 13025 reads (threshold >=500). NTC background: 1 reads; fold above NTC: 13025.0x (threshold >=5.0x).
+10300205_S9_L001	Thermomicrobium	centrifuge	Detected	1362		0	no NTC background				CENTRIFUGE DETECTED: 1362 reads (threshold >=500). NTC background: 0 reads; fold above NTC: no NTC background (threshold >=5.0x).

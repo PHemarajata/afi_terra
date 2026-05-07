@@ -1,0 +1,8 @@
+sample	genus	source	call	reads	breadth	ntc_reads	ntc_fold	cfr_reads	align_confirmed	rescued	evidence_summary
+23500462_S4_L001	Chryseobacterium	centrifuge	Detected	1665		0	no NTC background				CENTRIFUGE DETECTED: 1665 reads (threshold >=500). NTC background: 0 reads; fold above NTC: no NTC background (threshold >=5.0x).
+23500462_S4_L001	Cutibacterium	centrifuge	Detected	3075		0	no NTC background				CENTRIFUGE DETECTED: 3075 reads (threshold >=500). NTC background: 0 reads; fold above NTC: no NTC background (threshold >=5.0x).
+23500462_S4_L001	Escherichia	centrifuge	Detected	2534		53	47.8x				CENTRIFUGE DETECTED: 2534 reads (threshold >=500). NTC background: 53 reads; fold above NTC: 47.8x (threshold >=5.0x).
+23500462_S4_L001	Klebsiella	centrifuge	Detected	511		51	10.0x				CENTRIFUGE DETECTED: 511 reads (threshold >=500). NTC background: 51 reads; fold above NTC: 10.0x (threshold >=5.0x).
+23500462_S4_L001	Nocardiopsis	centrifuge	Detected	943		7	134.7x				CENTRIFUGE DETECTED: 943 reads (threshold >=500). NTC background: 7 reads; fold above NTC: 134.7x (threshold >=5.0x).
+23500462_S4_L001	Rothia	centrifuge	Detected	2055		0	no NTC background				CENTRIFUGE DETECTED: 2055 reads (threshold >=500). NTC background: 0 reads; fold above NTC: no NTC background (threshold >=5.0x).
+23500462_S4_L001	Thermomonas	centrifuge	Detected	1671		0	no NTC background				CENTRIFUGE DETECTED: 1671 reads (threshold >=500). NTC background: 0 reads; fold above NTC: no NTC background (threshold >=5.0x).

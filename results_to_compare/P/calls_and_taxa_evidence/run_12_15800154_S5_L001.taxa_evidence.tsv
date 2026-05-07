@@ -1,0 +1,5 @@
+sample	genus	source	call	reads	breadth	ntc_reads	ntc_fold	cfr_reads	align_confirmed	rescued	evidence_summary
+15800154_S5_L001	Acinetobacter	centrifuge	Detected	938		5	187.6x				CENTRIFUGE DETECTED: 938 reads (threshold >=500). NTC background: 5 reads; fold above NTC: 187.6x (threshold >=5.0x).
+15800154_S5_L001	Nocardioides	centrifuge	Detected	4543		0	no NTC background				CENTRIFUGE DETECTED: 4543 reads (threshold >=500). NTC background: 0 reads; fold above NTC: no NTC background (threshold >=5.0x).
+15800154_S5_L001	Rheinheimera	centrifuge	Detected	963		0	no NTC background				CENTRIFUGE DETECTED: 963 reads (threshold >=500). NTC background: 0 reads; fold above NTC: no NTC background (threshold >=5.0x).
+15800154_S5_L001	Staphylococcus	centrifuge	Detected	1312		0	no NTC background				CENTRIFUGE DETECTED: 1312 reads (threshold >=500). NTC background: 0 reads; fold above NTC: no NTC background (threshold >=5.0x).

@@ -1,0 +1,6 @@
+sample	genus	source	call	reads	breadth	ntc_reads	ntc_fold	cfr_reads	align_confirmed	rescued	evidence_summary
+23900752_S9_L001	Orientia	alignment	Probable	1684	0.2428	1288	1.3x	0	false	true	ALIGNMENT PROBABLE: 1684 reads (threshold >=50; below confirmed threshold of 100), breadth 0.2428 (threshold >=0.20). NTC background: 1288 reads; fold above NTC: 1.3x. Centrifuge: 0 reads -- not detected by centrifuge; call relies on alignment.
+23900752_S9_L001	Corynebacterium	centrifuge	Detected	622		0	no NTC background				CENTRIFUGE DETECTED: 622 reads (threshold >=500). NTC background: 0 reads; fold above NTC: no NTC background (threshold >=5.0x).
+23900752_S9_L001	Cutibacterium	centrifuge	Detected	1663		0	no NTC background				CENTRIFUGE DETECTED: 1663 reads (threshold >=500). NTC background: 0 reads; fold above NTC: no NTC background (threshold >=5.0x).
+23900752_S9_L001	Nocardioides	centrifuge	Detected	691		0	no NTC background				CENTRIFUGE DETECTED: 691 reads (threshold >=500). NTC background: 0 reads; fold above NTC: no NTC background (threshold >=5.0x).
+23900752_S9_L001	Staphylococcus	centrifuge	Detected	557		2	278.5x				CENTRIFUGE DETECTED: 557 reads (threshold >=500). NTC background: 2 reads; fold above NTC: 278.5x (threshold >=5.0x).

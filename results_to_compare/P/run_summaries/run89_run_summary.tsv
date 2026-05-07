@@ -1,0 +1,23 @@
+run_id	sample_id	sample_type	expected_taxa	detected_taxa	n_detected	validation_result	rescue_mechanisms	pc8_pass	run_pc8_valid
+Run9	09203017_S10_L001	clinical		Thermomicrobium (68.1%),Staphylococcus (31.9%)	2				true
+Run9	09403016_S11_L001	clinical		Staphylococcus (56.0%),Curtobacterium (44.0%)	2				true
+Run8	09502498_S7_L001	clinical		Nitrospira (100.0%)	1				true
+Run8	09502549_S8_L001	clinical		Paracoccus (35.1%),Corynebacterium (26.0%),Caldimonas (20.0%),Blastochloris (18.8%)	4				true
+Run9	09702850_S4_L001	clinical		Klebsiella (97.5%),Cutibacterium (2.5%)	2				true
+Run8	09802430_S4_L001	clinical		Faucicola (65.1%),Caldimonas (34.9%)	2				true
+Run8	09902444_S5_L001	clinical		Thermomicrobium (100.0%)	1				true
+Run8	10100409_S9_L001	clinical		Methylorubrum (27.9%),Acinetobacter (26.4%),Methylobacterium (20.6%),Agrobacterium (7.7%),Orientia (7.4%),Sphingomonas (4.6%),Acidovorax (1.9%),Bosea (1.9%),Brucella (1.7%)	9				true
+Run8	14500655_S10_L001	clinical		Methylorubrum (82.7%),Sphingomonas (17.3%)	2				true
+Run9	16601093_S7_L001	clinical		Pseudomonas (60.3%),Stenotrophomonas (15.4%),Achromobacter (4.6%),Brucella (2.8%),Cupriavidus (2.3%),Orientia (2.0%),Chromobacterium (1.9%),Delftia (1.5%),Acinetobacter (1.2%),Agrobacterium (1.2%),Methylobacterium (1.0%),Actinomycetospora (0.8%),Metapseudomonas (0.8%),Deinococcus (0.7%),Azospira (0.7%),Ectopseudomonas (0.7%),Burkholderia (0.6%),Cutibacterium (0.5%),Jeotgalicoccus (0.5%),Aeromonas (0.5%)	20				true
+Run9	16901195_S5_L001	clinical		Orientia (31.9%),Faucicola (15.7%),Sphingomonas (13.7%),Xanthomonas (7.1%),Methylobacterium (6.5%),Massilia (5.4%),Ruania (3.5%),Actinomycetospora (3.3%),Novosphingobium (3.2%),Micrococcus (2.3%),Thermomicrobium (1.6%),Alterirhizorhabdus (1.5%),Corynebacterium (1.5%),Baekduia (1.4%),Beutenbergia (1.3%)	15				true
+Run9	22600400_S6_L001	clinical		Orientia (30.3%),Ornithinimicrobium (25.3%),Cutibacterium (22.7%),Acinetobacter (10.2%),Faucicola (4.9%),Thermomicrobium (2.7%),Arthrobacter (2.3%),Floricoccus (1.6%)	8				true
+Run8	23000681_S6_L001	clinical		Corynebacterium (79.6%),Fontivita (20.4%)	2				true
+Run9	23200736_S8_L001	clinical		Streptococcus (22.5%),Orientia (19.9%),Brevibacterium (15.5%),Xanthomonas (11.2%),Corynebacterium (10.0%),Flavobacterium (9.0%),Cutibacterium (6.0%),Sphingomonas (5.8%)	8				true
+Run8	23300774_S11_L001	clinical		Xanthomonas (76.3%),Chthonomonas (12.1%),Rhodococcus (11.7%)	3				true
+Run9	23900752_S9_L001	clinical		Orientia (32.3%),Cutibacterium (31.9%),Nocardioides (13.2%),Corynebacterium (11.9%),Staphylococcus (10.7%)	5				true
+Run8	NTC1_DW_S2_L001	clinical		Rickettsia (54.9%),Flavobacterium (43.0%),Rhodoluna (1.2%),Orientia (0.6%),Microbacterium (0.4%)	5				true
+Run9	NTC1_DW_S2_L001_2	clinical		Rickettsia (54.9%),Flavobacterium (43.0%),Rhodoluna (1.2%),Orientia (0.6%),Microbacterium (0.4%)	5				true
+Run8	NTC2_EB_S3_L001	NTC			0				true
+Run9	NTC2_EB_S3_L001_2	NTC			0				true
+Run8	PC_S1_L001	PC_MIX8	Bacillus;Listeria;Staphylococcus;Enterococcus;Limosilactobacillus;Salmonella;Escherichia;Pseudomonas	Orientia (19.6%),Bacillus (17.3%),Staphylococcus (17.2%),Listeria (14.1%),Limosilactobacillus (12.1%),Enterococcus (7.9%),Salmonella (5.4%),Escherichia (3.3%),Pseudomonas (3.0%)	9	Concordant		true	true
+Run9	PC_S1_L001_2	PC_MIX8	Bacillus;Listeria;Staphylococcus;Enterococcus;Limosilactobacillus;Salmonella;Escherichia;Pseudomonas	Orientia (19.6%),Bacillus (17.3%),Staphylococcus (17.2%),Listeria (14.1%),Limosilactobacillus (12.1%),Enterococcus (7.9%),Salmonella (5.4%),Escherichia (3.3%),Pseudomonas (3.0%)	9	Concordant		true	true

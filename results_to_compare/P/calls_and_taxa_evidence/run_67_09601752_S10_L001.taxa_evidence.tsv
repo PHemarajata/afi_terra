@@ -1,0 +1,3 @@
+sample	genus	source	call	reads	breadth	ntc_reads	ntc_fold	cfr_reads	align_confirmed	rescued	evidence_summary
+09601752_S10_L001	Brevundimonas	centrifuge	Detected	1645		22	74.8x				CENTRIFUGE DETECTED: 1645 reads (threshold >=500). NTC background: 22 reads; fold above NTC: 74.8x (threshold >=5.0x).
+09601752_S10_L001	Streptomyces	centrifuge	Detected	1269		243	5.2x				CENTRIFUGE DETECTED: 1269 reads (threshold >=500). NTC background: 243 reads; fold above NTC: 5.2x (threshold >=5.0x).

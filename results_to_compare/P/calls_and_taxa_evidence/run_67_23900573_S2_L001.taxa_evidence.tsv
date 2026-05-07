@@ -1,0 +1,4 @@
+sample	genus	source	call	reads	breadth	ntc_reads	ntc_fold	cfr_reads	align_confirmed	rescued	evidence_summary
+23900573_S2_L001	Deinococcus	centrifuge	Detected	565		1	565.0x				CENTRIFUGE DETECTED: 565 reads (threshold >=500). NTC background: 1 reads; fold above NTC: 565.0x (threshold >=5.0x).
+23900573_S2_L001	Escherichia	centrifuge	Detected	1225		0	no NTC background				CENTRIFUGE DETECTED: 1225 reads (threshold >=500). NTC background: 0 reads; fold above NTC: no NTC background (threshold >=5.0x).
+23900573_S2_L001	Kocuria	centrifuge	Detected	614		0	no NTC background				CENTRIFUGE DETECTED: 614 reads (threshold >=500). NTC background: 0 reads; fold above NTC: no NTC background (threshold >=5.0x).

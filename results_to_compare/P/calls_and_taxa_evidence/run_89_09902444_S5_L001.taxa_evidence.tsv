@@ -1,0 +1,2 @@
+sample	genus	source	call	reads	breadth	ntc_reads	ntc_fold	cfr_reads	align_confirmed	rescued	evidence_summary
+09902444_S5_L001	Thermomicrobium	centrifuge	Detected	1619		0	no NTC background				CENTRIFUGE DETECTED: 1619 reads (threshold >=500). NTC background: 0 reads; fold above NTC: no NTC background (threshold >=5.0x).

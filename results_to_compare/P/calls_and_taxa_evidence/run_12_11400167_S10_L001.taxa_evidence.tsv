@@ -1,0 +1,2 @@
+sample	genus	source	call	reads	breadth	ntc_reads	ntc_fold	cfr_reads	align_confirmed	rescued	evidence_summary
+11400167_S10_L001	Leptospira	centrifuge	Detected	2313		0	no NTC background				CENTRIFUGE DETECTED: 2313 reads (threshold >=500). NTC background: 0 reads; fold above NTC: no NTC background (threshold >=5.0x).

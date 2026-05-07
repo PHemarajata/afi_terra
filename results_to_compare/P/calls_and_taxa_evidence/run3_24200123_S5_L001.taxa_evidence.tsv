@@ -1,0 +1,4 @@
+sample	genus	source	call	reads	breadth	ntc_reads	ntc_fold	cfr_reads	align_confirmed	rescued	evidence_summary
+24200123_S5_L001	Bacillus	centrifuge	Detected	4414		0	no NTC background				CENTRIFUGE DETECTED: 4414 reads (threshold >=500). NTC background: 0 reads; fold above NTC: no NTC background (threshold >=5.0x).
+24200123_S5_L001	Cutibacterium	centrifuge	Detected	1051		0	no NTC background				CENTRIFUGE DETECTED: 1051 reads (threshold >=500). NTC background: 0 reads; fold above NTC: no NTC background (threshold >=5.0x).
+24200123_S5_L001	Escherichia	centrifuge	Detected	1785		1	1785.0x				CENTRIFUGE DETECTED: 1785 reads (threshold >=500). NTC background: 1 reads; fold above NTC: 1785.0x (threshold >=5.0x).

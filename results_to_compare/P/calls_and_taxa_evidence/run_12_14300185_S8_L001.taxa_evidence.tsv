@@ -1,0 +1,6 @@
+sample	genus	source	call	reads	breadth	ntc_reads	ntc_fold	cfr_reads	align_confirmed	rescued	evidence_summary
+14300185_S8_L001	Burkholderia	centrifuge	Detected	1689		36	46.9x				CENTRIFUGE DETECTED: 1689 reads (threshold >=500). NTC background: 36 reads; fold above NTC: 46.9x (threshold >=5.0x).
+14300185_S8_L001	Flavisolibacter	centrifuge	Detected	797		0	no NTC background				CENTRIFUGE DETECTED: 797 reads (threshold >=500). NTC background: 0 reads; fold above NTC: no NTC background (threshold >=5.0x).
+14300185_S8_L001	Micrococcus	centrifuge	Detected	3494		70	49.9x				CENTRIFUGE DETECTED: 3494 reads (threshold >=500). NTC background: 70 reads; fold above NTC: 49.9x (threshold >=5.0x).
+14300185_S8_L001	Paracoccus	centrifuge	Detected	1500		1	1500.0x				CENTRIFUGE DETECTED: 1500 reads (threshold >=500). NTC background: 1 reads; fold above NTC: 1500.0x (threshold >=5.0x).
+14300185_S8_L001	Roseateles	centrifuge	Detected	1764		0	no NTC background				CENTRIFUGE DETECTED: 1764 reads (threshold >=500). NTC background: 0 reads; fold above NTC: no NTC background (threshold >=5.0x).

@@ -1,0 +1,3 @@
+sample	genus	source	call	reads	breadth	ntc_reads	ntc_fold	cfr_reads	align_confirmed	rescued	evidence_summary
+13900362_S6_L001	Brevundimonas	centrifuge	Detected	2643		22	120.1x				CENTRIFUGE DETECTED: 2643 reads (threshold >=500). NTC background: 22 reads; fold above NTC: 120.1x (threshold >=5.0x).
+13900362_S6_L001	Comamonas	centrifuge	Detected	1649		2	824.5x				CENTRIFUGE DETECTED: 1649 reads (threshold >=500). NTC background: 2 reads; fold above NTC: 824.5x (threshold >=5.0x).

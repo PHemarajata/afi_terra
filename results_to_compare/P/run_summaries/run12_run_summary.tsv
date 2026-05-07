@@ -1,0 +1,25 @@
+run_id	sample_id	sample_type	expected_taxa	detected_taxa	n_detected	validation_result	rescue_mechanisms	pc8_pass	run_pc8_valid
+run1	09000468_S8_L001	clinical		Agrobacterium (100.0%)	1				true
+run2	09200801_S6_L001	clinical		Streptococcus (42.3%),Escherichia (29.6%),Rheinheimera (28.1%)	3				true
+run1	09300438_S7_L001	clinical			0				true
+run2	09300607_S1_L001	clinical		Enterobacter (49.0%),Fontivita (27.1%),Bacillus (23.9%)	3				true
+run2	09400616_S2_L001	clinical		Microbacterium (100.0%)	1				true
+run2	09800841_S7_L001	clinical		Diaphorobacter (76.2%),Hahella (23.8%)	2				true
+run1	11400167_S10_L001	clinical		Leptospira (100.0%)	1				true
+run2	14300185_S8_L001	clinical		Micrococcus (37.8%),Roseateles (19.1%),Burkholderia (18.3%),Paracoccus (16.2%),Flavisolibacter (8.6%)	5				true
+run2	14300190_S10_L001	clinical		Dyadobacter (100.0%)	1				true
+run2	14400137_S4_L001	clinical		Streptococcus (56.2%),Rothia (29.8%),Haemophilus (4.7%),Schaalia (2.9%),Prevotella (2.2%),Leptotrichia (2.1%),Granulicatella (2.1%)	7				true
+run1	14600037_S1_L001	clinical		Pseudomonas (55.7%),Micrococcus (44.3%)	2				true
+run1	15000105_S2_L001	clinical		Agrobacterium (32.2%),Streptococcus (23.9%),Haemophilus (22.5%),Rothia (21.4%)	4				true
+run2	15600386_S9_L001	clinical		Micrococcus (48.7%),Brucella (32.7%),Campylobacter (11.4%),Svornostia (7.3%)	4				true
+run1	15800154_S5_L001	clinical		Nocardioides (58.6%),Staphylococcus (16.9%),Rheinheimera (12.4%),Acinetobacter (12.1%)	4				true
+run2	16300212_S3_L001	clinical		Acinetobacter (18.5%),Staphylococcus (13.3%),Serinicoccus (12.4%),Micrococcus (11.6%),Nocardioides (9.9%),Aquihabitans (8.1%),Pseudocnuella (7.1%),Klebsiella (5.7%),Variovorax (3.9%),Fimbriimonas (3.6%),Gemmatirosa (3.0%),Nakamurella (2.8%)	12				true
+run1	21500105_S3_L001	clinical			0				true
+run2	22700089_S5_L001	clinical		Escherichia (100.0%)	1				true
+run1	24200043_S6_L001	clinical			0				true
+run1	25500116_S4_L001	clinical			0				true
+run1	25700177_S9_L001	clinical		Anaerococcus (54.8%),Staphylococcus (23.4%),Devosia (21.8%)	3				true
+run1	NTC_run_1_S11_L001	NTC			0				true
+run2	NTC_run_2_S11_L001	NTC			0				true
+run1	PC_run_1_S12_L001	PC_MIX8	Bacillus;Listeria;Staphylococcus;Enterococcus;Limosilactobacillus;Salmonella;Escherichia;Pseudomonas	Bacillus (22.3%),Staphylococcus (21.7%),Listeria (18.2%),Limosilactobacillus (15.5%),Enterococcus (11.3%),Salmonella (5.3%),Escherichia (3.1%),Pseudomonas (2.7%)	8	Concordant		true	true
+run2	PC_run_2_S12_L001	PC_MIX8	Bacillus;Listeria;Staphylococcus;Enterococcus;Limosilactobacillus;Salmonella;Escherichia;Pseudomonas	Bacillus (21.9%),Staphylococcus (20.8%),Listeria (19.0%),Limosilactobacillus (16.1%),Enterococcus (10.9%),Salmonella (5.4%),Escherichia (3.1%),Pseudomonas (2.7%)	8	Concordant		true	true

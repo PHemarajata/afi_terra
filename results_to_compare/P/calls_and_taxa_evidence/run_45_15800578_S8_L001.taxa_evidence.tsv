@@ -1,0 +1,4 @@
+sample	genus	source	call	reads	breadth	ntc_reads	ntc_fold	cfr_reads	align_confirmed	rescued	evidence_summary
+15800578_S8_L001	Candidatus_Phycorickettsia	centrifuge	Detected	723		0	no NTC background				CENTRIFUGE DETECTED: 723 reads (threshold >=500). NTC background: 0 reads; fold above NTC: no NTC background (threshold >=5.0x).
+15800578_S8_L001	Cutibacterium	centrifuge	Detected	2149		7	307.0x				CENTRIFUGE DETECTED: 2149 reads (threshold >=500). NTC background: 7 reads; fold above NTC: 307.0x (threshold >=5.0x).
+15800578_S8_L001	Methylobacterium	centrifuge	Detected	1060		2	530.0x				CENTRIFUGE DETECTED: 1060 reads (threshold >=500). NTC background: 2 reads; fold above NTC: 530.0x (threshold >=5.0x).

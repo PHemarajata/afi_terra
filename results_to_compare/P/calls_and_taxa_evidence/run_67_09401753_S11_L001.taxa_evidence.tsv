@@ -1,0 +1,4 @@
+sample	genus	source	call	reads	breadth	ntc_reads	ntc_fold	cfr_reads	align_confirmed	rescued	evidence_summary
+09401753_S11_L001	Cutibacterium	centrifuge	Detected	2031		0	no NTC background				CENTRIFUGE DETECTED: 2031 reads (threshold >=500). NTC background: 0 reads; fold above NTC: no NTC background (threshold >=5.0x).
+09401753_S11_L001	Flavobacterium	centrifuge	Detected	1539		0	no NTC background				CENTRIFUGE DETECTED: 1539 reads (threshold >=500). NTC background: 0 reads; fold above NTC: no NTC background (threshold >=5.0x).
+09401753_S11_L001	Methylorubrum	centrifuge	Detected	895		0	no NTC background				CENTRIFUGE DETECTED: 895 reads (threshold >=500). NTC background: 0 reads; fold above NTC: no NTC background (threshold >=5.0x).

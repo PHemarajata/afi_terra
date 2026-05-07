@@ -1,0 +1,21 @@
+sample	genus	source	call	reads	breadth	ntc_reads	ntc_fold	cfr_reads	align_confirmed	rescued	evidence_summary
+16601093_S7_L001	Orientia	alignment	Probable	2284	0.2201	1288	1.8x	1	false	true	ALIGNMENT PROBABLE: 2284 reads (threshold >=50; below confirmed threshold of 100), breadth 0.2201 (threshold >=0.20). NTC background: 1288 reads; fold above NTC: 1.8x. Centrifuge: 1 reads (below 500 threshold) -- below centrifuge threshold; call relies on alignment.
+16601093_S7_L001	Achromobacter	centrifuge	Detected	5242		0	no NTC background				CENTRIFUGE DETECTED: 5242 reads (threshold >=500). NTC background: 0 reads; fold above NTC: no NTC background (threshold >=5.0x).
+16601093_S7_L001	Acinetobacter	centrifuge	Detected	1344		1	1344.0x				CENTRIFUGE DETECTED: 1344 reads (threshold >=500). NTC background: 1 reads; fold above NTC: 1344.0x (threshold >=5.0x).
+16601093_S7_L001	Actinomycetospora	centrifuge	Detected	870		0	no NTC background				CENTRIFUGE DETECTED: 870 reads (threshold >=500). NTC background: 0 reads; fold above NTC: no NTC background (threshold >=5.0x).
+16601093_S7_L001	Aeromonas	centrifuge	Detected	538		0	no NTC background				CENTRIFUGE DETECTED: 538 reads (threshold >=500). NTC background: 0 reads; fold above NTC: no NTC background (threshold >=5.0x).
+16601093_S7_L001	Agrobacterium	centrifuge	Detected	1337		0	no NTC background				CENTRIFUGE DETECTED: 1337 reads (threshold >=500). NTC background: 0 reads; fold above NTC: no NTC background (threshold >=5.0x).
+16601093_S7_L001	Azospira	centrifuge	Detected	805		0	no NTC background				CENTRIFUGE DETECTED: 805 reads (threshold >=500). NTC background: 0 reads; fold above NTC: no NTC background (threshold >=5.0x).
+16601093_S7_L001	Brucella	centrifuge	Detected	3249		1	3249.0x				CENTRIFUGE DETECTED: 3249 reads (threshold >=500). NTC background: 1 reads; fold above NTC: 3249.0x (threshold >=5.0x).
+16601093_S7_L001	Burkholderia	centrifuge	Detected	673		1	673.0x				CENTRIFUGE DETECTED: 673 reads (threshold >=500). NTC background: 1 reads; fold above NTC: 673.0x (threshold >=5.0x).
+16601093_S7_L001	Chromobacterium	centrifuge	Detected	2143		1	2143.0x				CENTRIFUGE DETECTED: 2143 reads (threshold >=500). NTC background: 1 reads; fold above NTC: 2143.0x (threshold >=5.0x).
+16601093_S7_L001	Cupriavidus	centrifuge	Detected	2613		0	no NTC background				CENTRIFUGE DETECTED: 2613 reads (threshold >=500). NTC background: 0 reads; fold above NTC: no NTC background (threshold >=5.0x).
+16601093_S7_L001	Cutibacterium	centrifuge	Detected	619		0	no NTC background				CENTRIFUGE DETECTED: 619 reads (threshold >=500). NTC background: 0 reads; fold above NTC: no NTC background (threshold >=5.0x).
+16601093_S7_L001	Deinococcus	centrifuge	Detected	856		1	856.0x				CENTRIFUGE DETECTED: 856 reads (threshold >=500). NTC background: 1 reads; fold above NTC: 856.0x (threshold >=5.0x).
+16601093_S7_L001	Delftia	centrifuge	Detected	1743		0	no NTC background				CENTRIFUGE DETECTED: 1743 reads (threshold >=500). NTC background: 0 reads; fold above NTC: no NTC background (threshold >=5.0x).
+16601093_S7_L001	Ectopseudomonas	centrifuge	Detected	805		0	no NTC background				CENTRIFUGE DETECTED: 805 reads (threshold >=500). NTC background: 0 reads; fold above NTC: no NTC background (threshold >=5.0x).
+16601093_S7_L001	Jeotgalicoccus	centrifuge	Detected	586		0	no NTC background				CENTRIFUGE DETECTED: 586 reads (threshold >=500). NTC background: 0 reads; fold above NTC: no NTC background (threshold >=5.0x).
+16601093_S7_L001	Metapseudomonas	centrifuge	Detected	858		0	no NTC background				CENTRIFUGE DETECTED: 858 reads (threshold >=500). NTC background: 0 reads; fold above NTC: no NTC background (threshold >=5.0x).
+16601093_S7_L001	Methylobacterium	centrifuge	Detected	1152		1	1152.0x				CENTRIFUGE DETECTED: 1152 reads (threshold >=500). NTC background: 1 reads; fold above NTC: 1152.0x (threshold >=5.0x).
+16601093_S7_L001	Pseudomonas	centrifuge	Detected	68861		0	no NTC background				CENTRIFUGE DETECTED: 68861 reads (threshold >=500). NTC background: 0 reads; fold above NTC: no NTC background (threshold >=5.0x).
+16601093_S7_L001	Stenotrophomonas	centrifuge	Detected	17623		1	17623.0x				CENTRIFUGE DETECTED: 17623 reads (threshold >=500). NTC background: 1 reads; fold above NTC: 17623.0x (threshold >=5.0x).
