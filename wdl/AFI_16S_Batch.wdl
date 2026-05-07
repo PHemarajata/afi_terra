@@ -80,15 +80,15 @@ workflow AFI_16S_Batch {
     # ── Run-wide options ───────────────────────────────────────────────────────
     # Single switch applies to every sample; set via workspace attribute or JSON.
     Boolean use_human_scrub   = true
-    Int     classify_threads  = 16
+    Int     classify_threads  = 8
 
     # ── Docker images ──────────────────────────────────────────────────────────
     String afi_core_docker    = "phemarajata614/afi-terra:0.4.1"  # python + samtools + scripts
     String fastp_docker       = "staphb/fastp:0.23.4"             # QC trimming
     String minimap_docker     = "phemarajata614/afi-terra:0.4.1"  # alignment + samtools sort/index
     String centrifuger_docker = "phemarajata614/centrifuger:1.1.0"
-    String centrifuger_memory = "128G"
-    String centrifuger_disks  = "local-disk 500 HDD"
+    String centrifuger_memory = "96G"
+    String centrifuger_disks  = "local-disk 375 HDD"
   }
 
   # ===========================================================================
