@@ -1,0 +1,55 @@
+entity:AFI_id	run_id	sample_type	read1	read2
+00126_S6_L001	3	CLINICAL	gs://fc-36ebdf16-bf31-4fef-9963-fc780c8f7367/uploads/AFI/00126_S6_L001_R1_001.fastq.gz	gs://fc-36ebdf16-bf31-4fef-9963-fc780c8f7367/uploads/AFI/00126_S6_L001_R2_001.fastq.gz
+00277_S4_L001	3	CLINICAL	gs://fc-36ebdf16-bf31-4fef-9963-fc780c8f7367/uploads/AFI/00277_S4_L001_R1_001.fastq.gz	gs://fc-36ebdf16-bf31-4fef-9963-fc780c8f7367/uploads/AFI/00277_S4_L001_R2_001.fastq.gz
+003691_S11_L001			gs://fc-36ebdf16-bf31-4fef-9963-fc780c8f7367/uploads/AFI/003691_S11_L001_R1_001.fastq.gz	gs://fc-36ebdf16-bf31-4fef-9963-fc780c8f7367/uploads/AFI/003691_S11_L001_R2_001.fastq.gz
+00369_S1_L001	3	CLINICAL	gs://fc-36ebdf16-bf31-4fef-9963-fc780c8f7367/uploads/AFI/00369_S1_L001_R1_001.fastq.gz	gs://fc-36ebdf16-bf31-4fef-9963-fc780c8f7367/uploads/AFI/00369_S1_L001_R2_001.fastq.gz
+00389_S5_L001	3	CLINICAL	gs://fc-36ebdf16-bf31-4fef-9963-fc780c8f7367/uploads/AFI/00389_S5_L001_R1_001.fastq.gz	gs://fc-36ebdf16-bf31-4fef-9963-fc780c8f7367/uploads/AFI/00389_S5_L001_R2_001.fastq.gz
+00428_S8_L001	3	CLINICAL	gs://fc-36ebdf16-bf31-4fef-9963-fc780c8f7367/uploads/AFI/00428_S8_L001_R1_001.fastq.gz	gs://fc-36ebdf16-bf31-4fef-9963-fc780c8f7367/uploads/AFI/00428_S8_L001_R2_001.fastq.gz
+00618_S7_L001	3	CLINICAL	gs://fc-36ebdf16-bf31-4fef-9963-fc780c8f7367/uploads/AFI/00618_S7_L001_R1_001.fastq.gz	gs://fc-36ebdf16-bf31-4fef-9963-fc780c8f7367/uploads/AFI/00618_S7_L001_R2_001.fastq.gz
+019371_S12_L001			gs://fc-36ebdf16-bf31-4fef-9963-fc780c8f7367/uploads/AFI/019371_S12_L001_R1_001.fastq.gz	gs://fc-36ebdf16-bf31-4fef-9963-fc780c8f7367/uploads/AFI/019371_S12_L001_R2_001.fastq.gz
+01937_S2_L001	3	CLINICAL	gs://fc-36ebdf16-bf31-4fef-9963-fc780c8f7367/uploads/AFI/01937_S2_L001_R1_001.fastq.gz	gs://fc-36ebdf16-bf31-4fef-9963-fc780c8f7367/uploads/AFI/01937_S2_L001_R2_001.fastq.gz
+027571_S13_L001			gs://fc-36ebdf16-bf31-4fef-9963-fc780c8f7367/uploads/AFI/027571_S13_L001_R1_001.fastq.gz	gs://fc-36ebdf16-bf31-4fef-9963-fc780c8f7367/uploads/AFI/027571_S13_L001_R2_001.fastq.gz
+02757_S3_L001	3	CLINICAL	gs://fc-36ebdf16-bf31-4fef-9963-fc780c8f7367/uploads/AFI/02757_S3_L001_R1_001.fastq.gz	gs://fc-36ebdf16-bf31-4fef-9963-fc780c8f7367/uploads/AFI/02757_S3_L001_R2_001.fastq.gz
+09002165_S3_L001	4	CLINICAL	gs://fc-36ebdf16-bf31-4fef-9963-fc780c8f7367/uploads/AFI/09002165_S3_L001_R1_001.fastq.gz	gs://fc-36ebdf16-bf31-4fef-9963-fc780c8f7367/uploads/AFI/09002165_S3_L001_R2_001.fastq.gz
+09102966_S1_L001	5	CLINICAL	gs://fc-36ebdf16-bf31-4fef-9963-fc780c8f7367/uploads/AFI/09102966_S1_L001_R1_001.fastq.gz	gs://fc-36ebdf16-bf31-4fef-9963-fc780c8f7367/uploads/AFI/09102966_S1_L001_R2_001.fastq.gz
+09202659_S12_L001	5	CLINICAL	gs://fc-36ebdf16-bf31-4fef-9963-fc780c8f7367/uploads/AFI/09202659_S12_L001_R1_001.fastq.gz	gs://fc-36ebdf16-bf31-4fef-9963-fc780c8f7367/uploads/AFI/09202659_S12_L001_R2_001.fastq.gz
+09300546_S4_L001	4	CLINICAL	gs://fc-36ebdf16-bf31-4fef-9963-fc780c8f7367/uploads/AFI/09300546_S4_L001_R1_001.fastq.gz	gs://fc-36ebdf16-bf31-4fef-9963-fc780c8f7367/uploads/AFI/09300546_S4_L001_R2_001.fastq.gz
+09302710_S2_L001	4	CLINICAL	gs://fc-36ebdf16-bf31-4fef-9963-fc780c8f7367/uploads/AFI/09302710_S2_L001_R1_001.fastq.gz	gs://fc-36ebdf16-bf31-4fef-9963-fc780c8f7367/uploads/AFI/09302710_S2_L001_R2_001.fastq.gz
+09302890_S5_L001	4	CLINICAL	gs://fc-36ebdf16-bf31-4fef-9963-fc780c8f7367/uploads/AFI/09302890_S5_L001_R1_001.fastq.gz	gs://fc-36ebdf16-bf31-4fef-9963-fc780c8f7367/uploads/AFI/09302890_S5_L001_R2_001.fastq.gz
+09402516_S8_L001	5	CLINICAL	gs://fc-36ebdf16-bf31-4fef-9963-fc780c8f7367/uploads/AFI/09402516_S8_L001_R1_001.fastq.gz	gs://fc-36ebdf16-bf31-4fef-9963-fc780c8f7367/uploads/AFI/09402516_S8_L001_R2_001.fastq.gz
+09502813_S2_L001	5	CLINICAL	gs://fc-36ebdf16-bf31-4fef-9963-fc780c8f7367/uploads/AFI/09502813_S2_L001_R1_001.fastq.gz	gs://fc-36ebdf16-bf31-4fef-9963-fc780c8f7367/uploads/AFI/09502813_S2_L001_R2_001.fastq.gz
+09602983_S7_L001	5	CLINICAL	gs://fc-36ebdf16-bf31-4fef-9963-fc780c8f7367/uploads/AFI/09602983_S7_L001_R1_001.fastq.gz	gs://fc-36ebdf16-bf31-4fef-9963-fc780c8f7367/uploads/AFI/09602983_S7_L001_R2_001.fastq.gz
+09700912_S3_L001	5	CLINICAL	gs://fc-36ebdf16-bf31-4fef-9963-fc780c8f7367/uploads/AFI/09700912_S3_L001_R1_001.fastq.gz	gs://fc-36ebdf16-bf31-4fef-9963-fc780c8f7367/uploads/AFI/09700912_S3_L001_R2_001.fastq.gz
+09902043_S1_L001	2	CLINICAL	gs://fc-36ebdf16-bf31-4fef-9963-fc780c8f7367/uploads/AFI/09902043_S1_L001_R1_001.fastq.gz	gs://fc-36ebdf16-bf31-4fef-9963-fc780c8f7367/uploads/AFI/09902043_S1_L001_R2_001.fastq.gz
+10900410_S10_L001	5	CLINICAL	gs://fc-36ebdf16-bf31-4fef-9963-fc780c8f7367/uploads/AFI/10900410_S10_L001_R1_001.fastq.gz	gs://fc-36ebdf16-bf31-4fef-9963-fc780c8f7367/uploads/AFI/10900410_S10_L001_R2_001.fastq.gz
+11200465_S2_L001	2	CLINICAL	gs://fc-36ebdf16-bf31-4fef-9963-fc780c8f7367/uploads/AFI/11200465_S2_L001_R1_001.fastq.gz	gs://fc-36ebdf16-bf31-4fef-9963-fc780c8f7367/uploads/AFI/11200465_S2_L001_R2_001.fastq.gz
+11800801_S7_L001	4	CLINICAL	gs://fc-36ebdf16-bf31-4fef-9963-fc780c8f7367/uploads/AFI/11800801_S7_L001_R1_001.fastq.gz	gs://fc-36ebdf16-bf31-4fef-9963-fc780c8f7367/uploads/AFI/11800801_S7_L001_R2_001.fastq.gz
+16401070_S11_L001	5	CLINICAL	gs://fc-36ebdf16-bf31-4fef-9963-fc780c8f7367/uploads/AFI/16401070_S11_L001_R1_001.fastq.gz	gs://fc-36ebdf16-bf31-4fef-9963-fc780c8f7367/uploads/AFI/16401070_S11_L001_R2_001.fastq.gz
+21001573_S6_L001	5	CLINICAL	gs://fc-36ebdf16-bf31-4fef-9963-fc780c8f7367/uploads/AFI/21001573_S6_L001_R1_001.fastq.gz	gs://fc-36ebdf16-bf31-4fef-9963-fc780c8f7367/uploads/AFI/21001573_S6_L001_R2_001.fastq.gz
+22900088_S3_L001	2	CLINICAL	gs://fc-36ebdf16-bf31-4fef-9963-fc780c8f7367/uploads/AFI/22900088_S3_L001_R1_001.fastq.gz	gs://fc-36ebdf16-bf31-4fef-9963-fc780c8f7367/uploads/AFI/22900088_S3_L001_R2_001.fastq.gz
+22900253_S4_L001	2	CLINICAL	gs://fc-36ebdf16-bf31-4fef-9963-fc780c8f7367/uploads/AFI/22900253_S4_L001_R1_001.fastq.gz	gs://fc-36ebdf16-bf31-4fef-9963-fc780c8f7367/uploads/AFI/22900253_S4_L001_R2_001.fastq.gz
+23000493_S5_L001	2	CLINICAL	gs://fc-36ebdf16-bf31-4fef-9963-fc780c8f7367/uploads/AFI/23000493_S5_L001_R1_001.fastq.gz	gs://fc-36ebdf16-bf31-4fef-9963-fc780c8f7367/uploads/AFI/23000493_S5_L001_R2_001.fastq.gz
+23500382_S6_L001	2	CLINICAL	gs://fc-36ebdf16-bf31-4fef-9963-fc780c8f7367/uploads/AFI/23500382_S6_L001_R1_001.fastq.gz	gs://fc-36ebdf16-bf31-4fef-9963-fc780c8f7367/uploads/AFI/23500382_S6_L001_R2_001.fastq.gz
+23500805_S7_L001	2	CLINICAL	gs://fc-36ebdf16-bf31-4fef-9963-fc780c8f7367/uploads/AFI/23500805_S7_L001_R1_001.fastq.gz	gs://fc-36ebdf16-bf31-4fef-9963-fc780c8f7367/uploads/AFI/23500805_S7_L001_R2_001.fastq.gz
+24500367_S5_L001	5	CLINICAL	gs://fc-36ebdf16-bf31-4fef-9963-fc780c8f7367/uploads/AFI/24500367_S5_L001_R1_001.fastq.gz	gs://fc-36ebdf16-bf31-4fef-9963-fc780c8f7367/uploads/AFI/24500367_S5_L001_R2_001.fastq.gz
+25300179_S6_L001	4	CLINICAL	gs://fc-36ebdf16-bf31-4fef-9963-fc780c8f7367/uploads/AFI/25300179_S6_L001_R1_001.fastq.gz	gs://fc-36ebdf16-bf31-4fef-9963-fc780c8f7367/uploads/AFI/25300179_S6_L001_R2_001.fastq.gz
+25300476_S8_L001			gs://fc-36ebdf16-bf31-4fef-9963-fc780c8f7367/uploads/AFI/25300476_S8_L001_R1_001.fastq.gz	gs://fc-36ebdf16-bf31-4fef-9963-fc780c8f7367/uploads/AFI/25300476_S8_L001_R2_001.fastq.gz
+25400409_S9_L001			gs://fc-36ebdf16-bf31-4fef-9963-fc780c8f7367/uploads/AFI/25400409_S9_L001_R1_001.fastq.gz	gs://fc-36ebdf16-bf31-4fef-9963-fc780c8f7367/uploads/AFI/25400409_S9_L001_R2_001.fastq.gz
+25800370_S9_L001	5	CLINICAL	gs://fc-36ebdf16-bf31-4fef-9963-fc780c8f7367/uploads/AFI/25800370_S9_L001_R1_001.fastq.gz	gs://fc-36ebdf16-bf31-4fef-9963-fc780c8f7367/uploads/AFI/25800370_S9_L001_R2_001.fastq.gz
+25800493_S10_L001			gs://fc-36ebdf16-bf31-4fef-9963-fc780c8f7367/uploads/AFI/25800493_S10_L001_R1_001.fastq.gz	gs://fc-36ebdf16-bf31-4fef-9963-fc780c8f7367/uploads/AFI/25800493_S10_L001_R2_001.fastq.gz
+25900911_S4_L001	5	CLINICAL	gs://fc-36ebdf16-bf31-4fef-9963-fc780c8f7367/uploads/AFI/25900911_S4_L001_R1_001.fastq.gz	gs://fc-36ebdf16-bf31-4fef-9963-fc780c8f7367/uploads/AFI/25900911_S4_L001_R2_001.fastq.gz
+E-coli_S4_L001	1	PC_SINGLE	gs://fc-36ebdf16-bf31-4fef-9963-fc780c8f7367/uploads/AFI/E-coli_S4_L001_R1_001.fastq.gz	gs://fc-36ebdf16-bf31-4fef-9963-fc780c8f7367/uploads/AFI/E-coli_S4_L001_R2_001.fastq.gz
+Mixed_S6_L001	1	MIXED4	gs://fc-36ebdf16-bf31-4fef-9963-fc780c8f7367/uploads/AFI/Mixed_S6_L001_R1_001.fastq.gz	gs://fc-36ebdf16-bf31-4fef-9963-fc780c8f7367/uploads/AFI/Mixed_S6_L001_R2_001.fastq.gz
+NC-20251016_S1_L001	1	NTC	gs://fc-36ebdf16-bf31-4fef-9963-fc780c8f7367/uploads/AFI/NC-20251016_S1_L001_R1_001.fastq.gz	gs://fc-36ebdf16-bf31-4fef-9963-fc780c8f7367/uploads/AFI/NC-20251016_S1_L001_R2_001.fastq.gz
+NC_S14_L001	5	NTC	gs://fc-36ebdf16-bf31-4fef-9963-fc780c8f7367/uploads/AFI/NC_S14_L001_R1_001.fastq.gz	gs://fc-36ebdf16-bf31-4fef-9963-fc780c8f7367/uploads/AFI/NC_S14_L001_R2_001.fastq.gz
+NC_S1_L001	4	NTC	gs://fc-36ebdf16-bf31-4fef-9963-fc780c8f7367/uploads/AFI/NC_S1_L001_R1_001.fastq.gz	gs://fc-36ebdf16-bf31-4fef-9963-fc780c8f7367/uploads/AFI/NC_S1_L001_R2_001.fastq.gz
+NC_S9_L001	3	NTC	gs://fc-36ebdf16-bf31-4fef-9963-fc780c8f7367/uploads/AFI/NC_S9_L001_R1_001.fastq.gz	gs://fc-36ebdf16-bf31-4fef-9963-fc780c8f7367/uploads/AFI/NC_S9_L001_R2_001.fastq.gz
+NTC_S11_L001	2	NTC	gs://fc-36ebdf16-bf31-4fef-9963-fc780c8f7367/uploads/AFI/NTC_S11_L001_R1_001.fastq.gz	gs://fc-36ebdf16-bf31-4fef-9963-fc780c8f7367/uploads/AFI/NTC_S11_L001_R2_001.fastq.gz
+P-aeru_S5_L001	1	PC_SINGLE	gs://fc-36ebdf16-bf31-4fef-9963-fc780c8f7367/uploads/AFI/P-aeru_S5_L001_R1_001.fastq.gz	gs://fc-36ebdf16-bf31-4fef-9963-fc780c8f7367/uploads/AFI/P-aeru_S5_L001_R2_001.fastq.gz
+PC-20251016_S7_L001	1	PC_MIX8	gs://fc-36ebdf16-bf31-4fef-9963-fc780c8f7367/uploads/AFI/PC-20251016_S7_L001_R1_001.fastq.gz	gs://fc-36ebdf16-bf31-4fef-9963-fc780c8f7367/uploads/AFI/PC-20251016_S7_L001_R2_001.fastq.gz
+PC_S10_L001	3	PC_MIX8	gs://fc-36ebdf16-bf31-4fef-9963-fc780c8f7367/uploads/AFI/PC_S10_L001_R1_001.fastq.gz	gs://fc-36ebdf16-bf31-4fef-9963-fc780c8f7367/uploads/AFI/PC_S10_L001_R2_001.fastq.gz
+PC_S12_L001	2	PC_MIX8	gs://fc-36ebdf16-bf31-4fef-9963-fc780c8f7367/uploads/AFI/PC_S12_L001_R1_001.fastq.gz	gs://fc-36ebdf16-bf31-4fef-9963-fc780c8f7367/uploads/AFI/PC_S12_L001_R2_001.fastq.gz
+PC_S13_L001	5	PC_MIX8	gs://fc-36ebdf16-bf31-4fef-9963-fc780c8f7367/uploads/AFI/PC_S13_L001_R1_001.fastq.gz	gs://fc-36ebdf16-bf31-4fef-9963-fc780c8f7367/uploads/AFI/PC_S13_L001_R2_001.fastq.gz
+PC_S8_L001	4	PC_MIX8	gs://fc-36ebdf16-bf31-4fef-9963-fc780c8f7367/uploads/AFI/PC_S8_L001_R1_001.fastq.gz	gs://fc-36ebdf16-bf31-4fef-9963-fc780c8f7367/uploads/AFI/PC_S8_L001_R2_001.fastq.gz
+S-pneumo_S2_L001	1	PC_SINGLE	gs://fc-36ebdf16-bf31-4fef-9963-fc780c8f7367/uploads/AFI/S-pneumo_S2_L001_R1_001.fastq.gz	gs://fc-36ebdf16-bf31-4fef-9963-fc780c8f7367/uploads/AFI/S-pneumo_S2_L001_R2_001.fastq.gz
+S-suis_S3_L001	1	PC_SINGLE	gs://fc-36ebdf16-bf31-4fef-9963-fc780c8f7367/uploads/AFI/S-suis_S3_L001_R1_001.fastq.gz	gs://fc-36ebdf16-bf31-4fef-9963-fc780c8f7367/uploads/AFI/S-suis_S3_L001_R2_001.fastq.gz
