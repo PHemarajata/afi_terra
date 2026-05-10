@@ -91,8 +91,8 @@ workflow AFI_16S_Batch {
     String fastp_docker       = "staphb/fastp:0.23.4"             # QC trimming
     String minimap_docker     = "phemarajata614/afi-terra:0.4.1"  # alignment + samtools sort/index
     String centrifuger_docker = "phemarajata614/centrifuger:1.1.0"
-    String centrifuger_memory = "96G"
-    String centrifuger_disks  = "local-disk 375 HDD"
+    String centrifuger_memory = "128G"
+    String centrifuger_disks  = "local-disk 500 HDD"
   }
 
   # ===========================================================================
