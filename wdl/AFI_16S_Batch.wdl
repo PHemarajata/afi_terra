@@ -84,7 +84,7 @@ workflow AFI_16S_Batch {
     # ── Run-wide options ───────────────────────────────────────────────────────
     # Single switch applies to every sample; set via workspace attribute or JSON.
     Boolean use_human_scrub   = true
-    Int     classify_threads  = 16  # must be ≥14 so GCP provisions ≥16 vCPUs (max 6.5 GB/vCPU) and can allocate 96 GB
+    Int     classify_threads  = 14  # must be ≥13 so GCP provisions ≥15 vCPUs (max 6.5 GB/vCPU) and can allocate 96 GB; 14 avoids potential threading bugs at 16
 
     # ── Docker images ──────────────────────────────────────────────────────────
     String afi_core_docker    = "phemarajata614/afi-terra:0.4.1"  # python + samtools + scripts

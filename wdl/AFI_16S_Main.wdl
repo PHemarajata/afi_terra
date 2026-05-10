@@ -50,7 +50,7 @@ workflow AFI_16S_Main {
     String centrifuger_docker = "phemarajata614/centrifuger:1.1.0"
     String centrifuger_memory = "128G"
     String centrifuger_disks  = "local-disk 500 HDD"
-    Int    classify_threads   = 16
+    Int    classify_threads   = 14  # must be ≥13 so GCP provisions ≥15 vCPUs (max 6.5 GB/vCPU); 14 avoids potential threading bugs at 16
   }
 
   # -------------------------------------------------------------------------
