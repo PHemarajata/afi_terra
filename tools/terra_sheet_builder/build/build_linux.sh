@@ -8,6 +8,7 @@ pip install -r ../requirements.txt pyinstaller
 
 pyinstaller \
   --onefile \
+  --clean \
   --name AFI_SheetBuilder \
   --add-data "../aphl_style.qss:." \
   --add-data "../assets:assets" \
