@@ -1,9 +1,12 @@
 # AFI Terra Pipeline: User Guide
 
-**Version:** 0.4.1  
+**Pipeline version:** 0.4.1  
+**Post-pipeline filter:** V4  
 **Workflows:** `AFI_16S_Main` / `AFI_16S_Batch`  
 **Platform:** Terra (Broad Institute)  
-**Last updated:** 2026-04-06
+**Last updated:** 2026-05-13
+
+> **What's new in this revision:** Sections 13 and 14 are new — the V4 post-pipeline decontamination filter (including the species-level *Burkholderia pseudomallei* safeguard and the positive-control spike-in bypass) and an analytical validation summary against a 48-sample reference panel plus an 86-sample AFI study cohort. All other sections are unchanged from the v0.4.1 user guide.
 
 ---
 
@@ -21,8 +24,10 @@
 10. [Output Files Reference](#10-output-files-reference)
 11. [Interpreting Calls and Summaries](#11-interpreting-calls-and-summaries)
 12. [Detection Thresholds](#12-detection-thresholds)
-13. [Docker Images](#13-docker-images)
-14. [Troubleshooting](#14-troubleshooting)
+13. [V4 Decontamination Filter (post-pipeline)](#13-v4-decontamination-filter-post-pipeline)
+14. [Analytical Validation Summary](#14-analytical-validation-summary)
+15. [Docker Images](#15-docker-images)
+16. [Troubleshooting](#16-troubleshooting)
 
 ---
 
@@ -1160,7 +1165,155 @@ All threshold parameters are exposed at the workflow level in both `AFI_16S_Main
 
 ---
 
-## 13. Docker Images
+## 13. V4 Decontamination Filter (post-pipeline)
+
+The pipeline's per-genus NTC subtraction (Section 2) and Centrifuger/alignment thresholds (Section 12) handle *run-specific* contamination. The **V4 filter** is an additional post-processing step that targets *cross-study* reagent / skin / water contaminants documented in landmark low-biomass microbiome reviews (Salter 2014, Glassing 2016, Lauder 2016, de Goffau 2018, Tan 2023). It runs on the pipeline's `.calls.tsv` outputs and does **not** modify pipeline behavior or thresholds.
+
+The filter is implemented as a standalone Python script (`afi_decontamination_filter_v4.py`) that ingests `.calls.tsv` rows with positive calls (Detected / Confirmed / Probable), applies the tiered rules below, and emits a report of which detections were kept and which were removed.
+
+### Tier A — High-confidence kit / skin / water contaminants
+
+The following 11 genera are removed on detection in clinical and study samples. Membership is documented in five or more independent low-biomass contamination reviews and confirmed in this dataset's NTC profiles.
+
+| Genus | Most common source |
+|---|---|
+| *Pseudomonas* | Kits, water, Taq, airborne |
+| *Ralstonia* | Kits, ultrapure water biofilm |
+| *Bradyrhizobium* | Kits, ultrapure water |
+| *Sphingomonas* | Kits, water systems |
+| *Stenotrophomonas* | Kits, water, PCR reagents |
+| *Methylobacterium* | Kits, ultrapure water systems |
+| *Acinetobacter* | Kits, PCR reagents, foot traffic |
+| *Cutibacterium* | Skin (alcohol-resistant), airborne |
+| *Staphylococcus* | Skin, airborne (coagulase-negative spp.) |
+| *Corynebacterium* | Kits, skin, airborne |
+| *Brevundimonas* | Kits, water; up to 285,740 NTC reads observed in run 6_and_7 |
+
+### Tier A exception — *Burkholderia* species-level safeguard
+
+The genus *Burkholderia* is a Tier-A-equivalent kit contaminant (the genus is dominated in low-biomass samples by *B. cepacia* complex species), but it also contains *B. pseudomallei*, the etiologic agent of melioidosis — a "cannot-miss" diagnosis endemic in Thailand. For every sample with a *Burkholderia* genus detection, the filter:
+
+1. Opens the Centrifuger kreport (`<sample>.centrifuger.kreport.tsv`) and parses rows at the species rank (`S`).
+2. Sums reads assigned to *Burkholderia pseudomallei* (NCBI taxonomy ID 28450) at species rank.
+3. Retrieves the run's NTC species-level *B. pseudomallei* read count for comparison.
+4. Preserves the detection only if **both**: (i) species reads ≥ 500, AND (ii) species reads > the run-NTC species max.
+5. When preserved, the retained record stores the **species-level read count**, not the genus total.
+
+> **Why this matters.** Earlier versions of the filter (V3) used a substring match on the literal string `"pseudomallei"` anywhere in the kreport, which triggered on the parent clade `pseudomallei_group` and then erroneously reported the genus-level *Burkholderia* read count. In one study sample, this conflated 54,126 genus-level reads (dominated by *B. cepacia* complex species) with only 8 reads of *B. pseudomallei* at species rank. V4 parses the species rank correctly and gates preservation on species reads ≥ 500 against the same-run NTC species count.
+
+### Tier B — NTC-only organisms
+
+Nine genera observed only in NTC samples across all sequencing runs are removed globally:
+
+*Cereibacter*, *Thioclava*, *Bdellovibrio*, *Saltatorellus*, *Pseudogemmobacter*, *Minisyncoccus*, *Rhodoluna*, *Microbacterium*, *Arcanobacterium*.
+
+### Tier 1 — Ultra-low-abundance environmental noise
+
+Sixteen genera with median per-sample abundance < 0.5% across the dataset are removed:
+
+*Shigella*, *Metapseudomonas*, *Stutzerimonas*, *Capsulimonas*, *Chamaesiphon*, *Chloroflexus*, *Flavihumibacter*, *Hymenobacter*, *Limnoglobus*, *Methylovirgula*, *Microvirga*, *Pelagovum*, *Pseudonocardia*, *Rufibacter*, *Salmonella*, *Spirosoma*.
+
+> **Tier 1 audit note.** *Mycoplasmopsis* and *Nitrospira* were removed from this list in V4 after review of their actual abundance distributions revealed both at substantially higher abundance than the <0.5% threshold (*Mycoplasmopsis* mean 39.78%, max 70.55% across 4 study samples). Both are now retained as candidate signal.
+
+### Tier 2 — Marginal organisms (conditional removal)
+
+Twenty-seven genera with median 0.5–2.0% abundance are retained only if detected in ≥ 2 samples AND each detection is ≥ 1.0% abundance. Below those thresholds, they are removed as likely contaminants.
+
+### Positive-control spike-in bypass
+
+For samples designated as positive controls, Tier A removal is bypassed for any organism that is a documented spike-in for that sample. Without this bypass, the `P-aeru_S5_L001` PC would fail because *Pseudomonas* is in Tier A — but *Pseudomonas aeruginosa* is precisely the organism the PC is designed to detect. The bypass restores PC interpretability without weakening Tier A removal in clinical samples.
+
+| PC sample | Type | Expected genera (filter bypassed for these) |
+|---|---|---|
+| `E-coli_S4_L001` | PC_SINGLE | *Escherichia* |
+| `P-aeru_S5_L001` | PC_SINGLE | *Pseudomonas* |
+| `S-pneumo_S2_L001` | PC_SINGLE | *Streptococcus* |
+| `S-suis_S3_L001` | PC_SINGLE | *Streptococcus* |
+| `PC_MIX8` replicates (5) | PC_MIX8 | *Bacillus*, *Enterococcus*, *Escherichia*, *Limosilactobacillus*, *Listeria*, *Pseudomonas*, *Salmonella*, *Staphylococcus* (ZymoBIOMICS Microbial Community Standard) |
+| `Mixed_S6_L001` | MIXED4 | *Escherichia*, *Pseudomonas*, *Streptococcus* |
+
+Under the bypass, PC concordance is defined as **all expected spike-in organisms must be detected AND retained** by the filter.
+
+### Running the filter
+
+```
+python3 afi_decontamination_filter_v4.py
+```
+
+The script reads `.calls.tsv` and Centrifuger kreport files from a configured run directory and writes `DECONTAMINATION-FILTER-REPORT-V4.txt` with a per-sample / per-detection breakdown of filter actions. A companion appendix generator (`generate_appendices.py`) produces Markdown and Excel tables with biomass distribution, NTC cross-checks, and confidence labels.
+
+---
+
+## 14. Analytical Validation Summary
+
+The pipeline (with V4 filter applied to clinical samples and PC bypass applied to positive controls) was validated against a 48-sample reference panel and then applied to a study cohort of 86 patient blood specimens from acute febrile illness (AFI) cases with positive blood culture but failed subculture recovery. Per-sample tables are in the companion appendix files (`APPENDIX-VALIDATION-PANEL.md`, `APPENDIX-STUDY-SAMPLES.md`, `APPENDICES.xlsx`).
+
+### Validation panel composition
+
+| Category | n | Description |
+|---|---|---|
+| Clinical (reference-lab confirmed) | 33 | *E. coli* (5), *O. tsutsugamushi* (6), *Rickettsia* (4), *Leptospira* (4), *B. pseudomallei* (5), *S. pneumoniae* (3), *S. suis* (3), *C. burnetii* (2), *Yersinia* (1) |
+| Positive controls (PC_SINGLE / PC_MIX8 / MIXED4) | 10 | 4 PC_SINGLE, 5 PC_MIX8 (ZymoBIOMICS Standard), 1 MIXED4 |
+| Negative template controls (NTC) | 5 | Water through extraction + library prep |
+| **Total** | **48** | Across 9 sequencing runs |
+
+### Sample-level analytical performance
+
+| Category | Concordant | Total | Rate | 95% CI |
+|---|---|---|---|---|
+| Clinical (target detected AND retained by V4) | 21 | 33 | **63.6%** | 46.6–77.8% |
+| Positive controls (all expected spike-ins detected + retained) | 10 | 10 | **100%** | 72.2–100% |
+| NTCs (no TAC bacterial target genus retained) | 5 | 5 | **100%** | 56.6–100% |
+| **Sample-level analytical performance (clinical + PC)** | **31** | **43** | **72.1%** | 57.3–83.3% |
+| **Overall validation accuracy** | **36** | **48** | **75.0%** | 61.2–85.1% |
+
+The **72.1% sample-level analytical performance** is the appropriate headline figure for regulatory documentation and matches the legacy APHL bioinformatic validation report for the same panel.
+
+### AFI study cohort (n=86)
+
+- **71 / 86 samples (82.6%)** carried ≥ 1 positive call (Centrifuger Detected, Tier 1 Confirmed, or Tier 2 Probable).
+- **15 / 86 samples (17.4%)** had zero detected taxa — consistent with pre-sequencing failure (DNA extraction, library prep, or sequencing depth).
+- V4 removed **70 / 217 detections (32.3%)**: predominantly *Cutibacterium*, *Staphylococcus*, *Brevundimonas*, *Acinetobacter*, *Corynebacterium*.
+- **147 detections retained** across the cohort.
+
+### Key cohort findings
+
+**Rickettsiales rescue evidence in 11 / 86 samples (~13%).** One Tier 1 genus-level *Orientia* detection (`16901195_S5_L001`, breadth 0.3235, ~12× NTC headroom — the highest-confidence Rickettsiales call in the cohort), and ten Tier 2 order-level "Rickettsiales detected" rescues (breadth 0.21–0.24). This pattern aligns with the expected endemic epidemiology of northeastern Thailand, where Rickettsiales (obligate intracellular, cannot be cultured on routine blood agar) account for a substantial fraction of AFI presentations. All 11 samples warrant species-specific qPCR confirmation.
+
+***Mycoplasmopsis* retained in 4 samples (mean 39.78%, max 70.55%).** Mycoplasma-class organisms are cell-wall-deficient and require sterol-supplemented media plus 1–3 weeks of incubation — exactly the profile that explains positive blood culture signal with failed aerobic subculture. Confirmation by Mycoplasma-specific PCR is recommended.
+
+**No study sample contains *B. pseudomallei* above the species-level threshold.** The genus-level *Burkholderia* signal in the cohort is dominated by *B. cepacia* complex species (kit contaminants). The validation-panel *B. pseudomallei* samples (13,744–65,016 species-level reads) remain authentic positives — this specific cohort simply does not contain melioidosis as detected by 16S.
+
+Additional candidate detections (require orthogonal confirmation): *Leptospira* in one sample at 22.78% (with a same-run NTC contamination caveat — the NTC carried 78,691 *Leptospira* reads, ~10× the study sample); *Brucella* in three samples at near-noise abundance (mean 0.98%, max 1.96%); *Streptococcus* in five samples (V1–V3 cannot resolve species).
+
+### Companion documents (manuscript-ready package)
+
+| File | Content |
+|---|---|
+| `MANUSCRIPT-FINAL-DRAFT.md` | Long-form manuscript draft (~7,800 words): Title, Abstract, Introduction, Methods, Results, Discussion, Limitations, Conclusion, References, Appendices |
+| `MANUSCRIPT-CONDENSED-DRAFT.md` | JCM-style condensed draft (~3,900 words) |
+| `MANUSCRIPT-WALKTHROUGH-THAI.md` | Thai-language walkthrough for the AFI wet-lab team |
+| `APPENDIX-VALIDATION-PANEL.md` / `APPENDIX-STUDY-SAMPLES.md` | Per-sample detection tables (Markdown) |
+| `APPENDICES.xlsx` | Same per-sample tables in Excel (4 sheets) |
+| `figure_a_sankey.html` / `figure_a_sankey.png` | Figure 1: Sankey of pre- vs. post-V4 filter genus distribution |
+| `DECONTAMINATION-FILTER-REPORT-V4.txt` | Raw V4 filter output with summary statistics and *Burkholderia* species evidence per sample |
+
+### Methodological revision log
+
+| Item | Pre-revision (V3) | Post-revision (V4) |
+|---|---|---|
+| *B. pseudomallei* safeguard | Substring match on "pseudomallei" → reported genus-level read count | Species-rank kreport parsing with ≥ 500 read floor and NTC comparison |
+| *Mycoplasmopsis* | Removed under Tier 1 "ultra-low abundance" (mis-categorized) | Retained (mean 39.78% across 4 samples) |
+| *Brevundimonas* | Not in any tier; retained at mean 16% across 9 samples | Added to Tier A; removed |
+| Study cohort size | "56 samples" (counted only Centrifuger-Detected entries) | 86 samples (71 with detections, 15 zero-detection pre-seq failures) |
+| Rickettsiales in cohort | "0 samples" (Centrifuger-only view) | 11 samples (with Minimap2 rescue rows included) |
+| Sample `00618_S7_L001` | "Failed rescue → Discordant" | Tier 2 Probable rescue → Concordant |
+| `P-aeru_S5_L001` PC | Failed (*Pseudomonas* removed by Tier A) | Passes with PC spike-in bypass |
+| Reference citations (Glassing, Lauder, Tan) | Garbled author names | Verified against PubMed (PMID 27239228, 27338728, 36997797) |
+
+---
+
+## 15. Docker Images
 
 The pipeline uses four Docker images. All images are pulled from public registries at runtime by Terra.
 
@@ -1222,7 +1375,7 @@ Then update your input JSON to reference the new image tag.
 
 ---
 
-## 14. Troubleshooting
+## 16. Troubleshooting
 
 ### Centrifuger task fails with "segfault" or exits abnormally
 
