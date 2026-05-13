@@ -21,8 +21,6 @@ jobs:
             label: linux-amd64
           - os: windows-latest
             label: windows-x64
-          - os: macos-13
-            label: macos-intel
           - os: macos-14
             label: macos-arm64
 
@@ -60,6 +58,7 @@ jobs:
         run: |
           pyinstaller \
             --onefile \
+            --clean \
             --name AFI_SheetBuilder \
             terra_sheet_builder.py
 
@@ -71,6 +70,7 @@ jobs:
           pyinstaller `
             --onefile `
             --windowed `
+            --clean `
             --name AFI_SheetBuilder `
             terra_sheet_builder.py
 
@@ -82,6 +82,7 @@ jobs:
           pyinstaller \
             --onedir \
             --windowed \
+            --clean \
             --name AFI_SheetBuilder \
             terra_sheet_builder.py
 
