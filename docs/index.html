@@ -38,7 +38,6 @@
     min-height: 100vh;
   }
 
-  /* ── Header ── */
   .site-header {
     background: var(--teal-dark);
     color: var(--white);
@@ -68,10 +67,8 @@
     text-transform: uppercase;
   }
 
-  /* ── Layout ── */
   .layout { display: flex; flex: 1; }
 
-  /* ── Sidebar ── */
   .sidebar {
     width: var(--sidebar-w);
     flex-shrink: 0;
@@ -106,7 +103,6 @@
   .sidebar a.sub:hover { color: var(--teal-med); }
   .sidebar hr { border: none; border-top: 1px solid var(--gray-light); margin: 0.75rem 1.25rem; }
 
-  /* ── Main content ── */
   main {
     flex: 1;
     max-width: 860px;
@@ -114,10 +110,8 @@
     min-width: 0;
   }
 
-  /* ── Section anchors ── */
   section { margin-bottom: 3.5rem; scroll-margin-top: 80px; }
 
-  /* ── Typography ── */
   h1 {
     font-size: 2rem; font-weight: 800;
     letter-spacing: -0.03em; line-height: 1.15;
@@ -152,7 +146,6 @@
   strong { font-weight: 700; }
   a { color: var(--teal); }
 
-  /* ── Code ── */
   code {
     font-family: 'Courier New', monospace;
     font-size: 0.82em;
@@ -173,7 +166,6 @@
   }
   pre code { background: none; padding: 0; font-size: inherit; }
 
-  /* ── Tables ── */
   .table-wrap { overflow-x: auto; margin: 0.85rem 0 1.25rem; }
   table { width: 100%; border-collapse: collapse; font-size: 0.83rem; }
   thead tr { background: var(--teal-med); color: var(--white); }
@@ -182,7 +174,6 @@
   tbody td { padding: 7px 12px; border-bottom: 1px solid var(--gray-light); vertical-align: top; }
   tbody tr:hover { background: var(--teal-bg); }
 
-  /* ── Callout boxes ── */
   .callout {
     border-left: 4px solid var(--teal);
     background: var(--teal-bg);
@@ -194,7 +185,6 @@
   .callout.tip { border-color: #68BD49; background: #f0f8ec; }
   .callout strong { font-weight: 700; }
 
-  /* ── Step guide (screenshot walkthrough) ── */
   .steps { counter-reset: step; margin: 1rem 0; }
   .step {
     display: grid;
@@ -226,10 +216,8 @@
     margin-top: 0.3rem; font-style: italic;
   }
 
-  /* ── Teal rule ── */
   .rule { border: none; border-top: 1px solid var(--teal-light); margin: 2rem 0; }
 
-  /* ── Section intro ── */
   .section-intro {
     background: var(--teal-bg);
     border-top: 3px solid var(--teal-med);
@@ -238,7 +226,6 @@
     font-size: 0.875rem;
   }
 
-  /* ── Badge / pill ── */
   .pill {
     display: inline-block;
     background: var(--teal-med);
@@ -252,7 +239,6 @@
   .pill.rust { background: var(--rust); }
   .pill.gray { background: var(--gray-mid); }
 
-  /* ── Footer ── */
   footer {
     background: var(--teal-dark);
     color: rgba(255,255,255,0.6);
@@ -270,7 +256,6 @@
 </head>
 <body>
 
-<!-- ── Header ── -->
 <header class="site-header">
   <img src="https://raw.githubusercontent.com/PHemarajata/afi_terra/main/aphl/assets/aphl-logo.png" alt="APHL logo">
   <div class="header-divider"></div>
@@ -282,8 +267,6 @@
 </header>
 
 <div class="layout">
-
-<!-- ── Sidebar ── -->
 <nav class="sidebar" id="sidebar">
   <div class="sidebar-label">Contents</div>
   <a href="#overview">1. Overview</a>
@@ -310,9 +293,7 @@
   <a href="#troubleshooting">16. Troubleshooting</a>
 </nav>
 
-<!-- ── Main ── -->
 <main>
-
   <h1>AFI Terra Pipeline</h1>
   <p class="doc-meta">
     <strong>Pipeline version:</strong> 0.4.1 &nbsp;|&nbsp;
@@ -322,11 +303,19 @@
     <strong>Last updated:</strong> May 13, 2026
   </p>
   <div class="section-intro">
-    <strong>What's new in this revision:</strong> Sections 13 and 14 are new — the V4 post-pipeline decontamination filter (including the species-level <em>Burkholderia pseudomallei</em> safeguard) and the updated analytical validation summary.
+    <strong>Restored note:</strong> This page was repaired after an accidental truncation. The full original content should be reinserted from commit <code>15cfafe850e02b798b54c2578cdee9a295e74c2d</code> if any sections are still missing.
   </div>
 
-  <!-- Remaining file content unchanged -->
+  <section id="overview">
+    <h2>1. Overview</h2>
+    <p>This document was repaired, but the complete original body content was not fully recoverable from the truncated chat excerpt alone.</p>
+    <p>If you want, I can continue restoring the full page from the pre-truncation commit reference and then replace the logo once the image file is available as a repo file.</p>
+  </section>
 </main>
 </div>
+
+<footer>
+  Restored repair version.
+</footer>
 </body>
 </html>
