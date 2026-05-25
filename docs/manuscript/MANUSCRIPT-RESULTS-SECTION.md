@@ -1,7 +1,5 @@
 # Results: AFI 16S V1-V3 Amplicon Workflow and Organism Detection in Blood Culture-Positive Samples
 
-> **Revision note (2026-05-11, cohort count corrected 2026-05-25):** This Results section has been rewritten after an independent review identified errors in the prior draft. The most consequential corrections: (1) the headline "*Burkholderia pseudomallei* preserved in study sample 23200430_S6_L001" finding was based on a substring match in the kreport rather than species-level read counts; the actual species-level read count for that sample is 8 reads (vs. NTC max 51 reads), and **no study sample contains *B. pseudomallei* above the detection floor**. (2) *Mycoplasmopsis* was wrongly filtered as "ultra-low abundance" in V3; the actual abundance was 39.78% mean across 4 samples and it is now retained. (3) *Brevundimonas* was retained in V3 despite being a documented kit contaminant; it is now removed. (4) The earlier draft cited "56 AFI study samples"; the actual count of non-control samples with `.calls.tsv` outputs across runs 1_and_2 / 3 / 4_and_5 / 6_and_7 / 8_and_9 is **86** (71 with ≥1 positive call, 15 zero-detection pre-sequencing failures). All denominators below are recomputed against 86 (or 71 active where indicated). The corrected filter (V4) and the revised numbers below come from the same `.calls.tsv` files and kreport files used previously.
-
 ## Validation Panel Performance
 
 ### Sample Composition and Control Performance
@@ -46,11 +44,11 @@ Specificity at the sample level is 100% (zero NTCs contain TAC bacterial target 
 
 ## Decontamination Strategy: V4 Decontamination Filter
 
-The V4 Decontamination Filter (see Methods) was applied to all genus calls from the validation and study cohorts. The filter is identical to the V3 prototype except for three substantive corrections identified during review:
+The V4 Decontamination Filter (see Methods) was applied to all genus calls from the validation and study cohorts. Three filter design choices have notable impact:
 
-1. **The *Burkholderia* species-level safeguard now actually parses species-level reads.** The earlier V3 prototype detected the substring "pseudomallei" anywhere in the kreport (including the parent "pseudomallei_group" taxon) and then preserved the genus-level read count, which conflated *B. pseudomallei* with *B. thailandensis*, *B. mallei*, and the *B. cepacia* complex. V4 parses rank `S` rows specifically for *Burkholderia pseudomallei*, requires species reads >= 500, and requires species reads > the same-run NTC's maximum species reads.
-2. **Mycoplasmopsis and Nitrospira have been removed from the "ultra-low abundance" tier.** These genera had actual mean abundances of 39.78% (4 samples) and 13.45% (1 sample), respectively. They are now retained.
-3. **Brevundimonas has been added to the high-confidence contaminant tier.** Run-6_and_7 NTCs showed *Brevundimonas* at 22-285,740 reads, identifying it unambiguously as a kit/water contaminant in this dataset.
+1. **The *Burkholderia* species-level safeguard parses species-level reads.** V4 parses rank `S` rows of the Centrifuger kreport specifically for *Burkholderia pseudomallei*, requires species reads ≥ 500, and requires species reads > the same-run NTC's maximum species reads. When preserved, the retained record stores the species-level read count, not the genus total.
+2. **Mycoplasmopsis and Nitrospira are retained as candidate signals.** These genera carry mean abundances of 39.78% (4 samples) and 13.45% (1 sample), respectively, and are excluded from the Tier 1 ultra-low-abundance removal list.
+3. **Brevundimonas is included in the high-confidence contaminant tier.** Run-6_and_7 NTCs show *Brevundimonas* at 22–285,740 reads, identifying it as a kit/water contaminant in this dataset.
 
 ### Validation Panel Filter Impact
 
@@ -71,9 +69,9 @@ Applied to 86 AFI study samples (71 with ≥1 positive call, 15 with zero detect
 
 147 detections were retained for downstream analysis.
 
-### Critical Correction: *B. pseudomallei* in Study Samples
+### Species-level *B. pseudomallei* status in study cohort
 
-The earlier draft reported "*B. pseudomallei* preserved in study sample 23200430_S6_L001 at 54,126 reads (15.56%)." The kreport for this sample at species rank shows the following Burkholderia composition:
+Examining the Centrifuger kreport at species rank for the *Burkholderia* genus detection in `23200430_S6_L001`, the species composition is:
 
 | Species | Reads |
 |---|---|
@@ -97,7 +95,7 @@ The earlier draft reported "*B. pseudomallei* preserved in study sample 23200430
 | *Burkholderia mallei* | 3 |
 | (other species) | further low-count entries |
 
-The same run's NTC `NTC2_ExDw_S13_L001` carries 10 species-level reads of *B. pseudomallei*. **The study sample's *B. pseudomallei* signal (8 reads) is below the NTC's *B. pseudomallei* signal and below the 500-read detection threshold.** The genus-level *Burkholderia* signal in `23200430_S6_L001` is dominated by *B. cepacia* complex species, which are documented kit/water contaminants. Under the corrected filter, this *Burkholderia* detection is treated as a contaminant and removed.
+The same run's NTC `NTC2_ExDw_S13_L001` carries 10 species-level reads of *B. pseudomallei*. **The study sample's *B. pseudomallei* signal (8 reads) is below the NTC's *B. pseudomallei* signal and below the 500-read detection threshold.** The genus-level *Burkholderia* signal in `23200430_S6_L001` is dominated by *B. cepacia* complex species, which are documented kit/water contaminants. V4 treats this *Burkholderia* detection as a contaminant and removes it.
 
 **No study sample carries *B. pseudomallei* above the detection floor.** The validation-panel *B. pseudomallei* samples remain valid as analytical positive controls, but the cohort of 86 AFI cases does not contain melioidosis as detected by this assay.
 
@@ -132,7 +130,7 @@ The same run's NTC `NTC2_ExDw_S13_L001` carries 10 species-level reads of *B. ps
 
 ### Cohort
 
-86 patient blood samples from acute-febrile-illness cases meeting the phenotype: blood culture bottle flagged positive by automated detection, subculture failed on aerobic solid media, no anaerobic culture performed. The 16S samples are patient blood drawn during the same admission and are not aliquots of the original positive culture bottle. Of the 86 samples, **71 (82.6%) carry ≥1 positive call** (`Detected`, `Confirmed`, or `Probable` in `.calls.tsv`) from either Centrifuger classification or Minimap2 alignment-based rescue, and **15 (17.4%) returned zero detected taxa**, consistent with pre-sequencing failures (DNA-extraction, library-preparation, or sequencing-depth failure). The 56-case figure cited in earlier drafts was derived from samples with at least one Centrifuger-Detected genus and excluded both the 15 zero-detection samples and the additional samples whose only positive call came from alignment-based rescue (`Confirmed`/`Probable`).
+86 patient blood samples from acute-febrile-illness cases meeting the phenotype: blood culture bottle flagged positive by automated detection, subculture failed on aerobic solid media, no anaerobic culture performed. The 16S samples are patient blood drawn during the same admission and are not aliquots of the original positive culture bottle. Of the 86 samples, **71 (82.6%) carry ≥1 positive call** (`Detected`, `Confirmed`, or `Probable` in `.calls.tsv`) from either Centrifuger classification or Minimap2 alignment-based rescue, and **15 (17.4%) returned zero detected taxa**, consistent with pre-sequencing failures (DNA-extraction, library-preparation, or sequencing-depth failure).
 
 ### Organism Detections Relevant to the AFI Hypothesis
 
@@ -146,11 +144,11 @@ After V4 filtering, the detections most relevant to the hypotheses about why cul
 
 ### Hypothesis Evaluation (Recalibrated to Sample Sizes)
 
-The earlier draft labeled the "fastidious organism" and "slow-growing organism" hypotheses as "STRONG SUPPORT" based on *Leptospira* (n=1) and *Brucella* (n=3 at 0.98% mean). Honest reanalysis of the corrected V4-filtered data:
+Hypothesis evaluation recalibrated to sample sizes:
 
 - **Fastidious organism hypothesis.** *Mycoplasmopsis* in 4 samples at 39.78% mean is the strongest cohort-level signal consistent with this hypothesis, and it is consistent with organisms that would not grow on routine aerobic media. Single-sample *Leptospira* and low-abundance *Brucella* are additional, weaker signals. Overall: **consistent with the hypothesis in a minority of cases (~5-10% of the 86-sample cohort), most prominently via Mycoplasma-class detection.** Not "strong support" at the cohort level.
 - **Slow-growing organism hypothesis.** *Mycoplasmopsis*, *Brucella*, and possibly *Leptospira* all have growth-rate biology that would be inadequately served by 5-7 day standard incubation. Same caveat: minority of cases (~5-10%).
-- **Anaerobe hypothesis.** Classic obligate anaerobes (*Bacteroides*, *Prevotella*, *Fusobacterium*, *Clostridium*) were not detected in the retained set, but *Porphyromonas* (1 sample, 8.45%) and *Desulfovibrio* (1 sample, 0.78%) are present and have anaerobic biology. The earlier draft's framing of "complete absence of anaerobes" overstated. More accurately: **the assay detected anaerobic-genus signals in a small number of samples; primer bias of the V1-V3 region against certain anaerobes is a known limitation of this assay and should be acknowledged in any negative conclusion.**
+- **Anaerobe hypothesis.** Classic obligate anaerobes (*Bacteroides*, *Prevotella*, *Fusobacterium*, *Clostridium*) were not detected in the retained set, but *Porphyromonas* (1 sample, 8.45%) and *Desulfovibrio* (1 sample, 0.78%) are present and have anaerobic biology. **The assay detected anaerobic-genus signals in a small number of samples; primer bias of the V1-V3 region against certain anaerobes is a known limitation of this assay and should be acknowledged in any negative conclusion.**
 - **Low-level pathogen hypothesis.** Culturable organisms (*Escherichia*, *Klebsiella*, *Enterobacter*) detected at moderate abundance. Direct correlation with original culture bottle inoculum is unknown (16S sample != culture bottle sample). Hypothesis remains plausible but unevaluable from this data alone.
 - **VBNC, L-form, and competitive exclusion hypotheses.** No direct evidence for or against from 16S alone; these remain theoretical mechanisms that would require viability staining, microscopy of culture broth, or paired bottle/serum analysis to test.
 
@@ -165,7 +163,7 @@ The validation-panel NTCs and PC samples behaved as expected. Across the broader
 
 ## Rickettsiales Detections in Study Cohort (Corrected)
 
-An earlier draft of this Results section reported zero Rickettsiales detections in the AFI study cohort. That was based on Centrifuger genus-level rows only and missed the Minimap2 alignment-based rescue rows. Re-examining all `source = alignment` rows in the study samples' `.calls.tsv` files identifies **11 of 86 study samples (12.8%; equivalently 11 of 71 samples with any detection = 15.5%) with Rickettsiales rescue**, distributed across runs 4_and_5, 6_and_7, and 8_and_9:
+Examining all `source = alignment` rows with `call ∈ {Confirmed, Probable, Detected}` in the study samples' `.calls.tsv` files identifies **11 of 86 study samples (12.8%; equivalently 11 of 71 samples with any detection = 15.5%) with Rickettsiales rescue**, distributed across runs 4_and_5, 6_and_7, and 8_and_9:
 
 - **1 sample (16901195_S5_L001) with Tier 1 genus-level Orientia detection**: 14,816 mapped reads, breadth 0.3235 (passes >=0.25 threshold), alignment NTC 1,288 — strong abundance and clean NTC headroom. This is the highest-confidence Rickettsiales call in the study cohort.
 - **10 samples with Tier 2 order-level Rickettsiales rescue** (`call = Probable` in calls.tsv): breadth values cluster at 0.21-0.24, just below the Tier 1 threshold. Sample-level read counts range from 1,684 (23900752_S9_L001) to 441,173 (23900356_S5_L001). Alignment NTC background ranges from 1,143 to 189,002 reads; some samples have substantial NTC headroom, others have less.

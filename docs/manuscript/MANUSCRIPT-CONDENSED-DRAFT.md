@@ -102,13 +102,13 @@ The 48-sample validation panel was processed through the V4-filter-aware pipelin
 
 The 72.1% sample-level figure matches the legacy bioinformatic validation report for this panel.
 
-**Organism-specific clinical sensitivity** ranged 0–100% (Table 1, body of `APPENDIX-VALIDATION-PANEL.md`). Notable patterns: (i) *E. coli* and *O. tsutsugamushi* achieved 100% sensitivity (with *Orientia* requiring two-tier rescue for several cases); (ii) three clinical samples (`00126_S6_L001`, `00369_S1_L001`, `25800370_S9_L001`) showed zero taxa, consistent with pre-sequencing failure rather than classification error; (iii) Streptococcus discordants reflect V1-V3 inability to resolve *S. pneumoniae* from *S. suis*; (iv) sample `00618_S7_L001` (Orientia-expected) carries a Rickettsia Tier-2 order-level rescue (`call = Probable`, breadth 0.2015) which the corrected analysis counts as concordant under the two-tier framework (the prior draft incorrectly counted this as a rescue failure).
+**Organism-specific clinical sensitivity** ranged 0–100% (Table 1, body of `APPENDIX-VALIDATION-PANEL.md`). Notable patterns: (i) *E. coli* and *O. tsutsugamushi* achieved 100% sensitivity (with *Orientia* requiring two-tier rescue for several cases); (ii) three clinical samples (`00126_S6_L001`, `00369_S1_L001`, `25800370_S9_L001`) showed zero taxa, consistent with pre-sequencing failure rather than classification error; (iii) Streptococcus discordants reflect V1-V3 inability to resolve *S. pneumoniae* from *S. suis*; (iv) sample `00618_S7_L001` (Orientia-expected) carries a Rickettsia Tier-2 order-level rescue (`call = Probable`, breadth 0.2015) which is counted as concordant under the two-tier framework.
 
 The V4 filter does not remove any organism from the validation panel that affects target detection. The 3 validation-panel *B. pseudomallei* samples (`09502813_S2_L001`, `09-0-02165`, `09700912_S3_L001`) trivially pass the species-level safeguard (species reads 13,744 / 20,061 / 65,016, all >> 500-read threshold). Without the positive-control spike-in bypass, the P-aeru_S5_L001 PC would have failed (since *Pseudomonas* is in Tier A); with the bypass, all 10 PCs are concordant — this is the bypass's specific contribution to the 72.1% figure.
 
 ### 3.2 Study cohort: cohort size and pre-sequencing failures
 
-The corrected study cohort comprises **86 patient blood specimens** across 5 sequencing runs (1_and_2, 3, 4_and_5, 6_and_7, 8_and_9). Earlier reports cited "56 samples"; that figure counted only Centrifuge-Detected genus calls and missed both the 15 zero-detection samples (pre-sequencing failures, 17.4% of cohort) and the alignment-based rescue rows. The cleaner counts: 71/86 samples (82.6%) have ≥1 positive call; 15/86 (17.4%) have zero detections (pre-sequencing failures).
+The study cohort comprises **86 patient blood specimens** across 5 sequencing runs (1_and_2, 3, 4_and_5, 6_and_7, 8_and_9): 71/86 samples (82.6%) have ≥1 positive call; 15/86 (17.4%) have zero detections (pre-sequencing failures).
 
 ### 3.3 Study cohort: filter impact
 
@@ -138,11 +138,11 @@ Confidence reflects sample-vs-alignment-NTC headroom. All 11 samples warrant Ric
 
 ### 3.5 Study cohort: species-level *B. pseudomallei* (corrected)
 
-Four *Burkholderia* genus detections were observed in study samples. Species-level kreport parsing shows that the dominant Burkholderia species in all four are *B. cepacia* complex members (*B. contaminans*, *B. cenocepacia*, *B. multivorans*, *B. sola*, *B. cepacia*) — well-documented kit/water contaminants — while *B. pseudomallei* species reads are 0–8. Sample `23200430_S6_L001`, which an earlier draft reported as a "preserved B. pseudomallei detection at 54,126 reads (15.56%)," actually carries **8 reads of *B. pseudomallei* at species level** against 12,789 reads of *B. cepacia* complex (run NTC carries 10 *B. pseudomallei* reads). **No study sample passes the species-level *B. pseudomallei* safeguard.** The 3 validation-panel *B. pseudomallei* samples remain authentic (13,744 / 20,061 / 65,016 species reads).
+Four *Burkholderia* genus detections were observed in study samples. Species-level kreport parsing shows that the dominant Burkholderia species in all four are *B. cepacia* complex members (*B. contaminans*, *B. cenocepacia*, *B. multivorans*, *B. sola*, *B. cepacia*) — well-documented kit/water contaminants — while *B. pseudomallei* species reads are 0–8. In sample `23200430_S6_L001`, species-level *B. pseudomallei* reads are 8 against 12,789 reads of *B. cepacia* complex (run NTC carries 10 *B. pseudomallei* reads). **No study sample passes the species-level *B. pseudomallei* safeguard.** The 3 validation-panel *B. pseudomallei* samples carry 13,744 / 20,061 / 65,016 species reads, demonstrating that the assay detects melioidosis when present at meaningful abundance.
 
 ### 3.6 Study cohort: candidate fastidious-organism signals
 
-- ***Mycoplasmopsis*** (cell-wall-deficient, fastidious organism class) was retained in **4 study samples** (mean abundance 39.78%, max 70.55%; read counts 537–6,568 across 5 samples). Mycoplasma-class organisms require sterol-supplemented media and 1–3 weeks of incubation; they would not be expected to grow on routine aerobic blood subculture within standard windows. This signal class was silently removed by the earlier V3 filter through a Tier-1 mis-categorization; it is now retained.
+- ***Mycoplasmopsis*** (cell-wall-deficient, fastidious organism class) was retained in **4 study samples** (mean abundance 39.78%, max 70.55%; read counts 537–6,568 across 5 samples). Mycoplasma-class organisms require sterol-supplemented media and 1–3 weeks of incubation; they would not be expected to grow on routine aerobic blood subculture within standard windows.
 - ***Leptospira*** was detected in `09801652_S5_L001` (run 6_and_7) at 7,294 reads (22.78%). The same run's NTC2_ExDw_S13_L001 carries 78,691 *Leptospira* reads (10× the study sample). The pipeline reports `ntc_reads = 0` for this sample (excluding the contaminated NTC), but the NTC contamination is a real caveat. Treat as a candidate requiring orthogonal confirmation.
 - ***Brucella*** was detected at sub-1% mean abundance (0.98% mean, max 1.96%) in 3 samples — near the noise floor. Candidate observations, not diagnoses.
 - ***Streptococcus*** in 5 samples (mean 12.75%) is genus-level only; V1-V3 does not resolve *S. pneumoniae* / *S. suis* / fastidious vs. non-fastidious species.
@@ -155,22 +155,22 @@ Inter-run reproducibility is 100% across 9 sequencing runs for the validation pa
 
 ## 4. Discussion (~800 words)
 
-### 4.1 The cohort: what the corrected analysis shows
+### 4.1 The cohort: what the analysis shows
 
 Three findings define the cohort's bacterial signal landscape:
 
 **Rickettsiales involvement in ~13% of cases is the most prevalent identifiable etiology.** The 11 samples with Minimap2 rescue evidence — 1 Tier-1 *Orientia* and 10 Tier-2 order-level "Rickettsiales detected" — align directly with the expected endemic epidemiology of northeastern Thailand. Rickettsiales are obligate intracellular pathogens that cannot be cultured on routine blood agar, so their detection by 16S in a positive-bottle / no-subculture cohort is biologically coherent: the bottle signal could plausibly come from Rickettsiales metabolic activity in the broth, but no organism would grow on agar subculture. The Tier-1 detection (16901195_S5_L001, breadth 0.3235, ~12× NTC headroom) is the highest-confidence Rickettsiales finding. The 10 Tier-2 calls have variable confidence based on alignment-NTC headroom and warrant priority-stratified confirmation.
 
-**No study sample carries *Burkholderia pseudomallei* above species-level background.** The corrected species-level kreport parsing reveals that the genus-level Burkholderia signal in the cohort is dominated by *B. cepacia* complex (kit contaminants); species-level *B. pseudomallei* reads are 0–8 per sample, below the run NTC. The earlier draft's headline preservation of *B. pseudomallei* was an implementation error in the species safeguard (substring matching on "pseudomallei" rather than species-rank parsing) — corrected here. The validation-panel *B. pseudomallei* samples remain authentic with 13,744–65,016 species reads, demonstrating the assay does detect melioidosis when present at meaningful abundance; this specific cohort simply does not contain it.
+**No study sample carries *Burkholderia pseudomallei* above species-level background.** Species-level kreport parsing shows that the genus-level Burkholderia signal in the cohort is dominated by *B. cepacia* complex (kit contaminants); species-level *B. pseudomallei* reads are 0–8 per sample, below the run NTC. The 3 validation-panel *B. pseudomallei* samples carry 13,744–65,016 species reads, demonstrating that the assay detects melioidosis when present at meaningful abundance; this specific cohort simply does not contain it.
 
-***Mycoplasmopsis* is the most prominent fastidious-organism-class signal in the cohort** (4 samples, mean abundance 39.78%, max 70.55%) and was silently filtered by the earlier V3 contaminant tier list (a misclassification corrected in V4). Mycoplasma-class organisms are cell-wall-deficient by definition and require specialized media and extended incubation — exactly the organism profile that explains a positive-bottle / no-subculture phenotype. Cohort-level prevalence is ~5%, putting this in the hypothesis-generating category for follow-up testing.
+***Mycoplasmopsis* is the most prominent fastidious-organism-class signal in the cohort** (4 samples, mean abundance 39.78%, max 70.55%). Mycoplasma-class organisms are cell-wall-deficient by definition and require specialized media and extended incubation — exactly the organism profile that explains a positive-bottle / no-subculture phenotype. Cohort-level prevalence is ~5%, putting this in the hypothesis-generating category for follow-up testing.
 
 ### 4.2 Why filter design matters
 
 The V4 filter's three core design choices each have outsized impact:
 
 - **Aggressive Tier A** removes 61 of 70 detections in the cohort (predominantly *Cutibacterium*, *Staphylococcus*, *Brevundimonas*, *Acinetobacter*, *Corynebacterium*); these are universally documented kit/skin/water contaminants in low-biomass studies (1–5).
-- **The *Burkholderia* species-level safeguard** is essential. Without it, the cohort would erroneously report *B. pseudomallei*-positive detections (the headline of an earlier draft); with proper species-rank parsing, no study sample passes the threshold.
+- **The *Burkholderia* species-level safeguard** is essential. Without species-rank parsing of the kreport, genus-level *Burkholderia* signals dominated by *B. cepacia* complex contamination could be misreported as melioidosis; with the safeguard, no study sample passes the threshold.
 - **The positive-control spike-in bypass** restores PC sensitivity. Without the bypass, the P-aeru_S5_L001 PC would fail (because *Pseudomonas* is in Tier A); with the bypass, PC accuracy is 10/10 and sample-level analytical performance is 31/43 = 72.1%, matching the legacy validation figure.
 
 ### 4.3 What the data do not support
@@ -247,4 +247,4 @@ A 16S V1-V3 amplicon workflow with two-tier Rickettsiales rescue and species-awa
 
 ---
 
-**Draft prepared 2026-05-12. Numerical results are derived from `.calls.tsv` and Centrifuge kreport files in `/Users/peerahemarajata/Downloads/AFI_P_Final/` and reflect the corrected counting established during the May 11–12 review.**
+**Draft prepared 2026-05-12. Numerical results are derived from `.calls.tsv` and Centrifuge kreport files in `/Users/peerahemarajata/Downloads/AFI_P_Final/`.**
