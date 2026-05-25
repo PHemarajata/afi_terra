@@ -1,0 +1,69 @@
+====================================================================================================
+AFI DECONTAMINATION FILTER REPORT V4
+Species-level Burkholderia safeguard with NTC comparison
+====================================================================================================
+
+SUMMARY
+----------------------------------------------------------------------------------------------------
+Total detections evaluated:                217
+Detections retained:                       147
+Detections removed:                        70 (32.3%)
+  - Tier A high-confidence contaminants:   61
+  - Burkholderia (non-pseudomallei):       4
+  - NC-only organisms:                     2
+  - Tier 1 ultra-low abundance:            2
+  - Tier 2 marginal + rare:                1
+Burkholderia detections preserved as B. pseudomallei: 0
+
+BURKHOLDERIA SPECIES-LEVEL EVIDENCE (all samples with Burkholderia genus detected)
+----------------------------------------------------------------------------------------------------
+Sample                              Run                 Genus_reads  Species_reads    NTC_max     Decision
+22900187_S10_L001                   4_and_5                     899              0         51       REMOVE
+23200430_S6_L001                    4_and_5                   54126              8         51       REMOVE
+23200519_S12_L001                   None                        876              0          0       REMOVE
+16601093_S7_L001                    None                        673              0          0       REMOVE
+
+RETAINED ORGANISM SUMMARY (top by detection count)
+----------------------------------------------------------------------------------------------------
+Genus                     Detections    Mean%     Max%
+Thermomicrobium                   11    9.13%   55.79%
+Escherichia                        6    8.28%   12.23%
+Streptococcus                      5   12.75%   23.29%
+Faucicola                          5    6.85%   10.30%
+Mycoplasmopsis                     4   39.78%   70.55%
+Klebsiella                         4   20.99%   73.90%
+Methylorubrum                      4    9.71%   17.53%
+Kocuria                            4    7.76%   16.89%
+Xanthomonas                        4   11.85%   24.04%
+Enterobacter                       3    3.39%    5.14%
+Paracoccus                         3    6.45%   11.60%
+Streptomyces                       3    9.21%   14.18%
+Agrobacterium                      3    1.20%    2.56%
+Brucella                           3    0.98%    1.96%
+Comamonas                          3    9.01%   11.59%
+Novosphingobium                    2    9.82%   17.81%
+Roseomonas                         2   15.43%   17.43%
+Acidovorax                         2    2.41%    4.19%
+Aeromonas                          2    6.18%   12.04%
+Deinococcus                        2    3.08%    5.64%
+Rothia                             2    8.86%    9.28%
+Flavobacterium                     2    7.46%   10.32%
+Caldimonas                         2    6.07%    6.61%
+Brevibacillus                      1    5.24%    5.24%
+Lactobacillus                      1    5.29%    5.29%
+Candidatus_Phycorickettsia          1    4.91%    4.91%
+Granulicatella                     1    4.42%    4.42%
+Desulfovibrio                      1    0.78%    0.78%
+Halobacteriovorax                  1    0.39%    0.39%
+Saccharopolyspora                  1    9.04%    9.04%
+Antarcticirhabdus                  1    9.87%    9.87%
+Aureimonas                         1    0.97%    0.97%
+Knoellia                           1    4.63%    4.63%
+Mariniblastus                      1    0.99%    0.99%
+Oceanithermus                      1    1.34%    1.34%
+Porphyromonas                      1    8.45%    8.45%
+Aquipseudomonas                    1    0.10%    0.10%
+Aquirufa                           1    0.21%    0.21%
+Cloacibacterium                    1    0.42%    0.42%
+Gardnerella                        1    0.45%    0.45%
+
