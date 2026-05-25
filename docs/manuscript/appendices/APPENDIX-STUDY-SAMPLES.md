@@ -1,6 +1,6 @@
 # Appendix: AFI Study Samples Detection Table
 
-> **Cohort size correction:** earlier reports cited "56 AFI study samples." The actual count of non-control samples with calls.tsv outputs across runs 1_and_2 / 3 / 4_and_5 / 6_and_7 / 8_and_9 is 86. Of these, 15 samples have zero detected taxa (pre-sequencing or library-prep failures suspected). The "56" figure in prior reports appears to have counted only samples with >=1 centrifuge-Detected genus call.
+> **Cohort size:** 86 non-control samples with calls.tsv outputs across runs 1_and_2 / 3 / 4_and_5 / 6_and_7 / 8_and_9. Of these, 15 samples have zero detected taxa (pre-sequencing or library-prep failures suspected); the remaining 71 carry >=1 positive call.
 > 
 > **Format:** one row per (sample × detected genus × source) for the 86 AFI study samples. `source = alignment` rows document Minimap2 evidence (including failed rescues, preserved for transparency).
 > 
@@ -366,7 +366,7 @@
 - **TIER_A:** removed as high-confidence kit/skin/water contaminant (Pseudomonas, Ralstonia, Bradyrhizobium, Sphingomonas, Stenotrophomonas, Methylobacterium, Acinetobacter, Cutibacterium, Staphylococcus, Corynebacterium, Brevundimonas)
 - **BURK_PSEUDOMALLEI / BURK (preserved/removed):** Burkholderia genus detection evaluated against species-level *B. pseudomallei* reads from the Centrifuge kreport. Preservation requires species reads >= 500 AND > same-run NTC species max.
 - **NC_ONLY:** removed because the genus only appears in NTC samples in this dataset.
-- **TIER_1:** removed as ultra-low-abundance environmental noise (median <0.5%). Note: *Mycoplasmopsis* and *Nitrospira* were previously in this tier in V3 but have been MOVED OUT in V4 after raw-data inspection showed substantial abundance.
+- **TIER_1:** removed as ultra-low-abundance environmental noise (median <0.5%). *Mycoplasmopsis* and *Nitrospira* are excluded from this tier and retained as candidate signals.
 - **TIER_2:** removed only if abundance <1% AND detected in <=3 samples in the cohort.
 - **KEEP:** passes filter; appears in final reported taxa.
 

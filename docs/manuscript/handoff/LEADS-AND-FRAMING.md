@@ -14,14 +14,14 @@
 
 **Lead with Rickettsiales.** The single most defensible and clinically actionable finding is the alignment-based rescue of Rickettsiales evidence in 11 of 86 AFI cases (~13%), consistent with the well-documented endemic burden of scrub typhus and spotted-fever-group rickettsioses in northeastern Thailand. The Rickettsiales finding fits the diagnostic gap the study set out to address: these are obligate intracellular pathogens that cannot grow on routine blood culture, so a positive bottle / failed-subculture phenotype with 16S detection of Rickettsiales DNA is internally coherent. The one Tier-1 *Orientia* call (`16901195_S5_L001`) is the headline within the headline.
 
-**What NOT to claim** (these were errors in earlier internal drafts and have been corrected):
+**What NOT to claim:**
 
 - Do **not** claim any study sample carries *Burkholderia pseudomallei*. None do, at species level above NTC background. The genus-level *Burkholderia* signal in the cohort is *B. cepacia* complex contamination. The 3 validation-panel cases (where *B. pseudomallei* species reads are 13,744–65,016) demonstrate the assay can detect melioidosis when present — the cohort simply does not contain it.
 - Do **not** describe the *Mycoplasmopsis* finding as "strong support for the fastidious-organism hypothesis." Four samples (4.7% of cohort) at high in-sample abundance is a candidate signal, not a cohort-level prevalence claim.
 - Do **not** make causal claims linking 16S detections to the bottle signal. The 16S samples are patient blood, not bottle aliquots. Use "candidate," "consistent with," "warrants confirmation."
 - Do **not** state that the cohort "lacks anaerobes." *Porphyromonas* and *Desulfovibrio* are retained at low frequency, and V1-V3 primer bias against some anaerobes is a known limitation. "Few anaerobes detected by this assay, with primer-bias caveat" is the honest framing.
 
-**Target journal considerations.** A pilot 16S diagnostic pipeline study with strong validation and a corrected analytical narrative sits comfortably in **Journal of Clinical Microbiology**, **Microbiology Spectrum**, **PLOS Neglected Tropical Diseases** (good fit for the AFI / NE Thailand framing), or **Open Forum Infectious Diseases**. *Lancet Microbe* and *Nature Microbiology* would require a stronger clinical-outcome anchor than the current package provides. A condensed JCM-style draft is already available at [`docs/manuscript/MANUSCRIPT-CONDENSED-DRAFT.md`](../MANUSCRIPT-CONDENSED-DRAFT.md).
+**Target journal considerations.** A pilot 16S diagnostic pipeline study with this validation profile sits comfortably in **Journal of Clinical Microbiology**, **Microbiology Spectrum**, **PLOS Neglected Tropical Diseases** (good fit for the AFI / NE Thailand framing), or **Open Forum Infectious Diseases**. *Lancet Microbe* and *Nature Microbiology* would require a stronger clinical-outcome anchor than the current package provides.
 
 ---
 
@@ -151,7 +151,7 @@ For the **3 *Brucella* candidates**:
 - **§2.4 DNA extraction.** Kit, manufacturer, version, protocol modifications.
 - **§2.5 16S V1-V3 amplification.** Primer sequences (27F / 534R or similar), polymerase, cycling.
 - **§2.6 Library preparation and sequencing.** Library prep kit, indexing strategy, MiSeq flow cell + read length + clustering.
-- **§2.7 Bioinformatics analysis.** Drop in [`AFI-TEAM-HANDOFF.md`](AFI-TEAM-HANDOFF.md) §B verbatim (or in summary form with a citation to our pipeline source code on GitHub + the back-pocket [`MANUSCRIPT-PACKAGE-FINAL.md`](../MANUSCRIPT-PACKAGE-FINAL.md) §2.4 for detail).
+- **§2.7 Bioinformatics analysis.** Drop in [`AFI-TEAM-HANDOFF.md`](AFI-TEAM-HANDOFF.md) §B verbatim, or in summary form with a citation to the pipeline source code on GitHub (https://github.com/PHemarajata/afi_terra).
 - **§2.8 Concordance definitions and statistical analysis.** Drop in [`AFI-TEAM-HANDOFF.md`](AFI-TEAM-HANDOFF.md) §B concordance box and the line about Wilson 95% confidence intervals.
 
 ### §4.3 Discussion skeleton
@@ -169,7 +169,7 @@ For the **3 *Brucella* candidates**:
 - **The 4 bioinformatics limitations** — drop in [`AFI-TEAM-HANDOFF.md`](AFI-TEAM-HANDOFF.md) §G verbatim.
 - **Pilot sample size** — 86 cases is appropriate for hypothesis generation, not for cohort-level prevalence estimates.
 - **Clinical limitations the EPI team should add:** convenience sample, single-region enrolment, no protocolised confirmatory PCR / serology cascade, no prospective treatment-response capture, no anaerobic culture comparator, no paired bottle / blood 16S.
-- **6 additional bioinformatics limitations** documented in back-pocket §5 if your target journal expects a comprehensive list.
+- **6 additional limitations** — pilot sample size, species-level resolution limits, filter dataset-dependence, no clinical-outcome correlation in this package, no anaerobic culture comparator, and the practical *B. pseudomallei* detection floor — can be added if your target journal expects a comprehensive list.
 
 ### §4.5 Conclusion skeleton
 
@@ -180,7 +180,6 @@ For the **3 *Brucella* candidates**:
 
 ## §5. Logistical reminders
 
-- **Bioinformatics support ends 2026-05-31.** Send any clarifying questions before 2026-05-30 to give time for response. After May 31, please rely on the documents in [`docs/manuscript/`](..) and the GitHub repository (https://github.com/PHemarajata/afi_terra) — both should be self-contained.
-- **The full back-pocket package** ([`MANUSCRIPT-PACKAGE-FINAL.md`](../MANUSCRIPT-PACKAGE-FINAL.md)) is the authoritative reference if any number in the slim handoff is unclear. If the two ever conflict, the back-pocket is correct.
-- **Appendices Excel file** is at [`docs/manuscript/appendices/APPENDICES.xlsx`](../appendices/APPENDICES.xlsx) — 4 sheets covering per-detection and per-sample summaries for both the validation panel and the study cohort. This is the per-sample evidence base for the manuscript.
-- **The condensed JCM-style draft** at [`docs/manuscript/MANUSCRIPT-CONDENSED-DRAFT.md`](../MANUSCRIPT-CONDENSED-DRAFT.md) (~3,900 words) may be a useful starting template if you decide to submit to a journal with a tight word-count limit.
+- **Bioinformatics support ends 2026-05-31.** Send any clarifying questions before 2026-05-30 to give time for response. After May 31, please rely on this handoff package and the GitHub repository (https://github.com/PHemarajata/afi_terra).
+- **If any number in this handoff seems unclear**, the per-sample appendix tables (`APPENDIX-VALIDATION-PANEL.md`, `APPENDIX-STUDY-SAMPLES.md`, `APPENDICES.xlsx`) are the underlying evidence base.
+- **Appendices Excel file** `APPENDICES.xlsx` contains 4 sheets covering per-detection and per-sample summaries for both the validation panel and the study cohort.

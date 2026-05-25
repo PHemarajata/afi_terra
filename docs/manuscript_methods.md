@@ -1,6 +1,6 @@
 # Methods — AFI Terra 16S Metagenomic Pipeline
 
-*Draft methods section for manuscript inclusion. Last revised 2026-05-13 to incorporate the post-pipeline V4 decontamination filter and the corrected analytical validation summary. See notes at bottom for citations and style adjustments.*
+*Draft methods section for manuscript inclusion. See notes at bottom for citations and style adjustments.*
 
 ---
 
@@ -14,7 +14,7 @@ Paired-end Illumina FASTQ reads were first subjected to human host read depletio
 
 ## Taxonomic Classification
 
-Cleaned reads were classified using Centrifuger v1.1.0 (`phemarajata614/centrifuger:1.1.0`) against a custom reference database combining the NCBI bacterial and archaeal genome collection with curated Rickettsiales genomes, ensuring comprehensive taxonomic coverage in a single classifier (replacing an earlier dual-database Kraken2 design). Classification outputs were converted to kreport format using `centrifuger-kreport`, and genus-level read counts were extracted from clade-aggregated rank-G entries using a custom Python parser. Classification was executed with 14 threads and 128 GB allocated memory on Google Compute Engine N1 custom virtual machines, with 500 GB persistent disk for database localization.
+Cleaned reads were classified using Centrifuger v1.1.0 (`phemarajata614/centrifuger:1.1.0`) against a custom reference database combining the NCBI bacterial and archaeal genome collection with curated Rickettsiales genomes, ensuring comprehensive taxonomic coverage in a single classifier. Classification outputs were converted to kreport format using `centrifuger-kreport`, and genus-level read counts were extracted from clade-aggregated rank-G entries using a custom Python parser. Classification was executed with 14 threads and 128 GB allocated memory on Google Compute Engine N1 custom virtual machines, with 500 GB persistent disk for database localization.
 
 ## Confirmatory 16S Alignment
 
@@ -88,7 +88,7 @@ NCBI sra-human-scrubber (HRRT, latest), fastp v0.23.4, Centrifuger v1.1.0, minim
 - **Add citations** for: NCBI HRRT, fastp (Chen 2018, *Bioinformatics* 34:i884), Centrifuger (Song & Langmead 2024, *Genome Biol* 25:106), Centrifuge (Kim et al. 2016, *Genome Res* 26:1721 — for the methodological predecessor), minimap2 (Li 2018, *Bioinformatics* 34:3094), samtools (Li et al. 2009 / Danecek 2021), Terra/Cromwell, and the contamination references for the V4 filter rationale (Salter 2014 *BMC Biol* 12:87 PMID 25387460; Glassing 2016 *Gut Pathog* 8:24 PMID 27239228; Lauder 2016 *Microbiome* 4:29 PMID 27338728; de Goffau 2018 *Nat Microbiol* 3:851 PMID 30046175; Tan 2023 *Nat Microbiol* 8:973 PMID 36997797).
 - **Adjust the 14-thread justification** if you prefer to omit the GCP-specific operational detail (useful for reproducibility but may read as too implementation-specific for some journals).
 - **Tense:** Currently written in past tense as appropriate for a Methods section. Adjust if your target journal prefers present tense.
-- **Length:** ~1,250 words; tighten or expand any section as needed. The V4 filter and concordance-definition sections are new in this revision (2026-05-13).
+- **Length:** ~1,250 words; tighten or expand any section as needed.
 
 ## See Also
 

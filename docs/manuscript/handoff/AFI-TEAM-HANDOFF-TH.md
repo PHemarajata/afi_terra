@@ -6,11 +6,12 @@
 
 > **วัตถุประสงค์ของเอกสารฉบับนี้**
 >
-> เอกสารฉบับนี้เป็นเวอร์ชัน**ย่อ** ของเอกสารวิเคราะห์ที่เราเตรียมไว้ เน้นให้ทีมห้องปฏิบัติการ AFI และทีมระบาดวิทยา**อ่านเข้าใจได้รวดเร็ว** โดยไม่ต้องมีพื้นฐาน bioinformatics เอกสารฉบับเต็มภาษาอังกฤษ (`MANUSCRIPT-PACKAGE-FINAL.md`, `MANUSCRIPT-RESULTS-SECTION.md`, `MANUSCRIPT-DISCUSSION-SECTION.md`) อยู่ในโฟลเดอร์ [`docs/manuscript/`](..) (โฟลเดอร์แม่ของไฟล์นี้) ใช้เป็นเอกสารอ้างอิงเมื่อต้องการรายละเอียดเพิ่มเติม
+> เอกสารฉบับนี้สรุปวิธีการวิเคราะห์ ผลลัพธ์ และข้อจำกัดสำหรับทีมห้องปฏิบัติการ AFI และทีมระบาดวิทยาเป็นภาษาไทย เน้นให้**อ่านเข้าใจได้รวดเร็ว**โดยไม่ต้องมีพื้นฐาน bioinformatics
 >
 > เอกสารคู่กันที่ควรอ่านพร้อมกัน:
 > - [`AFI-TEAM-HANDOFF.md`](AFI-TEAM-HANDOFF.md) — ฉบับภาษาอังกฤษ (มีข้อความที่สามารถนำไปใส่ในต้นฉบับโดยตรง)
 > - [`LEADS-AND-FRAMING.md`](LEADS-AND-FRAMING.md) — แนวทางการตีกรอบเรื่อง, citation เบื้องต้น, คำถามที่ทีมแพทย์/ระบาดควรตอบ, โครงร่างส่วนที่ทีมต้องเขียนเอง
+> - ตารางและเอกสารประกอบที่ส่งมาพร้อมกับการส่งมอบครั้งนี้ ดูรายการในส่วนที่ 6
 
 ---
 
@@ -98,9 +99,7 @@ V4 filter ถูกใช้กับ 217 genus-detection ทั้งหมด�
 
 ### 4.2 ไม่พบเมลิออยโดสิสในกลุ่มศึกษา
 
-มีสัญญาณ Burkholderia ที่ระดับ genus ใน 5 ตัวอย่าง แต่เมื่ออ่าน Centrifuger ระดับ species ใหม่ **ไม่มีตัวอย่างใดมี *B. pseudomallei* reads ถึงเกณฑ์ 500 และไม่มีตัวอย่างใดที่ species reads สูงกว่า NTC** สัญญาณ genus ในตัวอย่างเหล่านี้มาจาก *B. cepacia complex* ซึ่งเป็นเชื้อปนเปื้อนจาก kit/น้ำ V4 filter ลบสัญญาณเหล่านี้ออกอย่างถูกต้องทั้ง 5 ตัว
-
-**ข้อแก้ไขจากฉบับก่อนหน้า:** รายงานก่อนหน้านี้ระบุว่า `23200430_S6_L001` มี *B. pseudomallei* 54,126 reads ที่ 15.56% นั่นเป็นข้อผิดพลาด — จำนวนนั้นเป็น **genus-level count** ไม่ใช่ species-level จำนวน *B. pseudomallei* ที่ระดับ species ในตัวอย่างนี้คือ 8 reads ซึ่งต่ำกว่า NTC ของรอบเดียวกัน (10–51 reads)
+มีสัญญาณ Burkholderia ที่ระดับ genus ใน 5 ตัวอย่าง แต่เมื่ออ่าน Centrifuger ระดับ species ใหม่ **ไม่มีตัวอย่างใดมี *B. pseudomallei* reads ถึงเกณฑ์ 500 และไม่มีตัวอย่างใดที่ species reads สูงกว่า NTC** species reads ของ *B. pseudomallei* ในกลุ่มศึกษาอยู่ระหว่าง 0–8 reads ต่อตัวอย่าง ต่ำกว่า NTC ของรอบเดียวกัน (10–51 reads) และต่ำกว่าเกณฑ์ตรวจจับ 500 reads สัญญาณ genus ในตัวอย่างเหล่านี้มาจาก *B. cepacia complex* ซึ่งเป็นเชื้อปนเปื้อนจาก kit/น้ำ V4 filter ลบสัญญาณเหล่านี้ออกทั้ง 5 ตัว
 
 ### 4.3 Mycoplasmopsis — สัญญาณกลุ่ม fastidious ที่เด่นที่สุด
 
@@ -123,20 +122,19 @@ V4 filter ถูกใช้กับ 217 genus-detection ทั้งหมด�
 3. **V1-V3 primer biases** — primer 27F มีอคติในการตรวจจับ Gram-positive anaerobes บางกลุ่ม, Mycobacterium, *Bifidobacterium*/*Gardnerella*/*Atopobium* บางสปีชีส์ → "ไม่พบในการตรวจนี้" ≠ "ไม่มีในตัวอย่างจริง"
 4. **NTC contamination ในรอบ 6_and_7** — มี NTC ที่ปนเปื้อน *Leptospira*, *Burkholderia*, *Brevundimonas* จำนวนมาก ตรงนี้ต้องระบุไว้เป็น caveat ของ Leptospira candidate ใน `09801652_S5_L001`
 
-ข้อจำกัดเพิ่มเติม 6 ข้อ (ขนาด pilot, ข้อจำกัดความละเอียดระดับ species, การ depend on dataset ของ filter, ไม่มี clinical outcome ในแพ็กเกจ bioinformatics, ไม่มี anaerobic culture เปรียบเทียบ, และ practical detection floor ของ *B. pseudomallei*) อยู่ใน back-pocket §5 ([`MANUSCRIPT-PACKAGE-FINAL.md`](../MANUSCRIPT-PACKAGE-FINAL.md))
+ข้อจำกัดเพิ่มเติม 6 ข้อ (ขนาด pilot, ข้อจำกัดความละเอียดระดับ species, การ depend on dataset ของ filter, ไม่มี clinical outcome ในแพ็กเกจนี้, ไม่มี anaerobic culture เปรียบเทียบ, และ practical detection floor ของ *B. pseudomallei*) สามารถเพิ่มได้ตามที่วารสารต้องการ
 
 ---
 
-## ส่วนที่ 6 — ใครรับผิดชอบอะไร และจะหาเอกสารฉบับเต็มได้ที่ไหน
+## ส่วนที่ 6 — ใครรับผิดชอบอะไร และเอกสารประกอบ
 
 **ทีม Bioinformatics รับผิดชอบ:**
 - §2 Methods (analysis pipeline + concordance definitions) → ใช้ §B ใน [`AFI-TEAM-HANDOFF.md`](AFI-TEAM-HANDOFF.md)
 - §3 Results (validation + study cohort) → ใช้ §C + §D ใน [`AFI-TEAM-HANDOFF.md`](AFI-TEAM-HANDOFF.md)
 - §4 Discussion (4 ย่อหน้าตีความข้อมูลของเรา) → ใช้ §E ใน [`AFI-TEAM-HANDOFF.md`](AFI-TEAM-HANDOFF.md)
 - ส่วนที่เกี่ยวกับ Methods + Results ใน Abstract → ใช้ §F ใน [`AFI-TEAM-HANDOFF.md`](AFI-TEAM-HANDOFF.md)
-- ตารางรายตัวอย่าง (appendix) → อยู่ใน [`docs/manuscript/appendices/`](../appendices/)
-- รูปที่ 1 (Sankey) → อยู่ใน [`docs/manuscript/figures/`](../figures/)
-- Reference สำหรับซอฟต์แวร์ → อยู่ใน [`docs/manuscript/MANUSCRIPT-PACKAGE-FINAL.md`](../MANUSCRIPT-PACKAGE-FINAL.md) §8
+- ตารางรายตัวอย่าง (appendix), รูปที่ 1 (Sankey), V4 filter script, และ appendix generator จะถูกส่งมาพร้อมกับแพ็กเกจการส่งมอบนี้ (ดูรายการเต็มใน [`AFI-TEAM-HANDOFF.md`](AFI-TEAM-HANDOFF.md) §H)
+- Reference สำหรับซอฟต์แวร์ที่ใช้ในการวิเคราะห์ (fastp, Centrifuger, Minimap2, samtools, NCBI Scrubber, Salter 2014, Tan 2023 ฯลฯ) ใช้รายการที่ระบุไว้ใน §B ของ [`AFI-TEAM-HANDOFF.md`](AFI-TEAM-HANDOFF.md)
 
 **ทีมห้องปฏิบัติการ (NIH wet-lab) รับผิดชอบ:**
 - ส่วน Background / Introduction ของ Abstract

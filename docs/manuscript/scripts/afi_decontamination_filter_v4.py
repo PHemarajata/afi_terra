@@ -1,37 +1,38 @@
 #!/usr/bin/env python3
 """
-AFI 16S Decontamination Filter V4
+AFI 16S Decontamination Filter (V4)
 
-Fixes versus V3 (after critical review):
-  1. check_burkholderia_species() now parses the kreport file at species rank
-     and returns the actual B. pseudomallei species-level read count, not a
-     boolean substring match. The substring match in V3 triggered on any
-     occurrence of "pseudomallei" anywhere in the file (including the parent
-     "pseudomallei_group" clade) and the preserved record then reported the
-     genus-level read count, which is misleading when the genus signal is
-     dominated by B. cepacia complex contaminants.
-  2. A species-level threshold (B_PSEUDOMALLEI_MIN_SPECIES_READS) and a
-     run-NTC sanity check now gate B. pseudomallei preservation. If species
-     reads fall below the threshold or below the run's NC species reads,
-     the Burkholderia detection is treated as a non-pseudomallei contaminant
-     and removed.
-  3. When a sample is preserved as B. pseudomallei, the retained record
-     stores the species-level read count and species-level abundance
-     (species_reads / sample_total_reads), not the genus total.
-  4. Mycoplasmopsis and Nitrospira have been REMOVED from TIER_1_REMOVE.
-     In V3 they were tagged as "median <0.5% ultra-low abundance", but the
-     raw data shows Mycoplasmopsis at 537-6,568 reads in >=5 samples
-     (mean 39.78%, max 70.55%) and Nitrospira at 13.45% in 1 sample.
-     Mycoplasma-class organisms are biologically relevant (fastidious,
-     cell-wall deficient) and were silently erased by V3.
-  5. Brevundimonas has been ADDED to TIER_A_REMOVE_AGGRESSIVE. The raw data
-     shows Brevundimonas at 22-285,740 reads in run-6_and_7 NTCs - it is
-     plainly a kit/water contaminant in this dataset, despite V3 retaining
-     it as the second-most-abundant retained organism.
+Removes reagent / skin / water contaminants from 16S V1-V3 amplicon
+genus-level detections in low-biomass blood specimens, with safeguards
+for clinically critical organisms.
 
-Citations referenced in tier-A list (Salter 2014, Glassing 2016, Lauder 2016,
-de Goffau 2018, Tan 2023) must be verified before manuscript submission;
-prior reports contained garbled author names that have not yet been corrected.
+Filter tiers:
+  - Tier A (high-confidence kit / skin / water contaminants) removed on
+    any detection in clinical or study samples. Members include
+    Pseudomonas, Ralstonia, Bradyrhizobium, Sphingomonas, Stenotrophomonas,
+    Methylobacterium, Acinetobacter, Cutibacterium, Staphylococcus,
+    Corynebacterium, and Brevundimonas (see TIER_A_REMOVE_AGGRESSIVE).
+  - Burkholderia species-level safeguard: check_burkholderia_species()
+    parses the Centrifuger kreport at species rank and returns the
+    B. pseudomallei species-level read count. A Burkholderia detection
+    is preserved as B. pseudomallei only if species-level reads are at
+    least B_PSEUDOMALLEI_MIN_SPECIES_READS AND exceed the same-run NTC's
+    species-level B. pseudomallei count; the retained record stores the
+    species-level count and species-level abundance, not the genus total.
+  - Tier B (NTC-only organisms) removed globally.
+  - Tier 1 (ultra-low-abundance environmental noise, dataset-wide median
+    per-sample abundance < 0.5%) removed. Mycoplasmopsis and Nitrospira
+    are excluded from this tier and retained as candidate signals.
+  - Tier 2 (marginal organisms, median 0.5-2.0%) retained only if
+    detected in at least 2 samples AND each detection is at least 1.0%
+    abundance.
+
+Positive-control spike-in bypass: for samples typed PC_MIX8, PC_SINGLE,
+MIXED4, or generic PC, Tier A removal is skipped for any organism that is
+a documented spike-in for that PC type.
+
+Citations referenced in the Tier A rationale: Salter 2014, Glassing 2016,
+Lauder 2016, de Goffau 2018, Tan 2023.
 """
 
 import glob

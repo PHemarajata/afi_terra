@@ -9,8 +9,8 @@ Generate two manuscript appendices as markdown:
       Minimap2 rescue evidence even when rescue failed
 
   APPENDIX-STUDY-SAMPLES.md
-    - one row per (sample, detected genus, source) for the 56 AFI study
-      samples
+    - one row per (sample, detected genus, source) for the AFI study
+      samples (86 non-control samples across 5 runs)
     - includes pipeline NCmax, same-run NTC cross-check, V4 filter tier
       decision, Burkholderia species-level evidence, confidence, and
       hypothesis-class tag
@@ -945,7 +945,7 @@ def main():
     n_empty = sum(1 for r in study_rows_out if r.get('genus') == '-' and r.get('reads') == '-')
     study_md = ['# Appendix: AFI Study Samples Detection Table',
                 '',
-                f'> **Cohort size correction:** earlier reports cited "56 AFI study samples." The actual count of non-control samples with calls.tsv outputs across runs 1_and_2 / 3 / 4_and_5 / 6_and_7 / 8_and_9 is {n_study_samples}. Of these, {n_empty} samples have zero detected taxa (pre-sequencing or library-prep failures suspected). The "56" figure in prior reports appears to have counted only samples with >=1 centrifuge-Detected genus call.',
+                f'> **Cohort size:** {n_study_samples} non-control samples with calls.tsv outputs across runs 1_and_2 / 3 / 4_and_5 / 6_and_7 / 8_and_9. Of these, {n_empty} samples have zero detected taxa (pre-sequencing or library-prep failures suspected); the remaining {n_study_samples - n_empty} carry >=1 positive call.',
                 '> ',
                 f'> **Format:** one row per (sample × detected genus × source) for the {n_study_samples} AFI study samples. `source = alignment` rows document Minimap2 evidence (including failed rescues, preserved for transparency).',
                 '> ',

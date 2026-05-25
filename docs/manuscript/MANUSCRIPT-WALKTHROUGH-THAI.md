@@ -11,7 +11,7 @@
 > - `APPENDIX-VALIDATION-PANEL.md`, `APPENDIX-STUDY-SAMPLES.md`, `APPENDICES.xlsx` — ตารางผลรายตัวอย่าง
 > - `figure_a_sankey.html` / `figure_a_sankey.png` — รูปที่ 1 แสดงการกระจายของจุลชีพก่อน/หลังการกรอง
 >
-> เอกสารฉบับนี้เขียนวันที่ 2026-05-12 และสะท้อนผลการวิเคราะห์ฉบับที่ได้รับการแก้ไขแล้ว (corrected analysis) หลังการตรวจสอบในวันที่ 11–12 พฤษภาคม
+> เอกสารฉบับนี้เขียนวันที่ 2026-05-12
 
 ---
 
@@ -51,7 +51,7 @@
 
 เป็นตัวอย่างจริงจากผู้ป่วย AFI ที่เพาะเลือดได้ positive bottle แต่ไม่ขึ้นเชื้อใน subculture (กลุ่มเป้าหมายของงานวิจัย) จัดอยู่ใน 5 run การ sequencing (1_and_2, 3, 4_and_5, 6_and_7, 8_and_9)
 
-> **หมายเหตุสำคัญ:** เอกสารฉบับก่อนหน้านี้ระบุว่าชุดศึกษามี "56 ตัวอย่าง" — ตัวเลขนี้ผิด ตัวเลขจริงคือ **86 ตัวอย่าง** ที่ผ่าน pipeline (มีไฟล์ผลลัพธ์) แต่ในจำนวนนี้ 15 ตัวอย่างไม่พบจุลชีพใด ๆ เลย (zero detection — น่าจะเกิดจาก DNA extraction / library prep ล้มเหลว) ส่วน 71 ตัวอย่างพบจุลชีพอย่างน้อย 1 ชนิด ตัวเลข "56" ของเอกสารฉบับก่อนเกิดจากนับเฉพาะตัวอย่างที่มีผล "Detected" จาก Centrifuge เท่านั้น และพลาดตัวอย่างที่มีเฉพาะผลจาก Minimap2 rescue กับตัวอย่างที่ไม่พบเชื้อเลย
+> **หมายเหตุสำคัญ:** ชุดศึกษามี **86 ตัวอย่าง** ที่ผ่าน pipeline (มีไฟล์ผลลัพธ์) ในจำนวนนี้ 15 ตัวอย่างไม่พบจุลชีพใด ๆ เลย (zero detection — น่าจะเกิดจาก DNA extraction / library prep ล้มเหลว) ส่วน 71 ตัวอย่างพบจุลชีพอย่างน้อย 1 ชนิด
 
 ---
 
@@ -142,7 +142,7 @@ minimap2 จะนำ read ทั้งหมดไปจัด alignment กั
 
 หลังจากผ่าน pipeline ขั้นที่ 1–4 แล้ว เรายังมี "Detected" calls อีกจำนวนหนึ่งที่น่าจะเป็นการปนเปื้อน เพราะ NTC subtraction ไม่สามารถจัดการกับการปนเปื้อนทั้งหมดได้ (โดยเฉพาะการปนเปื้อนที่ NTC ตัวที่ใช้คำนวณ NCmax ก็มีปนเปื้อนเหมือนกัน ทำให้ค่า NCmax ต่ำกว่าที่ควรจะเป็น) เราจึงเพิ่ม **decontamination filter** อีกชั้นหนึ่ง
 
-V4 (เวอร์ชันที่ 4 หลังการแก้ไขในขั้นทบทวน) ประกอบด้วย 4 tier และมีข้อยกเว้นพิเศษอีก 1 ข้อ
+V4 filter ประกอบด้วย 4 tier และมีข้อยกเว้นพิเศษอีก 1 ข้อ
 
 #### Tier A — จุลชีพปนเปื้อนความเชื่อมั่นสูง (high-confidence kit/skin/water contaminants)
 
@@ -165,7 +165,7 @@ genus เหล่านี้ปรากฏใน landmark studies เกี�
 
 ใน validation panel: ตัวอย่างที่คาดว่าเป็น *B. pseudomallei* 3 ตัว (09502813_S2_L001, 09-0-02165, 09700912_S3_L001) มี species-level reads 13,744 / 20,061 / 65,016 ซึ่งผ่านเกณฑ์ทั้งหมด
 
-ใน study cohort: ไม่มีตัวอย่างใดผ่านเกณฑ์ (รายละเอียดใน section 5.2 ของเอกสารนี้ — เป็นข้อแก้ไขสำคัญจากเอกสารฉบับก่อนหน้า)
+ใน study cohort: ไม่มีตัวอย่างใดผ่านเกณฑ์ (รายละเอียดใน section 5.2 ของเอกสารนี้)
 
 #### Tier B — NTC-only organisms
 
@@ -175,7 +175,7 @@ genus เหล่านี้ปรากฏใน landmark studies เกี�
 
 16 genus ที่มี median abundance < 0.5% และไม่น่าจะเป็นเชื้อก่อโรค: *Shigella, Metapseudomonas, Stutzerimonas, Capsulimonas, Chamaesiphon, Chloroflexus, Flavihumibacter, Hymenobacter, Limnoglobus, Methylovirgula, Microvirga, Pelagovum, Pseudonocardia, Rufibacter, Salmonella, Spirosoma*
 
-(*Mycoplasmopsis* และ *Nitrospira* เคยอยู่ในรายการนี้ใน V3 แต่ถูกย้ายออกใน V4 หลังจากตรวจดูข้อมูลจริงพบว่าทั้งสองมีปริมาณสูงกว่าที่เคยเข้าใจ — รายละเอียดในข้อแก้ไขที่ section 6)
+(*Mycoplasmopsis* และ *Nitrospira* ไม่อยู่ในรายการนี้ภายใต้ V4 เนื่องจากข้อมูลจริงแสดงปริมาณสูงกว่าเกณฑ์ ultra-low-abundance)
 
 #### Tier 2 — marginal organisms
 
@@ -232,7 +232,7 @@ genus เหล่านี้ปรากฏใน landmark studies เกี�
 
 1. **3 ตัวอย่าง pre-sequencing failure** (00126_S6, 00369_S1, 25800370_S9) มี zero taxa — ปัญหาน่าจะอยู่ที่ DNA extraction / library prep / sequencing depth ไม่ใช่ที่ classifier
 2. **6 ตัวอย่างของ Streptococcus** (S. pneumoniae 3 + S. suis 3) — V1-V3 ไม่สามารถแยก species ได้ คงต้องรายงานในระดับ genus เท่านั้น
-3. **00618_S7_L001 (Orientia expected)** — เคยถูกระบุว่า "rescue failed" ในเอกสารฉบับก่อนหน้า แต่จริง ๆ แล้ว `.calls.tsv` แสดง `call = Probable` (Tier 2 order-level rescue triggered) ดังนั้นนับเป็น concordant ตามกรอบ two-tier framework
+3. **00618_S7_L001 (Orientia expected)** — `.calls.tsv` แสดง `call = Probable` (Tier 2 order-level rescue triggered) นับเป็น concordant ตามกรอบ two-tier framework
 4. **V4 filter ไม่ตัด target organism ใด ๆ ใน validation panel** — เพราะตัวอย่าง validation มักจะมี expected organism เป็น dominant signal (abundance สูง) อยู่แล้ว ไม่มี Tier A contaminant ที่ตรวจพบในระดับที่มีผลต่อ target
 
 ### 4.4 ผลของ control validity
@@ -254,13 +254,13 @@ genus เหล่านี้ปรากฏใน landmark studies เกี�
 - **71 / 86 ตัวอย่าง (82.6%)** มี ≥ 1 positive call (Detected, Confirmed, หรือ Probable)
 - **15 / 86 ตัวอย่าง (17.4%)** มี zero detection — เป็น pre-sequencing failure แนะนำให้พิจารณาทำซ้ำหรือใช้ diagnostic modality อื่น
 
-### 5.2 ข้อค้นพบสำคัญ — และข้อแก้ไขจากเอกสารฉบับก่อนหน้า
+### 5.2 ข้อค้นพบสำคัญ
 
 มี 3 ข้อค้นพบที่ทีมต้องเข้าใจให้ชัดก่อนเขียนต้นฉบับ
 
 #### ข้อค้นพบที่ 1 (สำคัญที่สุด): พบ Rickettsiales rescue ใน 11 / 86 ตัวอย่าง (12.8%)
 
-**ข้อค้นพบนี้พลาดไปในเอกสารฉบับก่อนหน้า** เพราะการวิเคราะห์เดิมดูเฉพาะ Centrifuge-Detected rows และพลาด Minimap2 alignment rescue rows ใน `.calls.tsv`
+หลักฐานนี้มาจากแถว Minimap2 alignment rescue ใน `.calls.tsv` (rows ที่มี `source = alignment` และ `call ∈ {Confirmed, Probable, Detected}`)
 
 11 ตัวอย่างที่มี Rickettsiales rescue:
 
@@ -289,11 +289,9 @@ genus เหล่านี้ปรากฏใน landmark studies เกี�
 
 #### ข้อค้นพบที่ 2: ไม่พบ B. pseudomallei ในระดับ species ใด ๆ ใน study cohort
 
-**ข้อแก้ไขสำคัญ:** เอกสารฉบับก่อนหน้านี้รายงานว่า "*B. pseudomallei* preserved in study sample 23200430_S6_L001 at 54,126 reads (15.56%)" — **คำสั่งนี้ผิด**
+V4 filter parse Centrifuger kreport ที่ระดับ species (rank `S`) สำหรับ *Burkholderia pseudomallei* และจะเก็บไว้เป็น *B. pseudomallei* เฉพาะเมื่อ species-level reads ≥ 500 และสูงกว่า NTC ในรอบเดียวกัน
 
-ปัญหาคือฟังก์ชันใน V3 filter เก่าใช้ substring matching คำว่า "pseudomallei" ในไฟล์ kreport ซึ่งจะ trigger ได้ทุกแถวที่มีคำนี้ (รวมถึง parent taxon "pseudomallei_group") ทำให้ระบบนึกว่ามี *B. pseudomallei* เลยรายงาน genus-level read count (54,126) เป็น species-level
-
-เมื่อ parse ที่ระดับ species จริง ๆ ในตัวอย่าง 23200430_S6_L001 พบว่า
+ในตัวอย่าง 23200430_S6_L001 ซึ่งมี *Burkholderia* genus-level reads = 54,126 เมื่อ parse ที่ระดับ species พบว่า
 
 | Burkholderia species | reads |
 |---|---|
@@ -315,7 +313,7 @@ V4 filter ที่แก้ไขใหม่จึงตัด *Burkholderia* 
 
 #### ข้อค้นพบที่ 3: Mycoplasmopsis เป็น candidate signal ของเชื้อ fastidious ที่ใหญ่ที่สุดใน cohort
 
-***Mycoplasmopsis*** ตรวจพบใน 4 ตัวอย่าง โดยมี read count 537–6,568 reads (mean abundance 39.78%, max 70.55%) — แต่**ถูกตัดทิ้งโดย V3 filter เก่า**เพราะถูกจัดเข้า Tier 1 "ultra-low abundance" ผิดพลาด V4 ย้ายออกจาก Tier 1 และคงไว้
+***Mycoplasmopsis*** ตรวจพบใน 4 ตัวอย่าง โดยมี read count 537–6,568 reads (mean abundance 39.78%, max 70.55%) V4 filter คงสัญญาณนี้ไว้ (อยู่นอก Tier 1 ultra-low-abundance)
 
 **ความหมายทางคลินิก:** Mycoplasma-class organisms เป็นเชื้อที่
 - **ไม่มี cell wall** (no peptidoglycan)
@@ -340,32 +338,9 @@ V4 filter ที่แก้ไขใหม่จึงตัด *Burkholderia* 
 
 ---
 
-## 6. ภาพรวมข้อแก้ไขสำคัญจากเอกสารฉบับก่อนหน้า
+## 6. การวิเคราะห์เพิ่มเติมที่จัดทำไว้สำหรับทีม
 
-ระหว่างการทบทวนข้อมูลในวันที่ 11–12 พฤษภาคม พบข้อผิดพลาดในเอกสารและ filter ฉบับเก่า (V3) ที่ได้แก้ไขแล้วเป็น V4 รายการสรุปดังนี้
-
-| ประเด็น | V3 เดิม (ผิด) | V4 แก้ไข (ถูก) |
-|---|---|---|
-| *B. pseudomallei* safeguard | ใช้ substring match คำว่า "pseudomallei" → รายงาน 54,126 reads ในตัวอย่าง 23200430_S6_L001 | parse kreport ที่ระดับ species จริง → species reads = 8, ตัดทิ้งเพราะไม่ผ่านเกณฑ์ |
-| Mycoplasmopsis | จัดเข้า Tier 1 "ultra-low abundance" → ตัดทิ้ง | ย้ายออกจาก Tier 1 → คงไว้ใน 4 ตัวอย่าง |
-| Brevundimonas | คงไว้ใน 9 ตัวอย่าง mean 16% | ย้ายเข้า Tier A → ตัดทิ้ง (NTC ใน run 6_and_7 มี Brevundimonas สูงถึง 285,740 reads) |
-| Cohort size | "56 ตัวอย่าง" | "86 ตัวอย่าง" (71 มี detection, 15 เป็น pre-seq failure) |
-| Rickettsiales ใน cohort | "0 ตัวอย่าง" (มอง Centrifuge only) | "11 ตัวอย่าง" (รวม Minimap2 alignment rescue) |
-| Sample 00618_S7_L001 | "rescue failed → discordant" | call = Probable Tier 2 → concordant |
-| PC P-aeru_S5_L001 | "fail" เพราะ Pseudomonas ถูก Tier A ตัด | "pass" หลังเพิ่ม PC bypass |
-| Sample-level accuracy | 22/33 = 66.7% clinical-only (ใช้ denominator ผิด รวม PC_SINGLE) | 21/33 = 63.6% clinical + 10/10 PC = 31/43 = 72.1% sample-level |
-| Citation Glassing 2016 | author "GaFixture S" (สะกดผิด) | author "Galandiuk S" (ถูก) |
-| Citation Lauder 2016 | author "Ralan A" (สะกดผิด) | author "Roche AM" (ถูก) |
-| Citation Tan 2023 | author "Tan KS, Liu Y, Mathema B" (ผิด) | author "Tan CCS, Ko KKK, Chen H" (ถูก, ตามที่ทีมส่ง PubMed link มาให้ยืนยัน) |
-| Anaerobic claim | "no anaerobes detected" | มี Porphyromonas และ Desulfovibrio + V1-V3 มี primer bias ต่อ anaerobes บางตัว |
-| Mortality statistics ใน discussion | อ้างเลข % โดยไม่มี citation | ตัดออก (ต้องใส่ citation ภายหลัง) |
-| Causal language | "16S identified organisms that CAUSED failed culture" | "16S DETECTED organism DNA" — correlative ไม่ใช่ causal |
-
----
-
-## 7. การวิเคราะห์เพิ่มเติมที่จัดทำไว้สำหรับทีม
-
-### 7.1 ตารางผลรายตัวอย่าง (appendix files)
+### 6.1 ตารางผลรายตัวอย่าง (appendix files)
 
 ทุก detection ในทุกตัวอย่างมีการบันทึกแบบละเอียดในไฟล์ต่อไปนี้
 
@@ -374,11 +349,11 @@ V4 filter ที่แก้ไขใหม่จึงตัด *Burkholderia* 
 - **`APPENDICES.xlsx`**: เนื้อหาเดียวกันในรูป Excel 4 sheets เพื่อให้ทีมเปิดดูใน spreadsheet ได้สะดวก
 - **`DECONTAMINATION-FILTER-REPORT-V4.txt`**: output ดิบจาก V4 filter พร้อม summary statistics และ Burkholderia species evidence รายตัวอย่าง
 
-### 7.2 รูปประกอบ
+### 6.2 รูปประกอบ
 
 - **`figure_a_sankey.html`** (interactive) และ **`figure_a_sankey.png`** (รูปนิ่ง) — Sankey diagram แสดงการกระจายของจุลชีพ**ก่อน vs หลัง V4 filter** ใน study cohort สามารถ hover ใน HTML เพื่อดู read count ของแต่ละ flow
 
-### 7.3 ซอร์สโค้ดที่ใช้
+### 6.3 ซอร์สโค้ดที่ใช้
 
 - `afi_decontamination_filter_v4.py`: V4 filter ที่ใช้รัน
 - `generate_appendices.py`: script สำหรับสร้างตาราง appendix (สามารถรันใหม่ได้หาก input data เปลี่ยน)
@@ -386,7 +361,7 @@ V4 filter ที่แก้ไขใหม่จึงตัด *Burkholderia* 
 
 ---
 
-## 8. คำแนะนำเรื่องการทดสอบยืนยัน (confirmatory testing)
+## 7. คำแนะนำเรื่องการทดสอบยืนยัน (confirmatory testing)
 
 จุลชีพที่ตรวจพบในการศึกษานี้เป็น **candidate detections** ทั้งหมด ก่อนรายงานผลทางคลินิกควรยืนยันด้วยวิธีอื่นในแต่ละกลุ่ม
 
@@ -400,7 +375,7 @@ V4 filter ที่แก้ไขใหม่จึงตัด *Burkholderia* 
 
 ---
 
-## 9. ข้อจำกัดของการศึกษาที่ทีมต้องตระหนัก
+## 8. ข้อจำกัดของการศึกษาที่ทีมต้องตระหนัก
 
 1. **ตัวอย่าง 16S = เลือดผู้ป่วย ไม่ใช่ขวดเพาะเชื้อ** — เราตรวจจาก patient blood ไม่ใช่จากของเหลวใน blood culture bottle ดังนั้นการเชื่อมโยงระหว่าง 16S detection กับ positive bottle signal เป็น correlative ไม่ใช่ causal
 2. **ไม่มีการประเมิน viability** — 16S ตรวจ DNA ไม่ว่าเชื้อจะมีชีวิตอยู่หรือไม่ (รวมถึง dead cells และ VBNC state)
@@ -412,7 +387,7 @@ V4 filter ที่แก้ไขใหม่จึงตัด *Burkholderia* 
 
 ---
 
-## 10. สิ่งที่ต้องเพิ่มจากทีมก่อนส่งต้นฉบับตีพิมพ์
+## 9. สิ่งที่ต้องเพิ่มจากทีมก่อนส่งต้นฉบับตีพิมพ์
 
 ตามตารางท้าย `MANUSCRIPT-FINAL-DRAFT.md` มี placeholders ที่ต้องการ team input อยู่ 18 จุด สรุปประเด็นหลัก:
 
@@ -430,7 +405,7 @@ V4 filter ที่แก้ไขใหม่จึงตัด *Burkholderia* 
 
 ---
 
-## 11. สรุปสำหรับทีม
+## 10. สรุปสำหรับทีม
 
 โดยสรุป pipeline 16S V1-V3 ของเรามีคุณสมบัติดังนี้
 
@@ -448,10 +423,10 @@ V4 filter ที่แก้ไขใหม่จึงตัด *Burkholderia* 
 - 17% เป็น pre-sequencing failure
 - ข้อมูล cohort สนับสนุนว่าเป็น **pilot, hypothesis-generating study** — ทุก candidate ควรยืนยันด้วยวิธีอื่นก่อนรายงานผลทางคลินิก
 
-ทีมห้องปฏิบัติการสามารถนำเนื้อหานี้ไปต่อยอดเขียนต้นฉบับเพิ่มเติมในส่วนที่เป็นข้อมูล wet-lab, clinical, epidemiological และ ethics ที่ทีม bioinformatics ไม่มีข้อมูลโดยตรง ตามรายการที่ section 10 ของเอกสารนี้
+ทีมห้องปฏิบัติการสามารถนำเนื้อหานี้ไปต่อยอดเขียนต้นฉบับเพิ่มเติมในส่วนที่เป็นข้อมูล wet-lab, clinical, epidemiological และ ethics ที่ทีม bioinformatics ไม่มีข้อมูลโดยตรง ตามรายการที่ section 9 ของเอกสารนี้
 
 ---
 
 **หากมีข้อสงสัยเพิ่มเติม หรือต้องการให้อธิบายส่วนใดเพิ่ม ทีม bioinformatics ยินดีให้คำตอบครับ/ค่ะ**
 
-*เอกสารฉบับนี้เขียนวันที่ 2026-05-12 อิงตามผลการวิเคราะห์ที่ผ่านการแก้ไขแล้ว (V4 filter, corrected counting, verified citations) ทุกตัวเลขในเอกสารนี้สามารถยืนยันได้จากไฟล์ `.calls.tsv` และ kreport ของ Centrifuger ใน `/Users/peerahemarajata/Downloads/AFI_P_Final/`*
+*เอกสารฉบับนี้เขียนวันที่ 2026-05-12 ทุกตัวเลขในเอกสารนี้สามารถยืนยันได้จากไฟล์ `.calls.tsv` และ kreport ของ Centrifuger ใน `/Users/peerahemarajata/Downloads/AFI_P_Final/`*

@@ -1,6 +1,6 @@
 # Detection of Bacterial Pathogens in Acute Febrile Illness Using a 16S rRNA V1-V3 Workflow with Two-Tier Rickettsiales Rescue and Species-Aware Decontamination
 
-**Manuscript package (final integrated draft).** Prepared 2026-05-25. All numerical results and per-sample data are derived from the actual `.calls.tsv` and Centrifuger kreport files in `/Users/peerahemarajata/Downloads/AFI_P_Final/` and use the corrected counting established during the May 11–12 review and the cohort-count correction (56 → 86) of May 25. The appendix generator (`generate_appendices.py`) and the V4 filter (`afi_decontamination_filter_v4.py`) can regenerate all numbers and tables from the raw inputs.
+**Manuscript package (integrated draft).** Prepared 2026-05-25. All numerical results and per-sample data are derived from the `.calls.tsv` and Centrifuger kreport files in `/Users/peerahemarajata/Downloads/AFI_P_Final/`. The appendix generator (`generate_appendices.py`) and the V4 filter (`afi_decontamination_filter_v4.py`) can regenerate all numbers and tables from the raw inputs.
 
 ---
 
@@ -34,9 +34,9 @@
 
 **Methods.** We developed and validated a 16S rRNA V1-V3 amplicon workflow combining Centrifuger v1.1.0 primary taxonomic classification with Minimap2 alignment-based rescue against a curated 7-genome Rickettsiales reference panel, a two-tier reporting framework that distinguishes confirmed genus-level calls (Tier 1) from order-level "Rickettsiales detected" rescues (Tier 2), and a multi-tiered post-pipeline decontamination filter (V4) that includes a species-level safeguard for *Burkholderia pseudomallei* and a positive-control spike-in bypass. The pipeline is implemented in WDL on Terra.bio / Cromwell with Google Cloud Batch orchestration. The assay was validated against a 48-sample panel (33 clinical samples with known reference-laboratory diagnoses, 10 positive controls, 5 negative template controls) and applied to a study cohort of 86 AFI cases with positive automated blood culture signal but failed subculture recovery.
 
-**Results.** The validated assay achieves 72.1% (31/43, 95% CI 57.5%–83.6%) sample-level analytical performance combining clinical and positive-control samples — 63.6% (21/33, 95% CI 46.0%–78.5%) strict clinical concordance, 100% (10/10) positive-control concordance — with 100% specificity (5/5 NTCs clear of all TaqMan Array Card bacterial target genera) and 100% inter-run reproducibility across nine sequencing runs. Applied to the AFI study cohort (n=86; 71 with ≥1 positive call, 15 zero-detection pre-sequencing failures), the workflow identified Rickettsiales rescue evidence in **11 of 86 samples (12.8%; 11/71 active samples = 15.5%)** — 1 Tier-1 genus-level *Orientia* detection (sample 16901195_S5_L001, breadth 0.3235, ~12× NTC headroom) and 10 Tier-2 order-level rescues with breadth-of-coverage 0.21–0.24; *Mycoplasmopsis* (a fastidious, cell-wall-deficient organism class) in 4 samples (mean abundance 39.78%, max 70.55%); a candidate *Leptospira* detection in 1 sample (22.78% abundance, with a same-run NTC contamination caveat); and *Brucella* signals at low abundance (0.98% mean) in 3 samples. **No study sample contains *Burkholderia pseudomallei* above the species-level detection threshold** (prior reports of preserved *B. pseudomallei* conflated genus-level with species-level read counts and have been corrected). The V4 filter removed 70 of 217 detections (32.3%) from the cohort, predominantly Tier-A kit/skin/water contaminants.
+**Results.** The validated assay achieves 72.1% (31/43, 95% CI 57.5%–83.6%) sample-level analytical performance combining clinical and positive-control samples — 63.6% (21/33, 95% CI 46.0%–78.5%) strict clinical concordance, 100% (10/10) positive-control concordance — with 100% specificity (5/5 NTCs clear of all TaqMan Array Card bacterial target genera) and 100% inter-run reproducibility across nine sequencing runs. Applied to the AFI study cohort (n=86; 71 with ≥1 positive call, 15 zero-detection pre-sequencing failures), the workflow identified Rickettsiales rescue evidence in **11 of 86 samples (12.8%; 11/71 active samples = 15.5%)** — 1 Tier-1 genus-level *Orientia* detection (sample 16901195_S5_L001, breadth 0.3235, ~12× NTC headroom) and 10 Tier-2 order-level rescues with breadth-of-coverage 0.21–0.24; *Mycoplasmopsis* (a fastidious, cell-wall-deficient organism class) in 4 samples (mean abundance 39.78%, max 70.55%); a candidate *Leptospira* detection in 1 sample (22.78% abundance, with a same-run NTC contamination caveat); and *Brucella* signals at low abundance (0.98% mean) in 3 samples. **No study sample contains *Burkholderia pseudomallei* above the species-level detection threshold.** The V4 filter removed 70 of 217 detections (32.3%) from the cohort, predominantly Tier-A kit/skin/water contaminants.
 
-**Conclusion.** The 16S V1-V3 assay, with the two-tier Rickettsiales framework and the species-aware V4 decontamination filter, is suitable for analytical surveillance of bacterial pathogens in AFI cases. Approximately one in eight AFI cases with positive culture / failed subculture shows Rickettsiales rescue evidence; an additional small minority shows fastidious-organism candidate signals (*Mycoplasmopsis*, *Leptospira*, *Brucella*). All candidate detections require orthogonal confirmation (PCR, serology, specialised culture) before clinical reporting. The corrected analysis frames the cohort study as pilot, hypothesis-generating data, with Rickettsiales involvement as the most prevalent identifiable etiology.
+**Conclusion.** The 16S V1-V3 assay, with the two-tier Rickettsiales framework and the species-aware V4 decontamination filter, is suitable for analytical surveillance of bacterial pathogens in AFI cases. Approximately one in eight AFI cases with positive culture / failed subculture shows Rickettsiales rescue evidence; an additional small minority shows fastidious-organism candidate signals (*Mycoplasmopsis*, *Leptospira*, *Brucella*). All candidate detections require orthogonal confirmation (PCR, serology, specialised culture) before clinical reporting. The cohort study is framed as pilot, hypothesis-generating data, with Rickettsiales involvement as the most prevalent identifiable etiology.
 
 ---
 
@@ -52,7 +52,7 @@ In low-biomass clinical samples such as blood, sequencing-based bacterial detect
 
 We developed and validated a 16S V1-V3 amplicon workflow for AFI bacterial-pathogen surveillance that addresses these constraints through four design choices: (1) **Centrifuger primary classification** for breadth across all bacterial genera, against a single combined index; (2) **Minimap2 alignment-based rescue** against a curated Rickettsiales 16S reference panel to compensate for V1-V3 limited genus-level discrimination; (3) a **two-tier Rickettsiales reporting framework** that distinguishes confirmed genus-level calls (Tier 1 "Confirmed") from order-level "Rickettsiales detected" rescues (Tier 2 "Probable") — both clinically actionable in a doxycycline-treatable endemic context; and (4) a **species-aware decontamination filter (V4)** that aggressively removes documented kit / skin / water contaminant genera while implementing species-level safeguards for clinically critical organisms (*B. pseudomallei*) and a positive-control spike-in bypass to allow PC samples to be evaluated for their expected organisms.
 
-This report presents the analytical validation of the workflow against a 43-sample reference panel (33 clinical samples with reference-laboratory diagnoses plus 10 positive controls) and 5 negative template controls, and the application of the validated workflow to a study cohort of 86 AFI cases drawn from positive blood cultures with failed subculture recovery. We report performance metrics, identify the candidate organisms detected in the cohort, and discuss the implications for AFI diagnostic algorithms in endemic regions. Because the May 2026 review identified several substantive errors in earlier analyses (notably a spurious *B. pseudomallei* preservation claim, a wrongly filtered *Mycoplasmopsis* signal, and a miscount of Rickettsiales rescue evidence), this report also explicitly documents the corrections.
+This report presents the analytical validation of the workflow against a 43-sample reference panel (33 clinical samples with reference-laboratory diagnoses plus 10 positive controls) and 5 negative template controls, and the application of the validated workflow to a study cohort of 86 AFI cases drawn from positive blood cultures with failed subculture recovery. We report performance metrics, identify the candidate organisms detected in the cohort, and discuss the implications for AFI diagnostic algorithms in endemic regions.
 
 ---
 
@@ -72,9 +72,9 @@ Two distinct sample sets were used in this study.
 - **10 positive controls** comprising 4 PC_SINGLE samples (single-organism control material for *E. coli*, *P. aeruginosa*, *S. pneumoniae*, *S. suis*), 5 PC_MIX8 samples (ZymoBIOMICS Microbial Community Standard: *Bacillus subtilis*, *Enterococcus faecalis*, *Escherichia coli*, *Lactobacillus fermentum* [now *Limosilactobacillus fermentum*], *Listeria monocytogenes*, *Pseudomonas aeruginosa*, *Salmonella enterica*, *Staphylococcus aureus*; the standard also includes two yeasts that are not detectable by 16S), and 1 MIXED4 sample (*E. coli* + *P. aeruginosa* + *S. pneumoniae* + *S. suis*).
 - **5 negative template controls (NTC)** — molecular-grade water carried through the full extraction and library-preparation process.
 
-Note: `E-coli_S4_L001` was reclassified during the 2026-05 review from "clinical" to PC_SINGLE on the basis of sample provenance; the corrected denominator for clinical sensitivity therefore is 33 rather than 34.
+Note: `E-coli_S4_L001` is classified as a PC_SINGLE control on the basis of sample provenance; the denominator for clinical sensitivity is therefore 33.
 
-**Study cohort (n=86 patient blood specimens).** Blood samples from patients enrolled with acute febrile illness during whose admission a blood culture bottle was flagged as positive by the automated detection system, but subculture onto aerobic solid media did not recover any organism. **The 16S samples are patient blood drawn during the same admission and are *not* aliquots of the original positive blood culture bottle.** No anaerobic blood culture is performed under local hospital protocol. Of the 86 samples, 71 (82.6%) carry ≥1 positive call from either Centrifuger classification or Minimap2 alignment rescue; 15 (17.4%) returned zero detected taxa, consistent with pre-sequencing failures (DNA extraction, library preparation, or sequencing depth). The "56 study samples" cited in earlier internal drafts represented only the subset of samples with at least one Centrifuger-Detected genus and inadvertently excluded both the zero-detection samples and the samples whose only positive call came from alignment-based rescue.
+**Study cohort (n=86 patient blood specimens).** Blood samples from patients enrolled with acute febrile illness during whose admission a blood culture bottle was flagged as positive by the automated detection system, but subculture onto aerobic solid media did not recover any organism. **The 16S samples are patient blood drawn during the same admission and are *not* aliquots of the original positive blood culture bottle.** No anaerobic blood culture is performed under local hospital protocol. Of the 86 samples, 71 (82.6%) carry ≥1 positive call from either Centrifuger classification or Minimap2 alignment rescue; 15 (17.4%) returned zero detected taxa, consistent with pre-sequencing failures (DNA extraction, library preparation, or sequencing depth).
 
 ### 2.3 Sample collection, DNA extraction, and library preparation
 
@@ -107,7 +107,7 @@ A two-tier rescue framework was applied (`scripts/call_taxa.py`):
 - **Not_Confirmed** (`call = Not_Confirmed`): reads ≥50 but ≤ alignment NTC max. Not reported clinically.
 - **Negative** (`call = Negative`): reads <50.
 
-A genus was reported as detected if it satisfied either Centrifuger or alignment-rescue criteria. Note that `.calls.tsv` has a 5-level `call` field (`Detected`, `Confirmed`, `Probable`, `Not_Confirmed`, `Negative`); analyses restricted to `call == 'Detected'` will miss Confirmed and Probable rescue rows and underreport Rickettsiales evidence.
+A genus was reported as detected if it satisfied either Centrifuger or alignment-rescue criteria. The `.calls.tsv` output has a 5-level `call` field: `Detected`, `Confirmed`, `Probable`, `Not_Confirmed`, `Negative`. All three positive levels (`Detected`, `Confirmed`, `Probable`) contribute to the reported detection set.
 
 #### 2.4.4 Negative-control handling and per-run background derivation
 
@@ -132,7 +132,7 @@ The following 11 genera are removed on any detection in clinical or study sample
 
 *Burkholderia* is treated as a Tier-A-equivalent kit contaminant (the genus is dominated in low-biomass samples by *B. cepacia* complex species: *B. contaminans*, *B. cenocepacia*, *B. multivorans*, *B. sola*, *B. cepacia*), but it also contains *B. pseudomallei*, a cannot-miss melioidosis pathogen endemic in Thailand. For every sample with a *Burkholderia* genus detection, the Centrifuger kreport is parsed at the species rank (`S`): reads assigned to *Burkholderia pseudomallei* (NCBI taxonomy ID 28450) are summed and compared against the run's NTC species-level *B. pseudomallei* count. The detection is preserved only if **both** conditions hold: (i) species-level *B. pseudomallei* reads ≥500, and (ii) species reads exceed the run-NTC maximum for *B. pseudomallei*. When preserved, the retained record stores the species-level read count, not the genus total.
 
-This safeguard replaces a V3-era substring match on "pseudomallei" anywhere in the kreport (which triggered on parent clade `pseudomallei_group` and reported genus-level read counts as species-level), an error described in §3.2.5. The 3 validation-panel *B. pseudomallei* samples (`09502813_S2_L001`, `09-0-02165`, `09700912_S3_L001`) carry 65,016 / 20,061 / 13,744 species-level *B. pseudomallei* reads respectively and trivially pass the safeguard. None of the *Burkholderia* detections in the 86-sample study cohort passed the safeguard.
+The 3 validation-panel *B. pseudomallei* samples (`09502813_S2_L001`, `09-0-02165`, `09700912_S3_L001`) carry 65,016 / 20,061 / 13,744 species-level *B. pseudomallei* reads respectively and trivially pass the safeguard. None of the *Burkholderia* detections in the 86-sample study cohort passed the safeguard.
 
 #### 2.5.3 Tier B — NTC-only organisms
 
@@ -140,7 +140,7 @@ Nine genera identified as present only in NTCs across all runs were removed glob
 
 #### 2.5.4 Tier 1 — Ultra-low-abundance environmental noise
 
-Sixteen genera with dataset-wide median per-sample abundance <0.5% were removed: *Shigella*, *Metapseudomonas*, *Stutzerimonas*, *Capsulimonas*, *Chamaesiphon*, *Chloroflexus*, *Flavihumibacter*, *Hymenobacter*, *Limnoglobus*, *Methylovirgula*, *Microvirga*, *Pelagovum*, *Pseudonocardia*, *Rufibacter*, *Salmonella*, *Spirosoma*. *Salmonella* is in Tier 1 because it was not detected at meaningful abundance in this dataset; it is a known AFI pathogen and any future detection should prompt explicit NTC cross-check before attribution. *Mycoplasmopsis* and *Nitrospira* were removed from this tier during the 2026-05-11 review after inspection of their actual abundance distributions (39.78% mean in 4 samples and 13.45% in 1 sample, respectively); they are retained in V4.
+Sixteen genera with dataset-wide median per-sample abundance <0.5% were removed: *Shigella*, *Metapseudomonas*, *Stutzerimonas*, *Capsulimonas*, *Chamaesiphon*, *Chloroflexus*, *Flavihumibacter*, *Hymenobacter*, *Limnoglobus*, *Methylovirgula*, *Microvirga*, *Pelagovum*, *Pseudonocardia*, *Rufibacter*, *Salmonella*, *Spirosoma*. *Salmonella* is in Tier 1 because it was not detected at meaningful abundance in this dataset; it is a known AFI pathogen and any future detection should prompt explicit NTC cross-check before attribution. *Mycoplasmopsis* and *Nitrospira* are excluded from Tier 1 and retained as candidate signals (mean abundance 39.78% across 4 samples and 13.45% in 1 sample, respectively).
 
 #### 2.5.5 Tier 2 — Marginal organisms
 
@@ -203,7 +203,7 @@ The 48-sample validation panel (33 clinical with known reference-laboratory diag
 | **Sample-level analytical performance (clinical + PC)** | **31** | **43** | **72.1%** | **57.5%–83.6%** |
 | **Overall validation accuracy (all categories)** | **36** | **48** | **75.0%** | 61.2%–85.1% |
 
-The 72.1% sample-level analytical performance figure matches the legacy APHL bioinformatic validation report (2026-02-16) for the same panel after PC-as-clinical reclassification and PC spike-in bypass were applied. Inter-run reproducibility is 100% across all 9 sequencing runs.
+The 72.1% sample-level analytical performance figure is the headline analytical performance metric for regulatory documentation. Inter-run reproducibility is 100% across all 9 sequencing runs.
 
 #### 3.1.2 Organism-specific clinical performance
 
@@ -226,7 +226,7 @@ Two failure patterns dominate the 12 discordant cases:
 
 #### 3.1.3 Two-tier Rickettsiales rescue performance on the validation panel
 
-The Minimap2 alignment-based rescue is essential for Rickettsiales detection at V1-V3 resolution. Across the 6 expected-*Orientia* validation samples: 4 carry direct genus-level Centrifuger detection (`00389_S5`, `11800801_S7`, `24500367_S5`, `25900911_S4`); Tier 1 Confirmed Minimap2 rescue (`call = Confirmed`) was triggered in `22900253_S4` (4,133 mapped reads, breadth 0.3220, `align_confirmed = true` — note this is a *Rickettsia* call in an Orientia-expected sample; counted as concordant under cross-genus Rickettsiales handling); Tier 2 Probable order-level rescue (`call = Probable`) was triggered in `00618_S7` (68 mapped reads, breadth 0.2015) — this sample was previously reported as a "failed rescue" in earlier validation analyses, but `.calls.tsv` shows `call = Probable` and the Tier-2 order-level framework correctly captures it as concordant. After this correction no validation-panel Rickettsiales sample falls into the failed-rescue category. A threshold uniformity audit (`THRESHOLD-UNIFORMITY-AUDIT.md`) confirms that the rescue thresholds are applied identically across all samples in the dataset.
+The Minimap2 alignment-based rescue is essential for Rickettsiales detection at V1-V3 resolution. Across the 6 expected-*Orientia* validation samples: 4 carry direct genus-level Centrifuger detection (`00389_S5`, `11800801_S7`, `24500367_S5`, `25900911_S4`); Tier 1 Confirmed Minimap2 rescue (`call = Confirmed`) was triggered in `22900253_S4` (4,133 mapped reads, breadth 0.3220, `align_confirmed = true` — this is a *Rickettsia* call in an Orientia-expected sample, counted as concordant under cross-genus Rickettsiales handling); and Tier 2 Probable order-level rescue (`call = Probable`) was triggered in `00618_S7` (68 mapped reads, breadth 0.2015). No validation-panel Rickettsiales sample falls into the failed-rescue category. A threshold uniformity audit (`THRESHOLD-UNIFORMITY-AUDIT.md`) confirms that the rescue thresholds are applied identically across all samples in the dataset.
 
 #### 3.1.4 Decontamination filter behaviour on the validation panel
 
@@ -243,7 +243,7 @@ The study cohort comprises **86 patient blood specimens** distributed across 5 s
 
 The pre-sequencing failure rate is comparable to that observed in the validation panel (3/33 = 9% clinical pre-seq failures) and indicates that low-biomass blood specimens have a non-trivial baseline failure rate that should be expected in operational deployment. We recommend a pre-sequencing QC step (Qubit + library qPCR) for future cohorts to distinguish pre-sequencing failures from true biological negatives up front.
 
-**Earlier internal reports cited "56 AFI study samples"; the corrected count is 86.** The 56 figure was derived from samples with at least one Centrifuger-Detected genus and inadvertently excluded both the 15 zero-detection samples and the additional samples whose only positive call was an alignment-based rescue (`Confirmed`/`Probable`). All denominators in this Results section use 86 (cohort total) or 71 (samples with any positive call) as appropriate.
+All denominators in this Results section use 86 (cohort total) or 71 (samples with any positive call) as appropriate.
 
 #### 3.2.2 Control validity within study runs
 
@@ -281,7 +281,7 @@ Per-sample biomass distribution under V4:
 
 #### 3.2.4 Rickettsiales rescue in the study cohort
 
-The single most clinically important finding of the cohort analysis is **Rickettsiales rescue evidence in 11 of 86 samples (12.8%; 11 of 71 samples with any positive call = 15.5%)**. This finding was missed in the earlier draft of the cohort analysis, which examined only Centrifuger-Detected rows and overlooked the Minimap2 alignment-based rescue rows. After re-examining all `source = alignment` rows with `call ∈ {Confirmed, Probable, Detected}`, the per-sample table is:
+The single most clinically important finding of the cohort analysis is **Rickettsiales rescue evidence in 11 of 86 samples (12.8%; 11 of 71 samples with any positive call = 15.5%)**, identified by examining all `source = alignment` rows with `call ∈ {Confirmed, Probable, Detected}`:
 
 | Sample | Run | Genus | Mapped reads | Breadth | Rescue tier | Alignment NTC reads | Confidence (sample-vs-NTC) |
 |---|---|---|---|---|---|---|---|
@@ -299,7 +299,7 @@ The single most clinically important finding of the cohort analysis is **Rickett
 
 **Summary.** 1 Tier-1 genus-level *Orientia* call (`16901195_S5_L001`, breadth 0.3235, ~12× NTC headroom — the cleanest Rickettsiales call in the cohort) and 10 Tier-2 order-level "Rickettsiales detected" calls with breadth in the 0.21–0.24 range (just below the Tier-1 0.25 threshold). Across all 11 samples, confidence stratifies as 2 HIGH (1 Tier-1 + 1 Tier-2 with abundance >> NTC), 3 MODERATE, and 6 LOW (alignment NTC carries comparable-magnitude background); the 6 LOW-confidence calls warrant priority follow-up. All 11 samples are flagged for Rickettsiales-specific qPCR confirmation; doxycycline empirical coverage is already standard in this endemic clinical context.
 
-#### 3.2.5 Species-level *B. pseudomallei* findings (corrected)
+#### 3.2.5 Species-level *B. pseudomallei* findings
 
 Five samples in the study cohort carry a *Burkholderia* genus detection in `.calls.tsv` (`14300185_S8_L001`, `22900187_S10_L001`, `23200430_S6_L001`, `23200519_S12_L001`, `16601093_S7_L001`). Species-level Centrifuger kreport parsing yields:
 
@@ -311,11 +311,11 @@ Five samples in the study cohort carry a *Burkholderia* genus detection in `.cal
 | `23200519_S12_L001` | 876 | 0 | 231 | 0 | REMOVE |
 | `16601093_S7_L001` | 673 | 0 | ~150 | 0 | REMOVE |
 
-**No study sample contains *B. pseudomallei* at species level above background.** The earlier draft's claim that `23200430_S6_L001` carried 54,126 reads of *B. pseudomallei* at 15.56% abundance conflated genus-level reads with species-level reads — the actual species-level *B. pseudomallei* count in that sample is 8 reads, below the run NTC's 10–51 reads of *B. pseudomallei*. The genus-level signal in that sample is dominated by *B. cepacia* complex (kit contaminant) species. The 3 validation-panel *B. pseudomallei* samples remain authentic (13,744 / 20,061 / 65,016 species-level reads). The corrected reading of the cohort is that melioidosis is not a major contributor to this specific cohort's positive-culture / failed-subculture phenotype as detected by 16S.
+**No study sample contains *B. pseudomallei* at species level above background.** Species-level *B. pseudomallei* reads across the cohort range 0–8 per sample, below both the 500-read detection threshold and the run NTC's 10–51 reads of *B. pseudomallei*. The genus-level *Burkholderia* signal in these samples is dominated by *B. cepacia* complex (kit contaminant) species. The 3 validation-panel *B. pseudomallei* samples carry 13,744 / 20,061 / 65,016 species-level reads and clearly pass the safeguard, demonstrating that the assay detects *B. pseudomallei* when present at meaningful abundance — but this specific cohort does not contain it. Melioidosis is not a major contributor to this cohort's positive-culture / failed-subculture phenotype as detected by 16S.
 
 #### 3.2.6 Fastidious-organism candidate signals
 
-**Mycoplasmopsis (4 of 86 samples = 4.7%; 4/71 active = 5.6%).** *Mycoplasmopsis* was detected at substantial abundance across the cohort but was silently removed by the prior V3 filter under a Tier-1 "ultra-low abundance" categorisation. The actual read counts in `.calls.tsv` are 537–6,568 reads across the affected samples (post-NCmax subtraction):
+**Mycoplasmopsis (4 of 86 samples = 4.7%; 4/71 active = 5.6%).** *Mycoplasmopsis* was detected at substantial abundance across the cohort. Read counts in `.calls.tsv` range 537–6,568 reads across the affected samples (post-NCmax subtraction):
 
 | Sample | Run | Reads | % of sample |
 |---|---|---|---|
@@ -369,15 +369,13 @@ Inter-run reproducibility was assessed by tracking PC and NTC pass rates across 
 
 ## 4. Discussion
 
-### 4.1 What the corrected analysis shows
-
-Three findings reframe the interpretation of this cohort relative to earlier drafts.
+### 4.1 What the analysis shows
 
 **Rickettsiales involvement is the most prevalent identifiable signal in this cohort** — present in 11 of 86 samples (12.8%) overall, equivalent to ~16% of the 71 samples with any positive detection. The Minimap2 alignment-based rescue identifies 1 high-confidence Tier-1 *Orientia* call (`16901195_S5_L001`, breadth 0.3235, ~12× NTC headroom) and 10 Tier-2 order-level "Rickettsiales detected" rescues. Rickettsiales are obligate intracellular pathogens that cannot be cultured on routine blood agar; their detection in a positive-blood-culture / no-subculture-growth cohort is the most biologically coherent finding in the dataset. This pattern aligns with the expected endemic epidemiology of northeastern Thailand, where scrub typhus (*Orientia tsutsugamushi*) and spotted-fever-group rickettsioses account for a substantial fraction of AFI presentations.
 
-**No study sample contains *Burkholderia pseudomallei* above species-level background.** The earlier reporting of preserved *B. pseudomallei* in sample `23200430_S6_L001` was a methodological artefact: a substring-based check for "pseudomallei" anywhere in the kreport file triggered on the parent `pseudomallei_group` clade, and the V3 safeguard then retained the genus-level read count rather than the species-level count. Species-rank parsing in V4 shows the sample's *B. pseudomallei* signal is 8 reads, below both the 500-read detection threshold and the run NTC's *B. pseudomallei* count (10–51 reads). The genus-level *Burkholderia* signal in that sample is dominated by *B. cepacia* complex species, which are kit / water contaminants (Salter et al., 2014). The 3 *B. pseudomallei*-positive validation-panel samples (with 13,744–65,016 species reads) demonstrate the assay does detect melioidosis when present at meaningful abundance — but this specific cohort does not contain it.
+**No study sample contains *Burkholderia pseudomallei* above species-level background.** Species-rank parsing of the Centrifuger kreport shows *B. pseudomallei* species reads of 0–8 per study sample, below both the 500-read detection threshold and the run NTC's *B. pseudomallei* count (10–51 reads). The genus-level *Burkholderia* signal in these samples is dominated by *B. cepacia* complex species, which are kit / water contaminants (Salter et al., 2014). The 3 *B. pseudomallei*-positive validation-panel samples (with 13,744–65,016 species reads) demonstrate the assay does detect melioidosis when present at meaningful abundance — but this specific cohort does not contain it.
 
-**Mycoplasmopsis is the most prominent fastidious-organism-class signal in the cohort** — 4 of 86 samples (4.7%) at mean abundance 39.78% and max 70.55% — and was silently removed by the earlier V3 filter under a Tier-1 "ultra-low abundance" categorisation that did not survive scrutiny against the actual abundance distribution. *Mycoplasmopsis* (*Mycoplasma* family) organisms are by definition cell-wall-deficient and fastidious; they require sterol-supplemented media and 1–3 weeks of incubation. Their presence in patient blood is biologically consistent with a positive-bottle / no-subculture-growth phenotype. The cohort-level prevalence (~5%) is too small to support cohort-level causal claims; this is a hypothesis-generating observation that warrants species-level kreport interrogation and Mycoplasma-specific PCR / specialised culture follow-up.
+**Mycoplasmopsis is the most prominent fastidious-organism-class signal in the cohort** — 4 of 86 samples (4.7%) at mean abundance 39.78% and max 70.55%. *Mycoplasmopsis* (*Mycoplasma* family) organisms are by definition cell-wall-deficient and fastidious; they require sterol-supplemented media and 1–3 weeks of incubation. Their presence in patient blood is biologically consistent with a positive-bottle / no-subculture-growth phenotype. The cohort-level prevalence (~5%) is too small to support cohort-level causal claims; this is a hypothesis-generating observation that warrants species-level kreport interrogation and Mycoplasma-specific PCR / specialised culture follow-up.
 
 ### 4.2 What the filter design choices contribute
 
@@ -387,14 +385,12 @@ The V4 decontamination filter materially changes which organisms are reported an
 - ***Burkholderia* species-level safeguard.** The genus is in Tier A but the species-level kreport parser preserves *B. pseudomallei* on a per-row basis. Without this safeguard, melioidosis cases would be erroneously discarded; with the safeguard, only true *B. pseudomallei* signals are preserved (validated against same-run NTC species reads). In this cohort the safeguard correctly admitted no false-positive melioidosis call.
 - **Positive-control spike-in bypass.** Without this bypass, the `P-aeru_S5_L001` PC would fail because *Pseudomonas* is in Tier A, even though *Pseudomonas aeruginosa* is the expected positive-control spike-in. The bypass restores PC accuracy from 9/10 to 10/10 and brings the sample-level analytical performance from 30/43 = 69.8% to 31/43 = 72.1%, matching the legacy APHL figure.
 
-The corrected Tier-1 list, which excludes *Mycoplasmopsis* and *Nitrospira*, demonstrates the importance of validating tier membership against actual abundance distributions in the dataset rather than relying on text-string filter rules. Filter membership of *Coxiella* (Tier 2) and *Salmonella* (Tier 1) reflects observed dataset statistics, not biological exclusion: future detections of either organism above the relevant tier thresholds should be interpreted as candidate AFI etiology, not contamination.
+Filter membership of *Coxiella* (Tier 2) and *Salmonella* (Tier 1) reflects observed dataset statistics, not biological exclusion: future detections of either organism above the relevant tier thresholds should be interpreted as candidate AFI etiology, not contamination.
 
 ### 4.3 What the data do not support
 
-The earlier discussion drafts contained several overreaches that the corrected analysis does not support:
+The following claims are not supported by the data:
 
-- **"The cohort has no Rickettsiales."** This was an artefact of Centrifuger-only filtering; alignment-based rescue rows show 11 samples with Rickettsiales evidence (12.8% of the 86-sample cohort).
-- **"*B. pseudomallei* preserved in study sample 23200430_S6_L001 at 54,126 reads (15.56%)."** The 54,126 reads is the genus-level *Burkholderia* count; the species-level *B. pseudomallei* count for that sample is 8 reads, below the run NTC's 10–51 reads of *B. pseudomallei*. The V4 filter correctly removes this detection. No study sample carries *B. pseudomallei* above the species-level detection threshold.
 - **"Strong support for fastidious-organism hypothesis."** With single-sample *Leptospira* (n=1, NTC caveat) and 3-sample low-abundance *Brucella* (mean 0.98%), the cohort-level evidence is thin. *Mycoplasmopsis* is the strongest signal class but still ~5% of cohort. Honest framing: hypothesis-generating observations for confirmatory testing in a minority of cases.
 - **"No anaerobes detected."** *Porphyromonas* and *Desulfovibrio* are retained in the V4 output, contradicting absolute negation. The V1-V3 primer set is also known to under-detect some Gram-positive anaerobes; "absent in this assay" is not equivalent to "biologically absent."
 - **"16S identified organisms that caused failed culture."** The 16S samples are patient blood, not aliquots of the original positive bottle. The detected organisms are candidates for explaining the bottle signal but cannot be causally linked without paired bottle / blood analysis. 16S also does not distinguish viable from non-viable cells.
@@ -431,7 +427,7 @@ The study cohort itself yielded:
 - **Three low-abundance *Brucella* candidates.**
 - **Four *Mycoplasmopsis* detections at substantial abundance.**
 
-This pattern — one high-confidence *Orientia* detection, ~10 order-level Rickettsiales rescues, no melioidosis at species level, candidate *Leptospira* / *Brucella* / Mycoplasma in additional samples — is consistent with a cohort in which a meaningful subset of patients have Rickettsiales involvement that culture cannot recover (Rickettsiales are intracellular obligate parasites that do not grow on routine blood culture), alongside a smaller subset showing fastidious / slow-growing organism candidate signals. The cohort is more biologically consistent with expected AFI etiology than the earlier draft suggested.
+This pattern — one high-confidence *Orientia* detection, ~10 order-level Rickettsiales rescues, no melioidosis at species level, candidate *Leptospira* / *Brucella* / Mycoplasma in additional samples — is consistent with a cohort in which a meaningful subset of patients have Rickettsiales involvement that culture cannot recover (Rickettsiales are intracellular obligate parasites that do not grow on routine blood culture), alongside a smaller subset showing fastidious / slow-growing organism candidate signals. The cohort is biologically consistent with expected AFI etiology in this region.
 
 ### 4.6 Methodological lessons for downstream deployment
 
@@ -492,7 +488,7 @@ The 15 samples with no detection at all warrant a separate workup — these are 
 
 A 16S V1-V3 amplicon workflow with Centrifuger v1.1.0 primary classification, Minimap2 alignment-based rescue for Rickettsiales, a two-tier reporting framework (genus-level Tier 1 Confirmed + order-level Tier 2 Probable), and a species-aware V4 decontamination filter (with positive-control spike-in bypass) achieves 72.1% sample-level analytical performance against a 43-sample reference panel (95% CI 57.5%–83.6%), with 100% NTC specificity (95% CI 56.6%–100%) and 100% inter-run reproducibility across 9 sequencing runs.
 
-Applied to a cohort of 86 AFI cases (71 with ≥1 positive call, 15 pre-sequencing failures) with positive automated blood culture and failed subculture recovery, the workflow identifies Rickettsiales rescue evidence in 11 samples (~13% of cohort, ~16% of samples with any detection) — a finding consistent with the expected endemic epidemiology of northeastern Thailand — and candidate fastidious-organism signals (*Mycoplasmopsis*, *Leptospira*, *Brucella*) in an additional small minority of the cohort. **No study sample carries *Burkholderia pseudomallei* above the species-level detection threshold**; earlier reports of preserved *B. pseudomallei* conflated genus-level with species-level read counts and have been corrected.
+Applied to a cohort of 86 AFI cases (71 with ≥1 positive call, 15 pre-sequencing failures) with positive automated blood culture and failed subculture recovery, the workflow identifies Rickettsiales rescue evidence in 11 samples (~13% of cohort, ~16% of samples with any detection) — a finding consistent with the expected endemic epidemiology of northeastern Thailand — and candidate fastidious-organism signals (*Mycoplasmopsis*, *Leptospira*, *Brucella*) in an additional small minority of the cohort. **No study sample carries *Burkholderia pseudomallei* above the species-level detection threshold.**
 
 The 16S workflow described here is suitable for use as a complementary diagnostic for AFI cases with positive culture signal but failed subculture recovery, with the understanding that candidate detections require orthogonal confirmation (species-specific PCR / qPCR, serology, specialised culture) before clinical interpretation. The most actionable finding for this specific cohort is the Rickettsiales rescue evidence in approximately one in eight AFI cases.
 
@@ -500,7 +496,7 @@ The 16S workflow described here is suitable for use as a complementary diagnosti
 
 ## 8. References
 
-**Decontamination and low-biomass microbiome studies (verified against PubMed 2026-05-11):**
+**Decontamination and low-biomass microbiome studies:**
 
 1. Salter SJ, Cox MJ, Turek EM, Calus ST, Cookson WO, Moffatt MF, Turner P, Parkhill J, Loman NJ, Walker AW. Reagent and laboratory contamination can critically impact sequence-based microbiome analyses. *BMC Biol.* 2014;12:87. doi:10.1186/s12915-014-0087-z. PMID: 25387460.
 2. Glassing A, Dowd SE, Galandiuk S, Davis B, Chiodini RJ. Inherent bacterial DNA contamination of extraction and sequencing reagents may affect interpretation of microbiota in low bacterial biomass samples. *Gut Pathog.* 2016;8:24. doi:10.1186/s13099-016-0103-7. PMID: 27239228.
@@ -539,14 +535,6 @@ The following companion files accompany this manuscript and contain the per-samp
 - **`figure_a_sankey.html`** / **`figure_a_sankey.png`** — Figure 1, V4 filter Sankey visualisation.
 - **`MANUSCRIPT-WALKTHROUGH-THAI.md`** — Thai-language walkthrough for the wet-lab team.
 
-Additional companion documents kept as reference for the integration:
-
-- **`MANUSCRIPT-FINAL-DRAFT.md`** — prior long-form draft (largely superseded by this PACKAGE-FINAL document).
-- **`MANUSCRIPT-RESULTS-SECTION.md`** / **`MANUSCRIPT-DISCUSSION-SECTION.md`** — extended standalone Results and Discussion (now 56→86 corrected).
-- **`docs/manuscript_methods.md`** — the polished methods source from which §2 was pulled.
-- **`MANUSCRIPT-CONDENSED-DRAFT.md`** — JCM-style ~3,900-word condensed version.
-- **`THRESHOLD-UNIFORMITY-AUDIT.md`** / **`STUDY-SAMPLES-THRESHOLD-UNIFORMITY-AUDIT.md`** — Minimap2 rescue threshold uniformity audits.
-
 ---
 
 ## 10. Placeholders requiring team input
@@ -581,4 +569,4 @@ Additional companion documents kept as reference for the integration:
 
 ---
 
-*End of MANUSCRIPT-PACKAGE-FINAL. Bioinformatics package prepared 2026-05-25. This document supersedes earlier internal Results / Discussion drafts; the standalone `MANUSCRIPT-RESULTS-SECTION.md` and `MANUSCRIPT-DISCUSSION-SECTION.md` files are retained as reference but have been brought into 56→86 numerical consistency with this document.*
+*End of MANUSCRIPT-PACKAGE-FINAL. Bioinformatics package prepared 2026-05-25.*

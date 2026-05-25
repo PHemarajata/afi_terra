@@ -1,7 +1,5 @@
 # Discussion: Interpreting 16S Detections in Blood Culture-Positive Samples with Failed Subculture Recovery
 
-> **Revision note (2026-05-11):** This Discussion has been rewritten after an independent review of the underlying analysis identified that the earlier draft (a) overstated several findings as "strong support," (b) contained a false headline claim about *Burkholderia pseudomallei* preservation in a study sample, (c) cited mortality statistics without sources, and (d) used causal language that the study design does not support. The revised draft reframes the work as a **pilot, hypothesis-generating analysis** with candidate organisms identified for confirmatory testing, rather than a clinical validation paper.
-
 ## Central Observation
 
 This pilot analysis applied 16S rRNA gene sequencing to **86 acute-febrile-illness (AFI) cases** meeting a specific phenotype: positive automated blood culture bottle signal with subsequent failed subculture recovery on aerobic solid media (no anaerobic culture performed). Of these, 71 (82.6%) carry ≥1 positive call from either Centrifuger classification or Minimap2 alignment-based rescue, and 15 (17.4%) returned zero detected taxa attributed to pre-sequencing library failure. The 16S samples are patient blood drawn during the same admission; they are **not** aliquots of the original positive culture bottles. After applying the V4 decontamination filter (which removes well-documented kit/skin/water contaminants and gates *Burkholderia* genus retention on species-level *B. pseudomallei* evidence), 147 of 217 genus-sample detections were retained.
@@ -19,7 +17,7 @@ These detections are **consistent with**, but do not prove, the involvement of f
 
 ### *Mycoplasmopsis* as a Hypothesis-Generating Finding
 
-Of the corrected filter results, the strongest cohort-level signal comes from *Mycoplasmopsis*: **4 of 86 samples (4.7%; 4 of 71 active samples = 5.6%)**, with mean abundance 39.78% and a maximum of 70.55%. Mycoplasma-class organisms are by definition fastidious: they lack a cell wall (cannot be Gram-stained reliably, do not retain peptidoglycan-targeted antibiotics like beta-lactams), require sterol-enriched media (e.g., Mycoplasma broth/agar with serum supplementation), and are slow-growing (visible colonies typically appear in 1-3 weeks, beyond the standard 5-7 day blood culture window). They would not be expected to grow on routine aerobic blood agar within the subculture window used by most hospital protocols.
+The strongest cohort-level fastidious-organism signal in the V4-filtered results is *Mycoplasmopsis*: **4 of 86 samples (4.7%; 4 of 71 active samples = 5.6%)**, with mean abundance 39.78% and a maximum of 70.55%. Mycoplasma-class organisms are by definition fastidious: they lack a cell wall (cannot be Gram-stained reliably, do not retain peptidoglycan-targeted antibiotics like beta-lactams), require sterol-enriched media (e.g., Mycoplasma broth/agar with serum supplementation), and are slow-growing (visible colonies typically appear in 1-3 weeks, beyond the standard 5-7 day blood culture window). They would not be expected to grow on routine aerobic blood agar within the subculture window used by most hospital protocols.
 
 This detection is plausibly relevant to the AFI phenotype: an organism present in blood, generating metabolic signal that could trip an automated bottle detector, but unable to grow on standard subculture. We emphasize that:
 
@@ -35,7 +33,7 @@ The two validation-panel *Leptospira* samples (`00277_S4` and `09202659_S12`) wi
 
 ### *Brucella* at Sub-1% Abundance
 
-Three study samples contain *Brucella* genus signal at mean 0.98% abundance (max 1.96%). At this abundance level, the signal is at the upper edge of what could plausibly be reagent contamination. It is also at the lower edge of what could be true low-level bacteremia. Without serological confirmation or species-level resolution, this is a candidate observation, not a diagnosis. The earlier draft's framing of *Brucella* detection as part of "strong support" for the fastidious-organism hypothesis was not justified by the abundance numbers.
+Three study samples contain *Brucella* genus signal at mean 0.98% abundance (max 1.96%). At this abundance level, the signal is at the upper edge of what could plausibly be reagent contamination. It is also at the lower edge of what could be true low-level bacteremia. Without serological confirmation or species-level resolution, this is a candidate observation, not a diagnosis, and does not constitute "strong support" for fastidious-organism involvement at the cohort level.
 
 ### *Streptococcus* as Ambiguous at V1-V3 Resolution
 
@@ -43,29 +41,24 @@ Five samples carry *Streptococcus* at mean 12.75%. The V1-V3 hypervariable regio
 
 ## What the Data Do Not Support
 
-### The Earlier Draft's "*B. pseudomallei* Preserved" Claim
+### Species-level *B. pseudomallei* status in the cohort
 
-The earlier draft asserted that the V3 filter's species-level safeguard preserved *Burkholderia pseudomallei* in study sample `23200430_S6_L001` at "54,126 reads (15.56%)". This was wrong on two levels:
+At the species level (Centrifuger kreport rank `S`), the *Burkholderia* genus signals in this cohort are dominated by *B. cepacia* complex species (e.g., 12,789 *B. cepacia* complex reads in `23200430_S6_L001` against 8 *B. pseudomallei* species reads). The same run's NTC contains 10 *B. pseudomallei* species reads, exceeding the study sample's count. The V4 filter, with species-level parsing and NTC comparison, removes this sample's *Burkholderia* detection as a *B. cepacia complex* contaminant. Across all 86 study samples, no detection passes the species-level *B. pseudomallei* safeguard. **The cohort does not contain melioidosis as detected by this assay.**
 
-1. The 54,126 reads is the **genus-level** *Burkholderia* count from the `.calls.tsv` file, not a species-level count.
-2. At the species level (kreport rank `S`), this sample contains 8 reads of *B. pseudomallei* against 12,789 reads of *B. cepacia complex* species (predominantly *B. contaminans*, *B. cenocepacia*, *B. multivorans*). The same run's NTC contains 10 reads of *B. pseudomallei*, exceeding the study sample's count.
-
-The V4 filter, with corrected species-level parsing and an NTC comparison, removes this sample's *Burkholderia* detection as a *B. cepacia* complex contaminant. Across all 86 study samples, no detection passes the species-level *B. pseudomallei* safeguard. **The cohort does not contain melioidosis as detected by this assay.**
-
-The validation-panel *B. pseudomallei* samples (`09502813_S2`, `09-0-02165`, `09700912_S3`) remain genuine: each carries 13,744-65,016 species-level *B. pseudomallei* reads, demonstrating that the pipeline can detect *B. pseudomallei* when it is present at clinically meaningful abundance. The absence of such detections in the AFI cohort is itself a finding -- it argues against melioidosis as a major contributor to the positive-culture/failed-subculture phenotype in this specific cohort.
+The 3 validation-panel *B. pseudomallei* samples (`09502813_S2`, `09-0-02165`, `09700912_S3`) carry 13,744–65,016 species-level *B. pseudomallei* reads each, demonstrating that the pipeline does detect *B. pseudomallei* when it is present at clinically meaningful abundance. The absence of such detections in the AFI cohort is itself a finding — it argues against melioidosis as a major contributor to the positive-culture/failed-subculture phenotype in this specific cohort.
 
 ### Anaerobes Cannot Be Excluded from the Differential
 
-The earlier draft framed the absence of classic obligate anaerobes (*Bacteroides*, *Prevotella*, *Fusobacterium*, *Clostridium*) in the retained set as evidence that anaerobes are not a major factor. This was overstated for two reasons:
+Two considerations make absolute exclusion of anaerobic contribution untenable:
 
 1. **V1-V3 primer bias.** The 27F primer set is known to underdetect certain Gram-positive and Gram-negative anaerobic taxa. "Absent in this assay" is not "biologically absent."
-2. **Some anaerobic-genus signals are present in the corrected retained set.** *Porphyromonas* (1 sample, 8.45%) and *Desulfovibrio* (1 sample, 0.78%) are anaerobic genera that were retained. Their presence, even at low frequency, undermines the absolute "no anaerobes" framing.
+2. **Anaerobic-genus signals are present in the retained set.** *Porphyromonas* (1 sample, 8.45%) and *Desulfovibrio* (1 sample, 0.78%) are anaerobic genera that were retained. Their presence, even at low frequency, undermines an absolute "no anaerobes" framing.
 
-A more honest framing: the assay's V1-V3 primer set is not optimal for anaerobe enumeration, and the available data neither rules anaerobes in nor out as contributors to the AFI phenotype in this cohort.
+The assay's V1-V3 primer set is not optimal for anaerobe enumeration, and the available data neither rules anaerobes in nor out as contributors to the AFI phenotype in this cohort.
 
 ### Causal Claims Are Not Supported by the Design
 
-The earlier draft repeatedly stated that 16S "identified organisms that caused the positive bottle signal" or "explained the positive-culture / failed-subculture phenotype." The study design does not support causal claims:
+Causal claims linking 16S detections to the bottle signal are not supported by the study design:
 
 1. The 16S samples are **patient blood from the same admission**, not aliquots of the original blood culture bottles. We do not know whether the organisms detected by 16S in the patient's blood are the same organisms that triggered the bottle alarm.
 2. 16S detects DNA from viable, non-viable, and viable-but-non-culturable cells alike. A high-abundance 16S detection does not establish that culturable, infection-causing organisms were present in the bottle.
@@ -98,12 +91,12 @@ In northeastern Thailand, the major causes of acute febrile illness include rick
 
 The study cohort itself yielded:
 - No detectable *B. pseudomallei* at species level
-- **Rickettsiales detected by Minimap2 alignment-based rescue in 11 of 86 study samples (12.8%; 11 of 71 samples with any positive call = 15.5%)** — see correction note below
+- **Rickettsiales detected by Minimap2 alignment-based rescue in 11 of 86 study samples (12.8%; 11 of 71 samples with any positive call = 15.5%)**
 - One candidate *Leptospira* with same-run NTC caveat
 - Three low-abundance *Brucella* candidates
 - Four *Mycoplasmopsis* detections at substantial abundance
 
-**Correction note on Rickettsiales (added during appendix generation):** An earlier draft of this Discussion stated that the cohort showed "no clearcut Rickettsiales." That assessment was based on Centrifuger genus-level rows only and missed the Minimap2 alignment-based rescue rows in `.calls.tsv`. After re-examining all `source = alignment` rows with `call ∈ {Confirmed, Probable, Detected}`, the actual count of study samples with Rickettsiales rescue is 11/86 (12.8%; 11/71 active samples = 15.5%):
+The full per-sample Rickettsiales rescue table is:
 
 | Sample | Run | Genus | Reads (alignment) | Breadth | Rescue tier | Alignment NTC reads | Confidence |
 |---|---|---|---|---|---|---|---|
@@ -121,9 +114,9 @@ The study cohort itself yielded:
 
 **Of these, 1 sample (16901195_S5_L001) is a Tier 1 genus-level Orientia detection with strong abundance and NTC headroom — the cleanest Rickettsiales call in the study cohort.** The remaining 10 are Tier 2 order-level Rickettsiales detections; the breadth-of-coverage values (0.21-0.24) cluster just below the documented 0.25 Tier-1 threshold, which is why they appear as `Probable` rather than `Confirmed` in calls.tsv. Most carry meaningful NTC alignment background (1,143-189,002 NTC reads vs. sample reads), so absolute confidence varies from HIGH (for the one Tier 1 sample) to LOW (for samples where the NTC carries >=50% of the sample's signal).
 
-**Clinical implication of this correction.** Rickettsiales is the canonical "cannot-miss" AFI etiology in endemic northeastern Thailand. The earlier draft's claim that the cohort lacked Rickettsiales was wrong. The corrected interpretation: approximately 13% of the AFI cohort (~16% of samples with any positive detection) shows Rickettsiales alignment evidence, with one genus-level Orientia detection at high confidence and ten additional order-level rescues that warrant follow-up by Rickettsiales-specific qPCR (recommended; doxycycline empirical coverage is already standard in this clinical context).
+**Clinical implication.** Rickettsiales is the canonical "cannot-miss" AFI etiology in endemic northeastern Thailand. Approximately 13% of the AFI cohort (~16% of samples with any positive detection) shows Rickettsiales alignment evidence, with one genus-level Orientia detection at high confidence and ten additional order-level rescues that warrant follow-up by Rickettsiales-specific qPCR (doxycycline empirical coverage is already standard in this clinical context).
 
-This pattern -- one high-confidence Orientia detection, ~10 order-level Rickettsiales rescues, no melioidosis at species level, candidate Leptospira / Brucella / Mycoplasma in additional samples -- is consistent with a cohort in which a meaningful subset of patients (~13% of all samples, ~16% of samples with any detection) have Rickettsiales involvement that culture cannot recover (Rickettsiales are intracellular obligate parasites that do not grow on routine blood culture), alongside a smaller subset (~5-10%) showing fastidious / slow-growing organism candidate signals. The cohort is more biologically consistent with expected AFI etiology than the earlier draft suggested.
+This pattern -- one high-confidence Orientia detection, ~10 order-level Rickettsiales rescues, no melioidosis at species level, candidate Leptospira / Brucella / Mycoplasma in additional samples -- is consistent with a cohort in which a meaningful subset of patients (~13% of all samples, ~16% of samples with any detection) have Rickettsiales involvement that culture cannot recover (Rickettsiales are intracellular obligate parasites that do not grow on routine blood culture), alongside a smaller subset (~5-10%) showing fastidious / slow-growing organism candidate signals. The cohort is biologically consistent with expected AFI etiology in this region.
 
 ## Critical Limitations
 
