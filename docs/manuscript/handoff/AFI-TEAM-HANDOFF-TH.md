@@ -64,13 +64,19 @@
 
 ใช้ตัวอย่าง 48 ตัวอย่าง (33 คลินิก + 10 positive control + 5 NTC) ครอบคลุม 9 รอบ sequencing
 
-| ประเภท | ถูกต้อง / รวม | อัตรา |
+ใช้กรอบ 2×2 contingency: ตัวอย่างที่คาดว่าจะเจอเป้าหมาย (clinical + PC = 43 ตัว) เป็น "expected positive"; NTC (5 ตัว) เป็น "expected negative" → TP = 31, FN = 12, TN = 5, FP = 0
+
+| ค่าทางสถิติ | ค่าที่ได้ | 95% CI (Wilson) |
 |---|---|---|
-| Clinical (เข้มงวด) | 21 / 33 | **63.6%** |
-| Positive control | 10 / 10 | **100%** |
-| Negative template control (specificity) | 5 / 5 | **100%** |
-| **Sample-level analytical (clinical + PC)** | **31 / 43** | **72.1%** |
-| Overall validation accuracy | 36 / 48 | 75.0% |
+| **Sensitivity** (clinical + PC) | **31 / 43 = 72.1%** | 57.3% – 83.3% |
+| &nbsp;&nbsp;เฉพาะ clinical (subgroup) | 21 / 33 = 63.6% | 46.0% – 78.5% |
+| &nbsp;&nbsp;เฉพาะ positive control (subgroup) | 10 / 10 = 100.0% | 72.2% – 100.0% |
+| **Specificity** (NTC) | **5 / 5 = 100.0%** | 56.6% – 100.0% |
+| **PPV** (positive predictive value) | 31 / 31 = 100.0% | 89.0% – 100.0% |
+| **NPV** (negative predictive value)\* | 5 / 17 = 29.4% | 13.3% – 53.1% |
+| Overall analytical accuracy | 36 / 48 = 75.0% | 61.2% – 85.1% |
+
+*\* NPV คำนวณจากองค์ประกอบของ validation panel (43 ตัวอย่างเป้าหมายเป็นบวก : 5 ตัวอย่างเป้าหมายเป็นลบ) ไม่สามารถ generalize ไปสู่ prevalence ทางคลินิกได้โดยตรง; sensitivity และ specificity เป็นค่าที่ไม่ขึ้นกับ prevalence และเป็นค่ามาตรฐานสำหรับการเปรียบเทียบระหว่าง study*
 
 **Reproducibility ระหว่างรอบ (inter-run): 100%** ทุก control ผ่านเกณฑ์ในทุกรอบ
 

@@ -28,15 +28,19 @@ Positive controls performed as expected: PC_MIX8 (5/5 samples, all 8 organisms d
 
 ### Validation Panel Summary
 
-**Validation panel accuracy (V4-filter-aware, TAC-target rule of record).** Categorized strictly by sample type — 33 clinical samples with known expected targets, 10 positive controls (5 PC_MIX8 = ZymoBIOMICS 8-organism standard, 4 PC_SINGLE, 1 MIXED4), 5 negative template controls — concordance was:
+**Validation panel performance (V4-filter-aware, TAC-target rule of record).** Each sample was scored as concordant if the rule of record was satisfied (target detected AND retained by V4 for clinical; all expected spike-in organisms detected and retained for PCs; no TAC bacterial target genus retained for NTCs) and the result was used to populate the standard 2×2 contingency table treating clinical + PC samples as expected-positive (n = 43; 33 clinical + 10 PC) and NTC samples as expected-negative (n = 5). This yields TP = 31, FN = 12, TN = 5, FP = 0.
 
-| Category | Concordant | Total | Rate |
-|---|---|---|---|
-| Clinical (target detected AND retained by V4) | 21 | 33 | 63.6% |
-| Positive controls (all expected spike-in organisms detected and retained) | 10 | 10 | 100% |
-| Negative template controls (clear of TAC bacterial target genera) | 5 | 5 | 100% |
-| **Overall validation accuracy** | **36** | **48** | **75.0%** |
-| **Sample-level analytical performance (clinical + PC)** | **31** | **43** | **72.1%** |
+| Parameter | Value | 95% CI (Wilson) |
+|---|---|---|
+| **Sensitivity** (clinical + PC samples) | **31 / 43 = 72.1%** | 57.3% – 83.3% |
+| &nbsp;&nbsp;Clinical-only subgroup | 21 / 33 = 63.6% | 46.0% – 78.5% |
+| &nbsp;&nbsp;Positive-control subgroup | 10 / 10 = 100.0% | 72.2% – 100.0% |
+| **Specificity** (NTC samples) | **5 / 5 = 100.0%** | 56.6% – 100.0% |
+| **Positive predictive value (PPV)** | 31 / 31 = 100.0% | 89.0% – 100.0% |
+| **Negative predictive value (NPV)**\* | 5 / 17 = 29.4% | 13.3% – 53.1% |
+| Overall analytical accuracy | 36 / 48 = 75.0% | 61.2% – 85.1% |
+
+*\* NPV is computed against the validation-panel composition (43 expected-positive : 5 expected-negative samples) and does not generalise to clinical prevalence. Sensitivity and specificity are the prevalence-independent metrics for inter-study comparison.*
 
 For the V4 filter to evaluate PC samples honestly, the filter bypasses Tier A (kit/skin/water contaminant) removal for any organism that is part of the PC sample's documented spike-in composition — *Pseudomonas* and *Staphylococcus* are kit contaminants in clinical samples but are expected positive-control targets in P-aeru_S5_L001, MIXED4, and PC_MIX8, and were therefore retained when those samples were processed. (E-coli_S4_L001 is reclassified from "clinical" to PC_SINGLE per the same logic.) Without this bypass, the P-aeru PC would have failed; with the bypass, all 10 PCs are concordant.
 
@@ -174,7 +178,7 @@ See `APPENDIX-STUDY-SAMPLES.md` for the full per-sample table with reads, breadt
 
 ## Summary of Findings
 
-1. **Validation panel** demonstrates 72.1% sample-level analytical performance (31/43 clinical + PC concordant after V4 filter, with PC-aware filter bypass for expected spike-in organisms); 100% NTC specificity; 100% PC accuracy (10/10); 63.6% strict clinical concordance (21/33); perfect inter-run reproducibility. Organism-specific clinical sensitivity ranges 0-100%; *Burkholderia pseudomallei* species-level detection is confirmed in all 3 validation-panel cases with substantial signal (13,744-65,016 species reads).
+1. **Validation panel** demonstrates 72.1% sensitivity (31/43, 95% CI 57.3%–83.3%; 63.6% [21/33] clinical-only and 100% [10/10] positive-control subgroups), 100% specificity (5/5 NTCs), 100% positive predictive value (31/31), and 100% inter-run reproducibility. Organism-specific clinical sensitivity ranges 0–100%; *Burkholderia pseudomallei* species-level detection is confirmed in all 3 validation-panel cases with substantial signal (13,744–65,016 species reads).
 2. **Two-tier Rickettsiales framework** (Centrifuge genus + Minimap2 order-level rescue) achieves 100% *Orientia* detection across the validation panel.
 3. **V4 decontamination filter** removes 32.3% of study-sample detections (predominantly Tier A skin/kit/water contaminants and *Burkholderia* signal dominated by *B. cepacia* complex). 147 detections retained.
 4. **No study sample contains *B. pseudomallei* at species level above background.** The earlier V3-based claim that 23200430_S6_L001 contained 54,126 reads of *B. pseudomallei* conflated genus-level reads with species-level reads; the actual species-level count is 8 reads, below the NTC background.

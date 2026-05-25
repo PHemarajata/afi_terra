@@ -71,15 +71,21 @@ The 16S V1-V3 amplicon sequence data were processed through a custom four-step b
 
 The 48-sample validation panel comprised 33 clinical specimens with known reference-laboratory diagnoses, 10 positive controls (5 PC_MIX8 ZymoBIOMICS 8-organism standards + 4 PC_SINGLE + 1 MIXED4), and 5 negative template controls (NTCs).
 
-| Category | Concordant / Total | Rate |
-|---|---|---|
-| Clinical (strict) | 21 / 33 | **63.6%** |
-| Positive controls | 10 / 10 | **100%** |
-| Negative template controls (specificity) | 5 / 5 | **100%** |
-| **Sample-level analytical (clinical + PC)** | **31 / 43** | **72.1%** |
-| Overall validation accuracy | 36 / 48 | 75.0% |
+Treating each sample as a single binary outcome (expected target organism detected and retained = "test positive"; otherwise = "test negative"), the standard 2×2 contingency yields TP = 31, FN = 12, TN = 5, FP = 0 (33 clinical + 10 PC = 43 expected-positive samples; 5 NTCs as expected-negative samples). The four standard analytical parameters with Wilson 95% confidence intervals:
 
-Inter-run reproducibility was 100% across all 9 sequencing runs. (Wilson 95% confidence intervals available on request.)
+| Parameter | Value | 95% CI (Wilson) |
+|---|---|---|
+| **Sensitivity** (clinical + PC samples) | **31 / 43 = 72.1%** | 57.3% – 83.3% |
+| &nbsp;&nbsp;Clinical-only subgroup | 21 / 33 = 63.6% | 46.0% – 78.5% |
+| &nbsp;&nbsp;Positive-control subgroup | 10 / 10 = 100.0% | 72.2% – 100.0% |
+| **Specificity** (NTC samples) | **5 / 5 = 100.0%** | 56.6% – 100.0% |
+| **PPV** (positive predictive value) | 31 / 31 = 100.0% | 89.0% – 100.0% |
+| **NPV** (negative predictive value)\* | 5 / 17 = 29.4% | 13.3% – 53.1% |
+| Overall analytical accuracy | 36 / 48 = 75.0% | 61.2% – 85.1% |
+
+*\* NPV is computed against the validation-panel composition (43 expected-positive : 5 expected-negative samples) and does not generalise to clinical prevalence. Sensitivity and specificity are the prevalence-independent metrics for inter-study comparison.*
+
+Inter-run reproducibility was 100% across all 9 sequencing runs.
 
 Two failure patterns explain the 12 discordant clinical cases. Two samples (`00126_S6_L001`, `00369_S1_L001`, both expected *Rickettsia*) returned zero taxa — these are pre-sequencing failures (DNA extraction, library prep, or sequencing depth), not classification errors. The remaining discordants were abundance-driven: the expected target was detectable but not the dominant 16S signal in the sample, with other organisms (often kit-contaminant-class or background environmental genera) accounting for the majority of reads. This reflects 16S genus-detection biology in mixed samples rather than a pipeline error.
 
@@ -149,7 +155,7 @@ Insert these sentences into the abstract Results bullet (and one into the Method
 
 > **(Methods sentence, second half of your Methods bullet.)** Sequencing data were processed through a custom 16S V1-V3 pipeline combining Centrifuger v1.1.0 primary classification, Minimap2 alignment-based rescue against a curated Rickettsiales reference panel with a two-tier reporting framework, and a multi-tier decontamination filter with a species-level safeguard for *Burkholderia pseudomallei* and a positive-control spike-in bypass.
 
-> **(Results sentence.)** Validated against a 48-sample reference panel, the assay achieved 72.1% sample-level analytical performance (31/43; 63.6% strict clinical concordance, 100% positive-control concordance, 100% negative-control specificity) with 100% inter-run reproducibility across 9 sequencing runs. Applied to the 86-sample AFI cohort, the workflow identified Rickettsiales rescue evidence in 11 of 86 samples (12.8%; 11/71 samples with detections = 15.5%; 1 Tier-1 genus-level *Orientia* + 10 Tier-2 order-level rescues), candidate *Mycoplasmopsis* detections in 4 samples (mean abundance 39.78%), and *Leptospira* (n=1) and *Brucella* (n=3) candidate signals; no study sample carried *B. pseudomallei* above the species-level detection threshold.
+> **(Results sentence.)** Validated against a 48-sample reference panel, the assay achieved 72.1% sensitivity (31/43, 95% CI 57.3%–83.3%; 63.6% clinical-only sensitivity, 100% positive-control sensitivity), 100% specificity (5/5 NTCs clear of TaqMan Array Card bacterial target genera), 100% positive predictive value (31/31), and 100% inter-run reproducibility across 9 sequencing runs. Applied to the 86-sample AFI cohort, the workflow identified Rickettsiales rescue evidence in 11 of 86 samples (12.8%; 11/71 samples with detections = 15.5%; 1 Tier-1 genus-level *Orientia* + 10 Tier-2 order-level rescues), candidate *Mycoplasmopsis* detections in 4 samples (mean abundance 39.78%), and *Leptospira* (n=1) and *Brucella* (n=3) candidate signals; no study sample carried *B. pseudomallei* above the species-level detection threshold.
 
 ---
 
