@@ -194,7 +194,7 @@ genus เหล่านี้ปรากฏใน landmark studies เกี�
 | PC_MIX8 (5 replicates) | PC_MIX8 | *Bacillus, Enterococcus, Escherichia, Limosilactobacillus, Listeria, Pseudomonas, Salmonella, Staphylococcus* (ZymoBIOMICS Standard) |
 | Mixed_S6_L001 | MIXED4 | *Escherichia, Pseudomonas, Streptococcus* |
 
-ถ้าไม่มี PC bypass ตัวอย่าง P-aeru_S5_L001 จะ "fail" เพราะ *Pseudomonas* (เชื้อที่ใส่ลงไปจงใจ) ถูกตัดทิ้งโดย Tier A เมื่อมี bypass แล้ว PC ทั้ง 10 ตัวอย่างผ่านเกณฑ์ 100% และผลรวมของ sample-level analytical performance ขึ้นไปอยู่ที่ 31/43 = 72.1% ซึ่งตรงกับตัวเลขที่รายงานใน APHL validation report เดิม
+ถ้าไม่มี PC bypass ตัวอย่าง P-aeru_S5_L001 จะ "fail" เพราะ *Pseudomonas* (เชื้อที่ใส่ลงไปจงใจ) ถูกตัดทิ้งโดย Tier A เมื่อมี bypass แล้ว PC ทั้ง 10 ตัวอย่างผ่านเกณฑ์ 100% และผลรวมของ sensitivity (clinical + PC) ขึ้นไปอยู่ที่ 31/43 = 72.1%
 
 ---
 
@@ -202,17 +202,23 @@ genus เหล่านี้ปรากฏใน landmark studies เกี�
 
 นี่คือผลการทดสอบ pipeline กับ validation panel 48 ตัวอย่าง
 
-### 4.1 ผลรวม (overall accuracy)
+### 4.1 ผลรวม (sensitivity / specificity / PPV / NPV)
 
-| หมวด | Concordant | จำนวนทั้งหมด | อัตรา | 95% CI |
-|---|---|---|---|---|
-| Clinical (เจอ target organism และผ่าน V4) | 21 | 33 | **63.6%** | 46.6–77.8% |
-| Positive controls (เจอ spike-in ครบทุก organism) | 10 | 10 | **100%** | 72.2–100% |
-| NTCs (ไม่มี TAC bacterial target ใด ๆ ผ่าน V4) | 5 | 5 | **100%** | 56.6–100% |
-| **Sample-level analytical performance (clinical + PC)** | **31** | **43** | **72.1%** | 57.3–83.3% |
-| **Overall validation accuracy (ทุกหมวด)** | **36** | **48** | **75.0%** | 61.2–85.1% |
+ใช้กรอบ 2×2 contingency: clinical + PC = 43 ตัวอย่าง "expected positive"; NTC = 5 ตัวอย่าง "expected negative" → TP = 31, FN = 12, TN = 5, FP = 0
 
-ตัวเลข **72.1% sample-level analytical performance** คือเลขที่จะใช้รายงานในต้นฉบับ ตรงกับ APHL bioinformatic validation report เดิม
+| ค่าทางสถิติ | ค่าที่ได้ | 95% CI (Wilson) |
+|---|---|---|
+| **Sensitivity** (clinical + PC) | **31 / 43 = 72.1%** | 57.3% – 83.3% |
+| &nbsp;&nbsp;เฉพาะ clinical (subgroup) | 21 / 33 = 63.6% | 46.0% – 78.5% |
+| &nbsp;&nbsp;เฉพาะ positive control (subgroup) | 10 / 10 = 100.0% | 72.2% – 100.0% |
+| **Specificity** (NTC) | **5 / 5 = 100.0%** | 56.6% – 100.0% |
+| **PPV** (positive predictive value) | 31 / 31 = 100.0% | 89.0% – 100.0% |
+| **NPV** (negative predictive value)\* | 5 / 17 = 29.4% | 13.3% – 53.1% |
+| Overall analytical accuracy | 36 / 48 = 75.0% | 61.2% – 85.1% |
+
+*\* NPV คำนวณจากองค์ประกอบของ validation panel (43 ตัวอย่างเป้าหมายเป็นบวก : 5 ตัวอย่างเป้าหมายเป็นลบ) ไม่สามารถ generalize ไปสู่ prevalence ทางคลินิกได้โดยตรง; sensitivity และ specificity เป็นค่าที่ไม่ขึ้นกับ prevalence และเป็นค่ามาตรฐานสำหรับการเปรียบเทียบระหว่าง study*
+
+ตัวเลข **72.1% sensitivity** คือเลขที่จะใช้รายงานในต้นฉบับ
 
 ### 4.2 ผลแยกตาม organism
 
@@ -412,7 +418,7 @@ V4 filter ที่แก้ไขใหม่จึงตัด *Burkholderia* 
 - **เกณฑ์การตรวจจับชัดเจน** — Centrifuger ≥500 reads + 5× NCmax; Minimap2 Tier 1 confirmed ≥100 reads + breadth ≥0.25 + 5× NCmax; Tier 2 probable ≥50 reads + breadth ≥0.20 + > NCmax
 - **มี two-tier Rickettsiales framework** — รองรับว่า V1-V3 แยก Orientia/Rickettsia ที่ระดับ genus ได้ยาก จึงใช้ alignment เสริม
 - **มี species-aware decontamination filter (V4)** — รวม Burkholderia species-level safeguard, NTC-only removal, ultra-low abundance noise filter และ PC spike-in bypass
-- **ผ่าน analytical validation ที่ดี** — 72.1% sample-level analytical performance, 100% specificity, 100% inter-run reproducibility
+- **ผ่าน analytical validation ที่ดี** — 72.1% sensitivity, 100% specificity, 100% PPV, 100% inter-run reproducibility
 
 ผลการศึกษา cohort สรุปได้ว่า
 

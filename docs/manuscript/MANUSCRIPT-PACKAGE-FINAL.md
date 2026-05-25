@@ -34,7 +34,7 @@
 
 **Methods.** We developed and validated a 16S rRNA V1-V3 amplicon workflow combining Centrifuger v1.1.0 primary taxonomic classification with Minimap2 alignment-based rescue against a curated 7-genome Rickettsiales reference panel, a two-tier reporting framework that distinguishes confirmed genus-level calls (Tier 1) from order-level "Rickettsiales detected" rescues (Tier 2), and a multi-tiered post-pipeline decontamination filter (V4) that includes a species-level safeguard for *Burkholderia pseudomallei* and a positive-control spike-in bypass. The pipeline is implemented in WDL on Terra.bio / Cromwell with Google Cloud Batch orchestration. The assay was validated against a 48-sample panel (33 clinical samples with known reference-laboratory diagnoses, 10 positive controls, 5 negative template controls) and applied to a study cohort of 86 AFI cases with positive automated blood culture signal but failed subculture recovery.
 
-**Results.** The validated assay achieves 72.1% (31/43, 95% CI 57.5%–83.6%) sample-level analytical performance combining clinical and positive-control samples — 63.6% (21/33, 95% CI 46.0%–78.5%) strict clinical concordance, 100% (10/10) positive-control concordance — with 100% specificity (5/5 NTCs clear of all TaqMan Array Card bacterial target genera) and 100% inter-run reproducibility across nine sequencing runs. Applied to the AFI study cohort (n=86; 71 with ≥1 positive call, 15 zero-detection pre-sequencing failures), the workflow identified Rickettsiales rescue evidence in **11 of 86 samples (12.8%; 11/71 active samples = 15.5%)** — 1 Tier-1 genus-level *Orientia* detection (sample 16901195_S5_L001, breadth 0.3235, ~12× NTC headroom) and 10 Tier-2 order-level rescues with breadth-of-coverage 0.21–0.24; *Mycoplasmopsis* (a fastidious, cell-wall-deficient organism class) in 4 samples (mean abundance 39.78%, max 70.55%); a candidate *Leptospira* detection in 1 sample (22.78% abundance, with a same-run NTC contamination caveat); and *Brucella* signals at low abundance (0.98% mean) in 3 samples. **No study sample contains *Burkholderia pseudomallei* above the species-level detection threshold.** The V4 filter removed 70 of 217 detections (32.3%) from the cohort, predominantly Tier-A kit/skin/water contaminants.
+**Results.** The validated assay achieves 72.1% sensitivity (31/43, 95% CI 57.3%–83.3%; 63.6% [21/33] clinical-only and 100% [10/10] positive-control sensitivity subgroups), 100% specificity (5/5 NTCs clear of all TaqMan Array Card bacterial target genera, 95% CI 56.6%–100%), 100% positive predictive value (31/31), and 100% inter-run reproducibility across nine sequencing runs. Applied to the AFI study cohort (n=86; 71 with ≥1 positive call, 15 zero-detection pre-sequencing failures), the workflow identified Rickettsiales rescue evidence in **11 of 86 samples (12.8%; 11/71 active samples = 15.5%)** — 1 Tier-1 genus-level *Orientia* detection (sample 16901195_S5_L001, breadth 0.3235, ~12× NTC headroom) and 10 Tier-2 order-level rescues with breadth-of-coverage 0.21–0.24; *Mycoplasmopsis* (a fastidious, cell-wall-deficient organism class) in 4 samples (mean abundance 39.78%, max 70.55%); a candidate *Leptospira* detection in 1 sample (22.78% abundance, with a same-run NTC contamination caveat); and *Brucella* signals at low abundance (0.98% mean) in 3 samples. **No study sample contains *Burkholderia pseudomallei* above the species-level detection threshold.** The V4 filter removed 70 of 217 detections (32.3%) from the cohort, predominantly Tier-A kit/skin/water contaminants.
 
 **Conclusion.** The 16S V1-V3 assay, with the two-tier Rickettsiales framework and the species-aware V4 decontamination filter, is suitable for analytical surveillance of bacterial pathogens in AFI cases. Approximately one in eight AFI cases with positive culture / failed subculture shows Rickettsiales rescue evidence; an additional small minority shows fastidious-organism candidate signals (*Mycoplasmopsis*, *Leptospira*, *Brucella*). All candidate detections require orthogonal confirmation (PCR, serology, specialised culture) before clinical reporting. The cohort study is framed as pilot, hypothesis-generating data, with Rickettsiales involvement as the most prevalent identifiable etiology.
 
@@ -193,17 +193,21 @@ The pipeline source code is publicly available at https://github.com/PHemarajata
 
 #### 3.1.1 Sample composition and overall accuracy
 
-The 48-sample validation panel (33 clinical with known reference-laboratory diagnoses + 10 positive controls + 5 NTCs) was processed through the V4-filter-aware pipeline. Final concordance under the rule of record (target detected AND retained by V4 for clinical; all expected spike-ins detected and retained under PC bypass for PCs; no TAC bacterial target genus retained for NTCs):
+The 48-sample validation panel (33 clinical with known reference-laboratory diagnoses + 10 positive controls + 5 NTCs) was processed through the V4-filter-aware pipeline. Each sample was scored under the rule of record (target detected AND retained by V4 for clinical; all expected spike-ins detected and retained under PC bypass for PCs; no TAC bacterial target genus retained for NTCs) and the result was used to populate the standard 2×2 contingency table treating clinical + PC samples as expected-positive (n = 43) and NTC samples as expected-negative (n = 5). This yields TP = 31, FN = 12, TN = 5, FP = 0.
 
-| Category | Concordant | Total | Rate | 95% CI (Wilson) |
-|---|---|---|---|---|
-| Clinical | 21 | 33 | **63.6%** | 46.0%–78.5% |
-| Positive controls (PC_MIX8 + PC_SINGLE + MIXED4) | 10 | 10 | **100%** | 72.2%–100% |
-| Negative template controls (specificity) | 5 | 5 | **100%** | 56.6%–100% |
-| **Sample-level analytical performance (clinical + PC)** | **31** | **43** | **72.1%** | **57.5%–83.6%** |
-| **Overall validation accuracy (all categories)** | **36** | **48** | **75.0%** | 61.2%–85.1% |
+| Parameter | Value | 95% CI (Wilson) |
+|---|---|---|
+| **Sensitivity** (clinical + PC samples) | **31 / 43 = 72.1%** | 57.3% – 83.3% |
+| &nbsp;&nbsp;Clinical-only subgroup | 21 / 33 = 63.6% | 46.0% – 78.5% |
+| &nbsp;&nbsp;Positive-control subgroup | 10 / 10 = 100.0% | 72.2% – 100.0% |
+| **Specificity** (NTC samples) | **5 / 5 = 100.0%** | 56.6% – 100.0% |
+| **Positive predictive value (PPV)** | 31 / 31 = 100.0% | 89.0% – 100.0% |
+| **Negative predictive value (NPV)**\* | 5 / 17 = 29.4% | 13.3% – 53.1% |
+| Overall analytical accuracy | 36 / 48 = 75.0% | 61.2% – 85.1% |
 
-The 72.1% sample-level analytical performance figure is the headline analytical performance metric for regulatory documentation. Inter-run reproducibility is 100% across all 9 sequencing runs.
+*\* NPV is computed against the validation-panel composition (43 expected-positive : 5 expected-negative samples) and does not generalise to clinical prevalence. Sensitivity and specificity are the prevalence-independent metrics for inter-study comparison.*
+
+Inter-run reproducibility is 100% across all 9 sequencing runs. The 72.1% sensitivity figure is the headline analytical performance metric for regulatory documentation.
 
 #### 3.1.2 Organism-specific clinical performance
 
@@ -383,7 +387,7 @@ The V4 decontamination filter materially changes which organisms are reported an
 
 - **Aggressive Tier A.** Removing the 11 high-confidence kit / skin / water contaminants is responsible for 61 of 70 V4 removals. *Cutibacterium*, *Staphylococcus*, and *Brevundimonas* are the top three contributors. The *Brevundimonas* addition (V4 vs V3) is supported by NTC profiles showing it at 22–285,740 reads per NTC in run 6_and_7.
 - ***Burkholderia* species-level safeguard.** The genus is in Tier A but the species-level kreport parser preserves *B. pseudomallei* on a per-row basis. Without this safeguard, melioidosis cases would be erroneously discarded; with the safeguard, only true *B. pseudomallei* signals are preserved (validated against same-run NTC species reads). In this cohort the safeguard correctly admitted no false-positive melioidosis call.
-- **Positive-control spike-in bypass.** Without this bypass, the `P-aeru_S5_L001` PC would fail because *Pseudomonas* is in Tier A, even though *Pseudomonas aeruginosa* is the expected positive-control spike-in. The bypass restores PC accuracy from 9/10 to 10/10 and brings the sample-level analytical performance from 30/43 = 69.8% to 31/43 = 72.1%, matching the legacy APHL figure.
+- **Positive-control spike-in bypass.** Without this bypass, the `P-aeru_S5_L001` PC would fail because *Pseudomonas* is in Tier A, even though *Pseudomonas aeruginosa* is the expected positive-control spike-in. The bypass restores PC sensitivity from 9/10 to 10/10 and brings the overall sensitivity (clinical + PC) from 30/43 = 69.8% to 31/43 = 72.1%.
 
 Filter membership of *Coxiella* (Tier 2) and *Salmonella* (Tier 1) reflects observed dataset statistics, not biological exclusion: future detections of either organism above the relevant tier thresholds should be interpreted as candidate AFI etiology, not contamination.
 
@@ -486,7 +490,7 @@ The 15 samples with no detection at all warrant a separate workup — these are 
 
 ## 7. Conclusion
 
-A 16S V1-V3 amplicon workflow with Centrifuger v1.1.0 primary classification, Minimap2 alignment-based rescue for Rickettsiales, a two-tier reporting framework (genus-level Tier 1 Confirmed + order-level Tier 2 Probable), and a species-aware V4 decontamination filter (with positive-control spike-in bypass) achieves 72.1% sample-level analytical performance against a 43-sample reference panel (95% CI 57.5%–83.6%), with 100% NTC specificity (95% CI 56.6%–100%) and 100% inter-run reproducibility across 9 sequencing runs.
+A 16S V1-V3 amplicon workflow with Centrifuger v1.1.0 primary classification, Minimap2 alignment-based rescue for Rickettsiales, a two-tier reporting framework (genus-level Tier 1 Confirmed + order-level Tier 2 Probable), and a species-aware V4 decontamination filter (with positive-control spike-in bypass) achieves 72.1% sensitivity against a 43-sample expected-positive reference panel (95% CI 57.3%–83.3%), 100% NTC specificity (5/5; 95% CI 56.6%–100%), 100% positive predictive value (31/31), and 100% inter-run reproducibility across 9 sequencing runs.
 
 Applied to a cohort of 86 AFI cases (71 with ≥1 positive call, 15 pre-sequencing failures) with positive automated blood culture and failed subculture recovery, the workflow identifies Rickettsiales rescue evidence in 11 samples (~13% of cohort, ~16% of samples with any detection) — a finding consistent with the expected endemic epidemiology of northeastern Thailand — and candidate fastidious-organism signals (*Mycoplasmopsis*, *Leptospira*, *Brucella*) in an additional small minority of the cohort. **No study sample carries *Burkholderia pseudomallei* above the species-level detection threshold.**
 

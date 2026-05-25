@@ -20,7 +20,7 @@
 
 **Methods.** We developed a 16S V1-V3 amplicon workflow combining Centrifuge primary classification with Minimap2 alignment-based rescue against a curated Rickettsiales 16S reference panel, a two-tier reporting framework (genus-level vs. order-level "Rickettsiales detected"), and a multi-tiered decontamination filter (V4) implementing a species-level safeguard for *B. pseudomallei* (parsing Centrifuge kreport at the species rank, comparing against same-run NTC species reads, with a 500-read threshold) and a positive-control spike-in bypass. The workflow was validated against a 48-sample panel (33 clinical, 10 positive controls, 5 NTC) and applied to 86 AFI cases with positive blood culture but failed subculture.
 
-**Results.** Sample-level analytical performance was 31/43 (72.1%, 95% CI 57.3–83.3%); strict clinical concordance 21/33 (63.6%); positive-control concordance 10/10 (100%); NTC specificity 5/5 (100%); inter-run reproducibility 100% across 9 runs. In the AFI cohort, 71/86 samples carried ≥1 detection; 15 had zero taxa (pre-sequencing failures). Rickettsiales rescue evidence was identified in 11 samples (1 Tier-1 genus-level *Orientia*, 10 Tier-2 order-level "Rickettsiales detected"). *Mycoplasmopsis* — a fastidious cell-wall-deficient organism class — was retained in 4 samples (mean 39.78%, max 70.55%). *Leptospira* at 22.78% in one sample and *Brucella* at sub-1% abundance in three samples emerged as candidate detections. No study sample carried *B. pseudomallei* above species-level background.
+**Results.** Sensitivity was 31/43 (72.1%, 95% CI 57.3–83.3%; 63.6% [21/33] clinical-only and 100% [10/10] positive-control subgroups); specificity 5/5 (100%); positive predictive value 31/31 (100%); inter-run reproducibility 100% across 9 runs. In the AFI cohort, 71/86 samples carried ≥1 detection; 15 had zero taxa (pre-sequencing failures). Rickettsiales rescue evidence was identified in 11 samples (1 Tier-1 genus-level *Orientia*, 10 Tier-2 order-level "Rickettsiales detected"). *Mycoplasmopsis* — a fastidious cell-wall-deficient organism class — was retained in 4 samples (mean 39.78%, max 70.55%). *Leptospira* at 22.78% in one sample and *Brucella* at sub-1% abundance in three samples emerged as candidate detections. No study sample carried *B. pseudomallei* above species-level background.
 
 **Conclusion.** The workflow detects clinically relevant AFI bacterial pathogens with good analytical performance and Rickettsiales-optimized rescue. Approximately 13% of AFI cases with positive culture / no growth show Rickettsiales rescue evidence; an additional minority show fastidious-organism candidate signals. Candidate detections require orthogonal confirmation before clinical reporting.
 
@@ -90,21 +90,23 @@ Sensitivity and specificity were computed as binary per-sample outcomes with Wil
 
 ### 3.1 Validation panel performance
 
-The 48-sample validation panel was processed through the V4-filter-aware pipeline. Sample-level performance:
+The 48-sample validation panel was processed through the V4-filter-aware pipeline. Each sample was scored under the rule of record and the result was used to populate a standard 2×2 contingency table (clinical + PC = 43 expected-positive; 5 NTCs as expected-negative; TP = 31, FN = 12, TN = 5, FP = 0):
 
-| Category | Concordant | Total | Rate | 95% CI |
-|---|---|---|---|---|
-| Clinical (target detected AND retained by V4) | 21 | 33 | 63.6% | 46.6–77.8% |
-| Positive controls (all spike-ins detected and retained) | 10 | 10 | 100% | 72.2–100% |
-| NTCs (clear of TAC bacterial targets) | 5 | 5 | 100% | 56.6–100% |
-| **Sample-level analytical performance (clinical + PC)** | **31** | **43** | **72.1%** | **57.3–83.3%** |
-| **Overall validation accuracy** | **36** | **48** | **75.0%** | **61.2–85.1%** |
+| Parameter | Value | 95% CI (Wilson) |
+|---|---|---|
+| **Sensitivity** (clinical + PC samples) | **31 / 43 = 72.1%** | 57.3% – 83.3% |
+| &nbsp;&nbsp;Clinical-only subgroup | 21 / 33 = 63.6% | 46.0% – 78.5% |
+| &nbsp;&nbsp;Positive-control subgroup | 10 / 10 = 100.0% | 72.2% – 100.0% |
+| **Specificity** (NTC samples) | **5 / 5 = 100.0%** | 56.6% – 100.0% |
+| **Positive predictive value (PPV)** | 31 / 31 = 100.0% | 89.0% – 100.0% |
+| **Negative predictive value (NPV)**\* | 5 / 17 = 29.4% | 13.3% – 53.1% |
+| Overall analytical accuracy | 36 / 48 = 75.0% | 61.2% – 85.1% |
 
-The 72.1% sample-level figure matches the legacy bioinformatic validation report for this panel.
+*\* NPV is computed against the validation-panel composition (43 expected-positive : 5 expected-negative samples) and does not generalise to clinical prevalence. Sensitivity and specificity are the prevalence-independent metrics for inter-study comparison.*
 
 **Organism-specific clinical sensitivity** ranged 0–100% (Table 1, body of `APPENDIX-VALIDATION-PANEL.md`). Notable patterns: (i) *E. coli* and *O. tsutsugamushi* achieved 100% sensitivity (with *Orientia* requiring two-tier rescue for several cases); (ii) three clinical samples (`00126_S6_L001`, `00369_S1_L001`, `25800370_S9_L001`) showed zero taxa, consistent with pre-sequencing failure rather than classification error; (iii) Streptococcus discordants reflect V1-V3 inability to resolve *S. pneumoniae* from *S. suis*; (iv) sample `00618_S7_L001` (Orientia-expected) carries a Rickettsia Tier-2 order-level rescue (`call = Probable`, breadth 0.2015) which is counted as concordant under the two-tier framework.
 
-The V4 filter does not remove any organism from the validation panel that affects target detection. The 3 validation-panel *B. pseudomallei* samples (`09502813_S2_L001`, `09-0-02165`, `09700912_S3_L001`) trivially pass the species-level safeguard (species reads 13,744 / 20,061 / 65,016, all >> 500-read threshold). Without the positive-control spike-in bypass, the P-aeru_S5_L001 PC would have failed (since *Pseudomonas* is in Tier A); with the bypass, all 10 PCs are concordant — this is the bypass's specific contribution to the 72.1% figure.
+The V4 filter does not remove any organism from the validation panel that affects target detection. The 3 validation-panel *B. pseudomallei* samples (`09502813_S2_L001`, `09-0-02165`, `09700912_S3_L001`) trivially pass the species-level safeguard (species reads 13,744 / 20,061 / 65,016, all >> 500-read threshold). Without the positive-control spike-in bypass, the P-aeru_S5_L001 PC would have failed (since *Pseudomonas* is in Tier A); with the bypass, all 10 PCs are concordant — this is the bypass's specific contribution to the 72.1% sensitivity figure.
 
 ### 3.2 Study cohort: cohort size and pre-sequencing failures
 
@@ -171,7 +173,7 @@ The V4 filter's three core design choices each have outsized impact:
 
 - **Aggressive Tier A** removes 61 of 70 detections in the cohort (predominantly *Cutibacterium*, *Staphylococcus*, *Brevundimonas*, *Acinetobacter*, *Corynebacterium*); these are universally documented kit/skin/water contaminants in low-biomass studies (1–5).
 - **The *Burkholderia* species-level safeguard** is essential. Without species-rank parsing of the kreport, genus-level *Burkholderia* signals dominated by *B. cepacia* complex contamination could be misreported as melioidosis; with the safeguard, no study sample passes the threshold.
-- **The positive-control spike-in bypass** restores PC sensitivity. Without the bypass, the P-aeru_S5_L001 PC would fail (because *Pseudomonas* is in Tier A); with the bypass, PC accuracy is 10/10 and sample-level analytical performance is 31/43 = 72.1%, matching the legacy validation figure.
+- **The positive-control spike-in bypass** restores PC sensitivity. Without the bypass, the P-aeru_S5_L001 PC would fail (because *Pseudomonas* is in Tier A); with the bypass, PC sensitivity is 10/10 and overall sensitivity (clinical + PC) is 31/43 = 72.1%.
 
 ### 4.3 What the data do not support
 
@@ -199,7 +201,7 @@ Operational deployment should incorporate: (i) explicit documentation of the per
 
 ## 6. Conclusion
 
-A 16S V1-V3 amplicon workflow with two-tier Rickettsiales rescue and species-aware decontamination achieves 72.1% sample-level analytical performance against a 43-sample reference panel with 100% NTC specificity. Applied to 86 AFI cases with positive blood culture / failed subculture, the workflow identifies Rickettsiales rescue evidence in 11 samples (~13% of cohort) — consistent with endemic epidemiology — and candidate fastidious-organism signals in an additional ~10%. The workflow is suitable as a complementary diagnostic for these cases; candidate detections require orthogonal confirmation before clinical reporting.
+A 16S V1-V3 amplicon workflow with two-tier Rickettsiales rescue and species-aware decontamination achieves 72.1% sensitivity (31/43, 95% CI 57.3%–83.3%), 100% specificity (5/5 NTCs), and 100% positive predictive value (31/31) against a 48-sample reference panel. Applied to 86 AFI cases with positive blood culture / failed subculture, the workflow identifies Rickettsiales rescue evidence in 11 samples (~13% of cohort) — consistent with endemic epidemiology — and candidate fastidious-organism signals in an additional ~10%. The workflow is suitable as a complementary diagnostic for these cases; candidate detections require orthogonal confirmation before clinical reporting.
 
 ---
 
