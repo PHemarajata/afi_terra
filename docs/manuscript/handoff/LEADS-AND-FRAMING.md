@@ -72,40 +72,22 @@
 
 ## §3. Question prompts for clinicians / EPI team
 
-### 3.1 Per-case follow-up (these are the cases that need the strongest clinical anchoring)
+### 3.1 Per-case follow-up — minimum data
 
-For **each of the 11 Rickettsiales-rescue cases** (see [`AFI-TEAM-HANDOFF.md`](AFI-TEAM-HANDOFF.md) §D.1 for the sample list):
+For each candidate case below, the manuscript really only needs three things:
 
-- Was the patient treated with doxycycline (or another tetracycline) empirically? When was it started relative to admission?
-- Did the fever defervescence pattern fit a rickettsial-treatment response (typically within 24–48 hours of doxycycline)?
-- Was paired acute / convalescent IgM / IgG serology collected for *Orientia tsutsugamushi* and *Rickettsia* spp? If yes, results?
-- Was an eschar described on examination? Any maculopapular rash, generalised lymphadenopathy, or hepatosplenomegaly?
-- Was there documented exposure consistent with mite or tick contact (rural / agricultural / forested area, fieldwork, recent travel to endemic district)?
-- Was Rickettsiales-specific qPCR (or other confirmatory test) performed? If yes, results?
-- Final discharge diagnosis and outcome (recovered, transferred, expired)?
+1. **Confirmatory test.** Was organism-specific PCR or serology done? What did it show?
+2. **Treatment and response.** Was empirical therapy directed at this organism given? Did the patient improve?
+3. **Outcome.** Discharge diagnosis and disposition (recovered / transferred / expired).
 
-For **each of the 4 *Mycoplasmopsis* cases** (samples `13400425_S4_L001`, `15700611_S5_L001`, `10300205_S9_L001`, `09301225_S4_L001`, `24500367_S5_L001` — the appendix table reports 5 detections with read counts 537–6,568, with 4 retained at the V4 filter level):
+Sample lists by organism group:
 
-- Clinical syndrome at presentation — primarily respiratory, primarily systemic, or both?
-- Was a Mycoplasma- or Mycoplasmataceae-specific PCR performed? If yes, results?
-- What antibiotics were administered? Did the patient respond to macrolide / tetracycline / fluoroquinolone coverage?
-- Any underlying conditions that would predispose to Mycoplasma infection (immunosuppression, chronic respiratory disease)?
-- Final discharge diagnosis and outcome?
+- **Rickettsiales rescue (11 cases)** — see [`AFI-TEAM-HANDOFF.md`](AFI-TEAM-HANDOFF.md) §D.1 for the full sample table.
+- **Mycoplasmopsis (4 cases retained at the V4 filter level)** — `13400425_S4_L001`, `15700611_S5_L001`, `10300205_S9_L001`, `09301225_S4_L001`, `24500367_S5_L001` (5 detections, 4 retained).
+- **Leptospira (1 candidate)** — `09801652_S5_L001`. *NTC caveat applies: a same-run NTC carried substantial Leptospira reads, so confirmatory testing matters more for this case than for the others.*
+- **Brucella (3 candidates, near-noise abundance)** — see the appendix for sample IDs.
 
-For the **single *Leptospira* candidate** (`09801652_S5_L001`):
-
-- Was paired-serum MAT (microscopic agglutination test) performed? Results?
-- Was Leptospira-specific qPCR performed? Results?
-- Exposure history: standing water, agricultural work, rodent contact, recent flooding?
-- Clinical syndrome: Weil's-disease-like (jaundice + renal failure), pulmonary-haemorrhage form, anicteric leptospirosis?
-- Treatment given and outcome?
-
-For the **3 *Brucella* candidates**:
-
-- Was *Brucella* serology (Rose Bengal, SAT, ELISA IgM/IgG) performed? Results?
-- Exposure history: unpasteurised dairy, livestock contact, occupational risk (slaughterhouse, veterinary)?
-- Clinical features consistent with brucellosis (undulant fever, hepatosplenomegaly, arthritis, prolonged fever > 2 weeks)?
-- Treatment given and outcome?
+If the team has time and capacity for richer clinical anchoring on any case, the natural optional additions are exposure history and organism-specific clinical syndrome; these are not required.
 
 ### 3.2 Cohort-level metadata the EPI team should confirm and document in the Methods
 
